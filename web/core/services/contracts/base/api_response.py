@@ -36,10 +36,9 @@ class ApiResponse(IApiResponse[T]):
     # region Interface implementation
 
     @property
-    def deserialized_data(self) -> T:
+    def json_data(self) -> T:
         #  switch to application type
-        return JsonUtil.deserialize(self.__data.decode(self.__encoding), self.__type_hook,
-                                    encoding=self.__encoding)
+        return JsonUtil.deserialize(self.__data.decode(self.__encoding), self.__type_hook)
 
     @property
     def raw_bytes(self) -> bytearray:

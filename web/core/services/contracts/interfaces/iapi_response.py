@@ -31,7 +31,7 @@ class IApiResponse(Generic[T]):
 
     @property
     @abstractmethod
-    def deserialized_data(self) -> T:
+    def json_data(self) -> T:
         """
             Returns a strongly typed object based on the inheriting class
         :return:

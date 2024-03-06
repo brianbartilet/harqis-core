@@ -2,6 +2,7 @@
 
 import json
 from collections import OrderedDict
+from json import JSONDecodeError
 
 import jsonpickle
 from typing import TypeVar, Generic, Type, Union
@@ -68,7 +69,10 @@ class JsonUtil(object):
     @staticmethod
     def deserialize(obj, type_hook : Type[T] = JsonObject[T], **kwargs) -> T:
         """Method for changing Json to a slightly strongly typed class"""
-        return json.loads(obj, object_hook=type_hook, **kwargs)
+        try:
+            return json.loads(obj, object_hook=type_hook, **kwargs)
+        except JSONDecodeError:
+            raise Exception("Could not decode data. Please check the JSON format.")
 
     @staticmethod
     def deserialize_from_dict(obj :  Union[OrderedDict, dict], type_hook : Type[T] = JsonObject[T]) -> T:

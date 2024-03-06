@@ -2,10 +2,7 @@ from typing import TypeVar, Type
 
 import requests
 
-from web.core.services.contracts.interfaces.iapi_client import IApiClient
-from web.core.services.contracts.interfaces.iapi_response import IApiResponse
-from web.core.services.contracts.base.api_response import ApiResponse
-from web.core.services.contracts.interfaces.iapi_request import IApiRequest
+from web.core.services.contracts import *
 from web.core.services.raw_rest_client import RawRestClient
 
 from utilities.custom_logger import custom_logger
@@ -21,16 +18,19 @@ class BaseApiClient(IApiClient, RawRestClient):
         self.config = kwargs
 
         self.__base_url = base_url
-        self.__response_encoding = kwargs.get("response_encoding", "ascii")
         self.__strip_right_url = True
+
+        self.__response_encoding = kwargs.get("response_encoding", "ascii")
         self.__default_headers = kwargs.get("default_headers", {})
         self.__timeout = kwargs.get("timeout", 5)
         self.__auth = kwargs.get("auth", None)
         self.__verify_ssh = kwargs.get("verify", False)
         self.__cookies = kwargs.get("cookies", {})
         self.__proxies = kwargs.get("proxies", {}) if str(ENV_ENABLE_PROXY).lower() == "true" else {}
+
         self.__session = requests.Session() if kwargs.get("use_session", False) else None
         self.__log = custom_logger()
+
 
         super(BaseApiClient, self).__init__(base_url, self.__verify_ssh, self.__response_encoding)
         self.initialize()
@@ -86,7 +86,7 @@ class BaseApiClient(IApiClient, RawRestClient):
         result.set_header(response.headers)
         result.set_raw_data(response.content)
 
-        self.log.info('response hook: ' + type_hook.__name__ + ' ' + str(type_hook) + '\n')
+        self.log.info('response hook: ' + type_hook.__name__ + '\n')
         self.log.info('response status code: ' + str(response.status_code) + '\n')
 
         return result

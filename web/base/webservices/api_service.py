@@ -37,11 +37,11 @@ def deserialized(type_hook: Type[T] = BaseDto, child: str = None, wait=None):
 
                     if child is not None:
                         if isinstance(type_hook(), dict):
-                            return ObjectUtil.convert_obj_to_sc(response.deserialized_data[child])
+                            return ObjectUtil.convert_obj_to_sc(response.json_data[child])
                         else:
                             return ObjectUtil.convert_obj_to_sc(eval("response.deserialized_data." + child))
                     else:
-                        return ObjectUtil.convert_obj_to_sc(response.deserialized_data)
+                        return ObjectUtil.convert_obj_to_sc(response.json_data)
 
                 except Exception as e:
                     log.warning("Cannot access deserialized data. Returning full response. ERROR: {0}".format(e))
