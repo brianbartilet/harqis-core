@@ -1,0 +1,3 @@
+**/*.log
+/tests/screenshots/
+.idea
