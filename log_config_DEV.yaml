@@ -1,0 +1,37 @@
+version: 1
+disable_existing_loggers: true
+level: DEBUG
+
+root:
+  level: DEBUG
+  handlers: [console, logfile, debuglogfile]
+  propagate: no
+
+formatters:
+  simple:
+    format: '%(asctime)s - %(process)d - %(threadName)s - %(levelname)s - %(module)s - %(message)s'
+
+handlers:
+  console:
+    class: logging.StreamHandler
+    level: DEBUG
+    formatter: simple
+    stream: ext://sys.stdout
+
+  debuglogfile:
+    class: logging.handlers.RotatingFileHandler
+    filename: "app-debug.log"
+    mode: "a"
+    maxBytes: 10485760
+    backupCount: 3
+    level: DEBUG
+    formatter: simple
+
+  logfile:
+    class: logging.handlers.RotatingFileHandler
+    filename: "app.log"
+    mode: "a"
+    maxBytes: 10485760
+    backupCount: 3
+    level: DEBUG
+    formatter: simple

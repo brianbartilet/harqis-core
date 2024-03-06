@@ -1,3 +1,3 @@
 from .web import *
 from .utilities import *
-from .exceptions import *
+from .exception import *

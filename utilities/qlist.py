@@ -238,7 +238,8 @@ class qlist(list, Generic[T], MutableSequence[T], Iterable[T]):
 
 # for typing purposes
 
-class QList(Generic[T], qlist):
+# class QList(Generic[T], qlist):
+class QList(qlist):
     def __getitem__(self, item):
         result = list.__getitem__(self, item)
         try:
@@ -248,7 +249,7 @@ class QList(Generic[T], qlist):
 
 
 """
-# Some tests
+# Some runners
 
 list = qlist
 a = list([1,2,3,4])
