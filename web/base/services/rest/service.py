@@ -6,7 +6,7 @@ from web.base.services.rest.client import BaseApiClient
 from web.core.services.business import *
 from web.core.services.contracts import *
 
-from utilities.testing.assertion_helper import LoggedAssertHelper
+from utilities.asserts.helper import LoggedAssertHelper
 from utilities.object_utils import ObjectUtil
 from utilities.custom_logger import custom_logger
 from utilities.apps_context import AppConfigurationContext

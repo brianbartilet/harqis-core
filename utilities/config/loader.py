@@ -1,27 +1,28 @@
-import sys
-import yaml, json
+import os
 
-from typing import Type
-from environment_variables import *
+from typing import TypeVar
+from enum import Enum
 
+from .services import *
+
+T = TypeVar('T')
+
+class Configuration(Enum):
+    YAML = ConfigServiceYaml
+    YML = ConfigServiceYaml
+    JSON = ConfigServiceJson
 
 class ConfigLoader:
     """ Loads a configuration from target file with support for dynamic path detection"""
-
-    def __init__(self, base_path=ENV_PATH_APP_CONFIG, name="apps_config_{0}.{1}".format(ENV_TESTENV, 'yaml'),):
-        """
-        Initializes a ConfigLoader then load to a target dto
-        """
+    def __init__(self, loader: T, base_path=os.getcwd(), name="apps_config.yaml"):
         self.path = base_path
         self.file_name = name
 
+        file = self.find_apps_configuration()
+        self.loader = loader.value(file)
+
     def load(self):
-        if self.file_name.endswith('.json'):
-            return self.load_json()
-        elif self.file_name.endswith('.yaml') or self.file_name.endswith('.yml'):
-            return self.load_yaml()
-        else:
-            raise ValueError("Unsupported file format.")
+        self.loader.load()
 
     def find_apps_configuration(self) -> str:
         cur_dir = os.path.join(self.path)
@@ -40,29 +41,6 @@ class ConfigLoader:
                 else:
                     cur_dir = parent_dir
         return file_location
-    def load_yaml(self) -> object:
-        try:
-            config_file_location = self.find_apps_configuration()
-            with open(config_file_location) as config_file:
-                config_dict = yaml.load(config_file, Loader=yaml.FullLoader)
-                config_dict[ENV_CURRENT_CONFIGURATION_FILE_PATH] = config_file_location
-        except Exception as e:
-            sys.exit("Terminating application YAML configuration not loaded due to {0}.".format(e))
-
-
-        return config_dict
-
-    def load_json(self) -> object:
-        try:
-            config_file_location = self.find_apps_configuration()
-            with open(config_file_location) as config_file:
-                config_dict = json.load(config_file)
-                config_dict[ENV_CURRENT_CONFIGURATION_FILE_PATH] = config_file_location
-        except Exception as e:
-            sys.exit("Terminating application JSON configuration not loaded due to {0}.".format(e))
-
-        return config_dict
-
 
 
 
