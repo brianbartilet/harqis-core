@@ -6,8 +6,6 @@ from utilities.json_util import JsonObject
 
 
 class IApiRequestBuilder:
-    # let's make this a fluent builder
-
     @abstractmethod
     def add_header(self, header_key, header_value) -> "IApiRequestBuilder":
         ...

@@ -1,9 +1,7 @@
-from typing import TypeVar, Type
-
 import requests
 
 from web.core.services.contracts import *
-from web.core.services.raw_rest_client import RawRestClient
+from web.core.clients.raw_rest_client import RawRestClient
 
 from utilities.custom_logger import custom_logger
 

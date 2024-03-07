@@ -3,29 +3,15 @@ from web.core.services.contracts.interfaces.iapi_request_builder import IApiRequ
 from web.core.services.contracts.base.api_request import RestRequest
 from web.core.services.contracts.constants.payload_type import PayloadType
 from web.core.services.contracts.interfaces.iapi_request import IApiRequest
+from web.core.services.contracts.constants.http_headers import HttpHeaders
 from utilities.json_util import JsonObject
 from utilities.custom_logger import custom_logger
-from enum import Enum
+
 
 import pprint
 
-log = custom_logger('REQUEST BUILDER')
+log = custom_logger('Request Builder')
 
-
-class HttpHeaders(Enum):
-    ACCEPT = 'Accept'
-    ACCEPT_CHARSET = 'Accept-Charset'
-    AUTHORIZATION = 'Authorization'
-    CONTENT_TYPE = 'Content-Type'
-    ORIGIN = 'Origin'
-    USER_AGENT = 'User-Agent'
-    CACHE_CONTROL = 'Cache-Control'
-    CONNECTION = 'Connection'
-    ACCEPT_ENCODING = 'Accept-Encoding'
-    HOST = 'Host'
-    REFERER = 'Referer'
-    X_REQUESTED_WITH = 'X-Requested-With'
-    COOKIE = 'Cookie'
 
 class RequestBuilder(IApiRequestBuilder):
 

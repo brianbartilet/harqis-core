@@ -1,7 +1,7 @@
 import socket
 from abc import abstractmethod
 
-from web.core.services.ssh_client import SSHClient
+from web.core.clients.ssh_client import SSHClient
 
 
 class IProCClient:

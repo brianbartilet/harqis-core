@@ -1,13 +1,11 @@
-from abc import abstractmethod
-
-from web.base.apps.browser.selenium_driver import *
+from web.base.browser.selenium_driver import *
 from utilities import *
 
 from behave.model import Table
 
 from utilities.apps_context import AppConfigurationContext
 from web.core.services.contracts.constants.service_client_type import ServiceClientType
-
+from abc import abstractmethod
 
 class BasePage(SeleniumDriver):
 

@@ -1,2 +1,3 @@
-from .webservices import *
-from .apps import *
+from .browser import *
+from .mobile import *
+from .services import *

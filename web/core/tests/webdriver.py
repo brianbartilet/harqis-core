@@ -1,5 +1,5 @@
 import unittest
-from web.base.apps.browser.webdriver_factory import *
+from web.base.browser.webdriver_factory import *
 
 
 class TestWebdriver(unittest.TestCase):

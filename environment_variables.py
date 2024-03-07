@@ -9,13 +9,14 @@ from settings import *
 
 ENV_ENABLE_PROXY = os.environ.get("ENABLE_PROXY", False)
 ENV_TESTENV = os.environ.get("ENV", SettingsEnvironment.DEV.value)
-ENV_PATH_APP_CONFIG = os.environ.get("ENV_PATH_APP_CONFIG", None)
+ENV_PATH_APP_CONFIG = os.environ.get("ENV_PATH_APP_CONFIG", os.getcwd())
 ENV_ROOT_DIRECTORY = os.environ.get('ENV_APP_PATH', os.path.dirname(os.path.abspath(__file__)))
 ENV_TASK_APP = os.environ.get("ENV_TASK_APP", 'DAILY_TASKS')
 ENV_CURRENT_USER_PROFILE = os.environ.get("USERPROFILE", None)
 ENV_LOCAL_APP_DATA = os.environ.get("LOCALAPPDATA", None)
 ENV_DEBUG = os.environ.get("DEBUG", '1')
 ENV_PATH = os.environ.get("PATH")
+ENV_CURRENT_CONFIGURATION_FILE_PATH = 'CURRENT_CONFIGURATION_FILE_PATH'
 
 #  endregion
 

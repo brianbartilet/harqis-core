@@ -1,13 +1,12 @@
 import functools
 import time
-from typing import TypeVar, Type
 
-from web.base.webservices.webservice_client import BaseApiClient
+from web.base.services.rest.client import BaseApiClient
 
 from web.core.services.business import *
 from web.core.services.contracts import *
 
-from utilities.logged_assert_helper import LoggedAssertHelper
+from utilities.testing.assertion_helper import LoggedAssertHelper
 from utilities.object_utils import ObjectUtil
 from utilities.custom_logger import custom_logger
 from utilities.apps_context import AppConfigurationContext

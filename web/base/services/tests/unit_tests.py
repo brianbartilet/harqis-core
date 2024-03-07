@@ -1,11 +1,12 @@
 import unittest
-from hamcrest import assert_that, equal_to, has_entries
 
-from web.base.webservices import *
+from utilities import *
+from web.base.services import *
 
-NEW_APP = 'NEW_APP'
+
+BASE_TEST_CONFIG = 'NEW_APP'
 apps_config = {
-    NEW_APP: {
+    BASE_TEST_CONFIG: {
             "client": {
                 "base_url": "https://jsonplaceholder.typicode.com/",
                 "response_encoding": "utf-8",
@@ -56,13 +57,13 @@ class ChildApiServiceTestApp(BaseApiServiceTestApp):
 
 class TestsUnitWebServices(unittest.TestCase):
     def test_run_unit_tests_get(self):
-        service = ChildApiServiceTestApp(source_id=NEW_APP)
+        service = ChildApiServiceTestApp(source_id=BASE_TEST_CONFIG)
         response = service.get()
         assert_that(response.status_code, equal_to(200))
         assert_that(response.json_data, equal_to(response_check_get))
 
     def test_run_unit_tests_post(self):
-        service = ChildApiServiceTestApp(source_id=NEW_APP)
+        service = ChildApiServiceTestApp(source_id=BASE_TEST_CONFIG)
         response = service.post()
         assert_that(response.status_code, equal_to(201))
         assert_that(response.json_data, has_entries(post_payload))
