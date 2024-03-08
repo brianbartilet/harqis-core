@@ -4,7 +4,7 @@ from utilities import *
 from behave.model import Table
 
 from utilities.apps_context import AppConfigurationContext
-from web.services.core.contracts.constants.service_client_type import ServiceClientType
+from web.services.core.constants.service_client_type import ServiceClientType
 from abc import abstractmethod
 
 class BasePage(SeleniumDriver):

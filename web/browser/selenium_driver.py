@@ -9,13 +9,12 @@ from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.support.select import Select
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.remote.webdriver import WebDriver
-from selenium.webdriver.remote.webelement import WebElement
 from selenium.common.exceptions import *
 
 from behave.runner import Context
 
 from exception.error_wrapper import *
-from utilities.custom_logger import custom_logger
+from utilities.logging.custom_logger import custom_logger
 
 future_speed = os.getenv("FUTURE_SPEED", "N").lower()
 

@@ -1,2 +1,11 @@
-# harqis-core
-core libraries for automation, testing and reporting
+Hopefully Another Rather Quite Intelligent System
+======
+
+Mission
+------
+Features
+------
+Use Cases
+------
+Install
+------

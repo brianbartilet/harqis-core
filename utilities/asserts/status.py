@@ -1,4 +1,4 @@
-from utilities.custom_logger import custom_logger
+from utilities.logging.custom_logger import custom_logger
 from enum import Enum
 import functools
 

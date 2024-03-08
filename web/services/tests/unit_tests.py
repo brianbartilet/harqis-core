@@ -2,7 +2,7 @@ import unittest
 
 from utilities import *
 from web.services import *
-
+from web.services.core.response import deserialized
 
 BASE_TEST_CONFIG = 'NEW_APP'
 apps_config = {
@@ -42,30 +42,44 @@ class ChildApiServiceTestApp(BaseApiServiceTestApp):
     @deserialized(dict)
     def get(self):
         self.request\
+            .set_method(HttpMethod.GET)\
             .add_uri_parameter('posts')\
             .add_uri_parameter('1')
 
-        return self.send_get_request(self.request.build())
+        return self.send_request(self.request.build())
 
     @deserialized(dict)
     def post(self):
-        self.request\
+        self.request \
+            .set_method(HttpMethod.POST) \
             .add_uri_parameter('posts')\
             .add_json_payload(post_payload)
 
-        return self.send_post_request(self.request.build())
+        return self.send_request(self.request.build())
+
+    @deserialized(dict)
+    def delete(self):
+        self.request \
+            .set_method(HttpMethod.DELETE) \
+            .add_uri_parameter('posts')
+
+        return self.send_request(self.request.build())
 
 class TestsUnitWebServices(unittest.TestCase):
     def test_run_unit_tests_get(self):
         service = ChildApiServiceTestApp(source_id=BASE_TEST_CONFIG)
         response = service.get()
-        assert_that(response.status_code, equal_to(200))
+        assert_that(response.status_code, equal_to(HTTPStatus.OK))
         assert_that(response.json_data, equal_to(response_check_get))
-
     def test_run_unit_tests_post(self):
         service = ChildApiServiceTestApp(source_id=BASE_TEST_CONFIG)
         response = service.post()
-        assert_that(response.status_code, equal_to(201))
+        assert_that(response.status_code, equal_to(HTTPStatus.CREATED))
         assert_that(response.json_data, has_entries(post_payload))
+
+    def test_run_unit_tests_delete(self):
+        service = ChildApiServiceTestApp(source_id=BASE_TEST_CONFIG)
+        response = service.delete()
+        assert_that(response.status_code, equal_to(HTTPStatus.NOT_FOUND))
 
 

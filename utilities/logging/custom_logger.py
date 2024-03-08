@@ -1,37 +1,49 @@
+import os
 import inspect
 import logging
 import logging.config
-import os
-
 import yaml
 
-from environment_variables import *
+file_name = "logging.yaml"
 
 
-file_name = "log_config_{0}.yaml".format(ENV_TESTENV)
+def custom_logger(logger_name=None):
+    """
+    Create a custom logger with the specified name or the name of the calling function.
 
-
-def custom_logger(log_level=logging.DEBUG, logger_name=None):
+    :param logger_name: Optional; the name of the logger. If not provided, the name of the calling function is used.
+    :return: A logger object with the specified name.
+    """
     if logger_name is None:
         logger_name = inspect.stack()[1][3]
-    newlogger = logging.getLogger(logger_name)
-    newlogger.setLevel(rootLevel)
+    new_logger = logging.getLogger(logger_name)
+    new_logger.setLevel(rootLevel)
 
-    return newlogger
+    return new_logger
 
 
 def load_logging_configuration():
+    """
+    Load logging configuration from a YAML file and configure the logging module.
+
+    :return: The root logger object after loading the configuration.
+    """
     config_file_location = find_logging_config()
     with open(config_file_location) as config_file:
         config_dict = yaml.load(config_file, Loader=yaml.FullLoader)
         logging.config.dictConfig(config_dict)
-    logger = logging.getLogger()
+    new_logger = logging.getLogger()
 
-    logger.info("Loaded logging configuration from %s\n", config_file_location)
-    return logger
+    new_logger.info("Loaded logging configuration from %s\n", config_file_location)
+    return new_logger
 
 
 def find_logging_config():
+    """
+    Search for the logging configuration file (logging.yaml) starting from the current working directory and moving up the directory tree.
+
+    :return: The file path of the logging configuration file if found, otherwise None.
+    """
     cur_dir = os.getcwd()  # Dir from where search starts can be replaced with any path
 
     file_location = None

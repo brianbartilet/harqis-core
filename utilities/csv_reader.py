@@ -1,7 +1,7 @@
 import csv
-from typing import TypeVar, Generic, Type
+from typing import TypeVar, Type
 from typing import List
-from utilities.custom_logger import custom_logger
+from utilities.logging.custom_logger import custom_logger
 
 T = TypeVar('T')
 log = custom_logger("CSV_READER")

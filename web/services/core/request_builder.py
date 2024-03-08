@@ -1,41 +1,46 @@
-from web.services.core.contracts.interfaces.request_builder import IWebRequestBuilder
-
-from web.services.rest.request import RestRequest
-from web.services.core.contracts.constants.payload_type import PayloadType
-from web.services.core.contracts.interfaces.request import IWebServiceRequest
-from web.services.core.contracts.constants.http_headers import HttpHeaders
-from utilities.json_util import JsonObject
-from utilities.custom_logger import custom_logger
-
-
 import pprint
 
-log = custom_logger('Request Builder')
+from requests.structures import CaseInsensitiveDict
+
+from web.services.core.contracts.request_builder import IWebRequestBuilder
+from web.services.core.constants import PayloadType
+from web.services.core.contracts.request import IWebServiceRequest
+
+from web.services.core.constants.http_headers import HttpHeaders
+from web.services.core.constants.http_methods import HttpMethod
+
+from web.services.core.request import Request
+
+from utilities.json_util import JsonObject
+from utilities.logging.custom_logger import custom_logger
 
 
 class RequestBuilder(IWebRequestBuilder):
 
     def __init__(self, routing_separator="/"):
+        self.log = custom_logger('Request Builder')
 
         self._routing_separator = routing_separator
-        self._header = {}
+        self._header = CaseInsensitiveDict()
         self._query_strings = {}
         self._uri_params = []
         self._body = None
         self._method = None
-        self._strip_right_url = True
 
-    def add_header(self, header_key: HttpHeaders, header_value) -> IWebRequestBuilder:
-        if header_key in self._header.keys():
-            log.debug("query parameter already exists. Old value: %s, New Value: %s",
-                            self._header[header_key], header_value)
-        self._header[header_key] = header_value
+        self.strip_right_url_path = True
+
+    def set_method(self, method: HttpMethod)-> IWebRequestBuilder:
+        self._method = method
+        return self
+
+    def add_header(self, header_key: HttpHeaders, header_value: str) -> IWebRequestBuilder:
+        if header_key in self._header:
+            self.log.debug(f"Header {header_key} already exists. Old value: {self._header[header_key.value]}, New Value: {header_value}")
+        self._header[header_key.value] = header_value
         return self
 
     def add_headers(self, headers: dict) -> IWebRequestBuilder:
-        for header in headers:
-            self.add_header(**header)
-
+        self._header.update(headers)
         return self
 
     def add_payload(self, payload, payload_type: PayloadType) -> "IWebRequestBuilder":
@@ -64,25 +69,26 @@ class RequestBuilder(IWebRequestBuilder):
         return self
 
     def build(self) -> IWebServiceRequest:
-        request = RestRequest()
+        request = Request()
 
-        if self._header is not None:
+        self.log.debug(
+            f"PROCESSING REQUEST:\n"
+            f"Headers:\n{pprint.pformat(self._header)}\n"
+            f"Query strings:\n{pprint.pformat(self._query_strings)}\n"
+            f"URI params:\n{pprint.pformat(self._uri_params)}"
+        )
+        if self._method:
+            request.set_request_method(self._method)
+        if self._header:
             request.set_header(self._header)
-        if self._body is not None:
+        if self._body:
             request.set_body(self._body)
-
-        if self._query_strings is not None:
+        if self._query_strings:
             request.set_query_string(self._query_strings)
 
         uri_string = self.__get_uri_param__()
-        request.set_url_params(uri_string)
-        request.strip_right_url(self._strip_right_url)
-
-        log.info("PROCESSING REQUEST:")
-        log.info("Showing headers:\n" + pprint.pformat(self._header))
-
-        log.info("Showing query strings:\n" + pprint.pformat(self._query_strings))
-        log.info("Showing uri params:\n" + pprint.pformat(self._uri_params))
+        request.set_full_url(uri_string)
+        request.set_url_strip_right(self.strip_right_url_path)
 
         self.__initialize__()
 
@@ -90,9 +96,7 @@ class RequestBuilder(IWebRequestBuilder):
 
     def add_query_string(self, query_name, query_value) -> IWebRequestBuilder:
         if query_name in self._query_strings.keys():
-            #  self._log.warning("query parameter already exists. Old value: %s, New Value: %s",
-            #                    self._query_strings[query_name], query_value)
-            log.warning("query parameter '%s' already exists", query_name)
+            self.log.warning("query parameter '%s' already exists", query_name)
 
         self._query_strings[query_name] = query_value
         return self
@@ -103,9 +107,9 @@ class RequestBuilder(IWebRequestBuilder):
 
         return self
 
-    def add_query_object(self, object) -> "IWebRequestBuilder":
+    def add_query_object(self, target) -> "IWebRequestBuilder":
 
-        queries = object.__dict__
+        queries = target.__dict__
         for query in queries:
             self.add_query_string(query, queries[query])
 
@@ -117,7 +121,7 @@ class RequestBuilder(IWebRequestBuilder):
 
         if url_param_name in parameter_dict.keys():
             old_value = parameter_dict[url_param_name]
-            log.warning("URI parameter already exists. Old value(order): %s(%s), New Value(order): %s(%s)",
+            self.log.warning("URI parameter already exists. Old value(order): %s(%s), New Value(order): %s(%s)",
                               old_value, self._uri_params.index((url_param_name, old_value)), url_param_value, new_order)
             self._uri_params.remove((url_param_name, old_value))
 
@@ -129,9 +133,10 @@ class RequestBuilder(IWebRequestBuilder):
         return self
 
     def strip_right_url(self, toggle=True):
-        self._strip_right_url = toggle
+        self.strip_right_url_path = toggle
 
     def __initialize__(self):
+        self._method = None
         self._header = {}
         self._query_strings = {}
         self._uri_params = []

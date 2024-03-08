@@ -2,11 +2,6 @@ version: 1
 disable_existing_loggers: true
 level: DEBUG
 
-root:
-  level: DEBUG
-  handlers: [console, logfile, debuglogfile]
-  propagate: no
-
 formatters:
   simple:
     format: '%(asctime)s - %(process)d - %(threadName)s - %(levelname)s - %(module)s - %(message)s'
@@ -35,3 +30,19 @@ handlers:
     backupCount: 3
     level: DEBUG
     formatter: simple
+
+loggers:
+  myapp:
+    level: INFO
+    handlers: [console, logfile]
+    propagate: no
+
+  debug:
+    level: DEBUG
+    handlers: [console, debuglogfile]
+    propagate: no
+
+root:
+  level: DEBUG
+  handlers: [console, logfile]
+  propagate: no

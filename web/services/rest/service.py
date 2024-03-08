@@ -1,57 +1,21 @@
-import functools
-import time
 
-from web.services.rest.client import BaseWebClient
+from web.services.rest.client import RestClient
 
 from utilities.asserts.helper import LoggedAssertHelper
-from utilities.object_utils import ObjectUtil
+
 
 from utilities.apps_context import AppConfigurationContext
 
 from web.services.core.contracts import *
-from .request_builder import RequestBuilder
+from web.services.core.constants import *
+from web.services.core.request_builder import RequestBuilder
 
-from utilities.custom_logger import custom_logger
-log = custom_logger()
-from web.services.core.base_dto import BaseDto
+from web.services.core.dto import BaseDto
 from typing import TypeVar, Type
 T = TypeVar("T")
 V = TypeVar("V")
 
 
-def deserialized(type_hook: Type[T] = BaseDto, child: str = None, wait=None):
-    def decorator(func):
-        @functools.wraps(func)
-        def wrapper(self, *args, **kwargs):
-            self.initialize()
-            self.response_type = type_hook
-
-            if wait is not None:
-                time.sleep(wait)
-
-            response = func(self, *args, **kwargs)
-
-            if self._return_data_only:
-                try:
-
-                    if child is not None:
-                        if isinstance(type_hook(), dict):
-                            return ObjectUtil.convert_obj_to_sc(response.json_data[child])
-                        else:
-                            return ObjectUtil.convert_obj_to_sc(eval("response.deserialized_data." + child))
-                    else:
-                        return ObjectUtil.convert_obj_to_sc(response.json_data)
-
-                except Exception as e:
-                    log.warning("Cannot access deserialized data. Returning full response. ERROR: {0}".format(e))
-                    return response
-
-            else:
-                return response
-
-        return wrapper
-
-    return decorator
 
 
 class WebService(IWebService[T]):
@@ -62,10 +26,10 @@ class WebService(IWebService[T]):
     def __init__(self,
                  source_id: str,
                  apps_config_data: dict,
-                 client: type = BaseWebClient,
+                 client: type = RestClient,
                  val: Type[T] = BaseDto,
                  app_ctx: type = AppConfigurationContext,
-                 app_service_type: ServiceClientType = ServiceClientType.WEBSERVICE,
+                 app_service_type: ServiceClientType = ServiceClientType.WEBSERVICE_GENERIC,
                  **kwargs):
 
         self._app_ctx = app_ctx(source_id, app_service_type, apps_config_data)
@@ -102,25 +66,8 @@ class WebService(IWebService[T]):
     def client(self) -> IWebClient:
         return self._client
 
-    def send_get_request(self, request: IWebServiceRequest, **kwargs) -> IResponse[T]:
-        request.set_request_type(Method.GET)
-        return self._client.execute(request, self.response_type, **kwargs)
-
-    def send_post_request(self, request: IWebServiceRequest, **kwargs) -> IResponse[T]:
-        request.set_request_type(Method.POST)
-        return self._client.execute(request, self.response_type, **kwargs)
-
-    def send_delete_request(self, request: IWebServiceRequest, **kwargs) -> IResponse[T]:
-        request.set_request_type(Method.DELETE)
-        return self._client.execute(request, self.response_type, **kwargs)
-
-    def send_put_request(self, request: IWebServiceRequest, **kwargs) -> IResponse[T]:
-        request.set_request_type(Method.PUT)
-        return self._client.execute(request, self.response_type, **kwargs)
-
-    def send_patch_request(self, request: IWebServiceRequest, **kwargs) -> IResponse[T]:
-        request.set_request_type(Method.PATCH)
-        return self._client.execute(request, self.response_type, **kwargs)
+    def send_request(self, r: IWebServiceRequest, **kwargs) -> IResponse[T]:
+        return self._client.execute_request(r, self.response_type, **kwargs)
 
     def get_request_builder(self) -> IWebRequestBuilder:
         return RequestBuilder(self._routing_separator)

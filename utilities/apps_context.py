@@ -1,4 +1,4 @@
-from web.services.core.contracts import ServiceClientType
+from web.services.core.constants import ServiceClientType
 
 
 class AppConfigurationContext(dict):

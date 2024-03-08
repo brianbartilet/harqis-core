@@ -8,7 +8,7 @@ import inspect
 import sys
 import traceback
 
-from utilities.custom_logger import custom_logger
+from utilities.logging.custom_logger import custom_logger
 
 
 class BaseExceptionWrapperDto:

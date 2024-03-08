@@ -1,7 +1,10 @@
 from enum import Enum
 
 
-class Method(Enum):
+class HttpMethod(Enum):
+    """
+    Enum for common HTTP methods.
+    """
     COPY = 'copy'
     DELETE = 'delete'
     GET = 'get'
@@ -9,5 +12,8 @@ class Method(Enum):
     MERGE = 'merge'
     OPTIONS = 'options'
     PATCH = 'patch'
-    POST = "post"
-    PUT = "put"
+    POST = 'post'
+    PUT = 'put'
+
+    def __str__(self):
+        return self.value

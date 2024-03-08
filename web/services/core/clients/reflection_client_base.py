@@ -1,6 +1,6 @@
 import abc
 from telnetlib import Telnet
-from utilities.custom_logger import custom_logger
+from utilities.logging.custom_logger import custom_logger
 
 
 class ReflectionClientBase(object):

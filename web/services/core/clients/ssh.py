@@ -1,5 +1,5 @@
 import paramiko
-from utilities.custom_logger import custom_logger
+from utilities.logging.custom_logger import custom_logger
 import sys
 import time
 
