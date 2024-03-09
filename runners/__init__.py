@@ -1,1 +1,1 @@
-from .tests_runner import *
+from .unit_tests_runner import *
