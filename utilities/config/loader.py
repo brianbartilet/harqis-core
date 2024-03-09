@@ -3,7 +3,7 @@ import os
 from typing import TypeVar
 from enum import Enum
 
-from .services import *
+from .types import *
 
 T = TypeVar('T')
 

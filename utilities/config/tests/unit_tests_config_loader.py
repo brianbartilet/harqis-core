@@ -3,7 +3,7 @@ import unittest, pytest
 
 from utilities.config.loader import ConfigLoader, Configuration
 
-class TestsUnitConfigLoader(unittest.TestCase):
+class UnitTestsConfigLoader(unittest.TestCase):
     def test_without_keywords(self):
         loader = ConfigLoader(Configuration.YAML)
         data = loader.load()

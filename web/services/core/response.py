@@ -9,7 +9,7 @@ from requests.structures import CaseInsensitiveDict
 from web.services.core.contracts.response import IResponse
 from utilities.json_util import JsonUtil
 from utilities.logging.custom_logger import custom_logger
-from utilities.object_utils import ObjectUtil
+from utilities.data_helpers.objects import ObjectUtilities
 
 from .dto import BaseDto
 
@@ -32,11 +32,11 @@ def deserialized(type_hook: Type[T] = BaseDto, child: str = None, wait=None):
                 try:
                     if child is not None:
                         if isinstance(type_hook(), dict):
-                            return ObjectUtil.convert_obj_to_sc(response_instance.json_data[child])
+                            return ObjectUtilities.convert_object_keys_to_snake_case(response_instance.json_data[child])
                         else:
-                            return ObjectUtil.convert_obj_to_sc(eval("response.deserialized_data." + child))
+                            return ObjectUtilities.convert_object_keys_to_snake_case(eval("response.deserialized_data." + child))
                     else:
-                        return ObjectUtil.convert_obj_to_sc(response_instance.json_data)
+                        return ObjectUtilities.convert_object_keys_to_snake_case(response_instance.json_data)
 
                 except Exception as e:
                     log.warning("Cannot access deserialized data. Returning full response. ERROR: {0}".format(e))

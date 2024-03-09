@@ -1,243 +1,286 @@
 import hamcrest
 from hamcrest import *
 
-from .messages import *
 from reports.report_generator import ReportGenerator
 
-def raise_any_exception(exception_list : list) -> None:
+def raise_any_exception(exception_list: list) -> None:
+    """
+    Raises an AssertionError with a concatenated message of all exceptions in the list.
+
+    Args:
+        exception_list (list): A list of exception messages.
+
+    Raises:
+        AssertionError: An error with a concatenated message of all exceptions.
+    """
     if len(exception_list) > 0:
         all_exceptions = "\n".join([str(exc) for exc in exception_list])
         full_message = "Error(s) encountered: {}".format(all_exceptions)
         raise AssertionError(full_message)
 
-
 def is_between(lower_bound, upper_bound):
     """
-    helper method for
-    :param lower_bound:
-    :param upper_bound:
-    :return:
+    Returns a matcher that checks if a value is between two bounds.
+
+    Args:
+        lower_bound: The lower bound of the range.
+        upper_bound: The upper bound of the range.
+
+    Returns:
+        A Hamcrest matcher that checks if a value is between the specified bounds.
     """
     return all_of(greater_than_or_equal_to(lower_bound), less_than_or_equal_to(upper_bound))
 
-
 class LoggedAssertHelper:
+    """
+    A helper class for performing assertions and logging the results.
+
+    """
+
     @property
     def common(self):
+        """
+        Provides access to common Hamcrest matchers.
+
+        Returns:
+            The hamcrest module with common matchers.
+        """
         return hamcrest
 
     def __init__(self, report_generator: ReportGenerator = None):
+        """
+        Initializes the LoggedAssertHelper with an optional report generator.
+
+        Args:
+            report_generator (ReportGenerator, optional): An instance of ReportGenerator for logging assertion results. Defaults to None.
+        """
         self.__report_generator = report_generator
 
     def assert_items_are_not_equal(self, expected: list, actual: list):
+        """
+        Asserts that two lists are not equal and logs the result.
+
+        Args:
+            expected (list): The expected list.
+            actual (list): The actual list to compare.
+
+        Raises:
+            AssertionError: If the actual list is equal to the expected list.
+        """
         try:
             assert_that(actual, is_not(expected))
-            self.__write_success_not_equal__(expected, actual)
-        except:
-            self.__write_failure_not_equal__(expected, actual)
+            self.__write_report_entry__('SUCCESS', actual, 'is not equal to', expected)
+        except AssertionError:
+            self.__write_report_entry__('FAILURE', actual, 'is not equal to', expected)
             raise
 
     def assert_items_in_list_are_equal_unordered(self, expected: list, actual: list):
-        self.__write_any_entry__("Checking list are equal in any order:")
+        """
+        Asserts that two lists contain the same items in any order and logs the result.
 
+        Args:
+            expected (list): The expected list.
+            actual (list): The actual list to compare.
+
+        Raises:
+            AssertionError: If the actual list does not contain the same items as the expected list.
+        """
         self._check_list_lengths(expected, actual)
-        self.assert_items_in_unordered_list_with_length_varying(expected, actual)
+        for item in expected:
+            self.assert_item_in_list(actual, item)
 
-    def assert_item_not_in_list(self, expected : list, actual_item):
-        self.__write_any_entry__("Checking if item in list:")
+    def assert_item_not_in_list(self, expected: list, actual_item):
+        """
+        Asserts that an item is not in a list and logs the result.
 
+        Args:
+            expected (list): The list to check.
+            actual_item: The item that should not be in the list.
+
+        Raises:
+            AssertionError: If the item is in the list.
+        """
         try:
             assert_that(actual_item, not_(is_in(expected)))
-            self.__write_success_not_contains__(expected, actual_item)
-        except:
-            self.__write_failure_not_contains__(expected, actual_item)
+            self.__write_report_entry__('SUCCESS', actual_item, 'is not in list', expected)
+        except AssertionError:
+            self.__write_report_entry__('FAILURE', actual_item, 'is not in list', expected)
             raise
 
-    def assert_item_in_list(self, expected : list, actual_item):
-        self.__write_any_entry__("Checking if item in list:")
+    def assert_item_in_list(self, expected: list, actual_item):
+        """
+        Asserts that an item is in a list and logs the result.
 
+        Args:
+            expected (list): The list to check.
+            actual_item: The item that should be in the list.
+
+        Raises:
+            AssertionError: If the item is not in the list.
+        """
         try:
-            assert_that(actual_item, not_(is_in(expected)))
-            self.__write_success_contains__(expected, actual_item)
-        except:
-            self.__write_failure_contains__(expected, actual_item)
+            assert_that(actual_item, is_in(expected))
+            self.__write_report_entry__('SUCCESS', actual_item, 'is in list', expected)
+        except AssertionError:
+            self.__write_report_entry__('FAILURE', actual_item, 'is in list', expected)
             raise
 
-    def assert_each_item_in_list_are_equal(self, expected: list, actual: list, tolerance = None):
-        self.__write_any_entry__("Checking list are equal in order:")
+    def assert_each_item_in_list_are_equal(self, expected: list, actual: list, tolerance=None):
+        """
+        Asserts that each corresponding item in two lists are equal and logs the result.
 
+        Args:
+            expected (list): The expected list.
+            actual (list): The actual list to compare.
+            tolerance (float, optional): The tolerance for numerical comparisons. Defaults to None.
+
+        Raises:
+            AssertionError: If any corresponding items in the lists are not equal.
+        """
         self._check_list_lengths(expected, actual)
-
-        failure_list = []
         for exp, act in zip(expected, actual):
-            try:
-                self.assert_items_are_equal(exp, act, tolerance)
-            except AssertionError as e:
-                failure_list.append(e)
+            self.assert_items_are_equal(exp, act, tolerance)
 
-        raise_any_exception(failure_list)
+    def assert_rows_are_equal(self, expected: list, actual: list, tolerance: float = None):
+        """
+        Asserts that each row (list) in two lists of rows are equal and logs the result.
 
-    def assert_rows_are_equal(self, expected: list, actual:list, tolerance : float = None):
+        Args:
+            expected (list): The expected list of rows.
+            actual (list): The actual list of rows to compare.
+            tolerance (float, optional): The tolerance for numerical comparisons within rows. Defaults to None.
 
+        Raises:
+            AssertionError: If any row in the lists is not equal.
+        """
         self._check_list_lengths(expected, actual)
-
-        # if there is an error, do the item per item assert
-        failure_list = []
         for exp, act in zip(expected, actual):
-            # now check the next
-            try:
-                self.assert_each_item_in_list_are_equal(exp, act, tolerance)
-            except AssertionError as e:
-                failure_list.append(e)
+            self.assert_each_item_in_list_are_equal(exp, act, tolerance)
 
-        raise_any_exception(failure_list)
+    def assert_items_are_equal(self, expected, actual, tolerance=None):
+        """
+        Asserts that two items are equal and logs the result.
 
-    def assert_items_are_equal(self, expected, actual, tolerance = None):
+        Args:
+            expected: The expected item.
+            actual: The actual item to compare.
+            tolerance (float, optional): The tolerance for numerical comparisons. Defaults to None.
 
-        # first get the type of the item
-        if (isinstance(actual, int) or isinstance(actual, float))\
-            and tolerance is not None:
+        Raises:
+            AssertionError: If the items are not equal.
+        """
+        if isinstance(actual, (int, float)) and tolerance is not None:
             self.assert_numbers_are_equal(expected, actual, tolerance)
         else:
             try:
                 assert_that(actual, equal_to(expected))
-                self.__write_success_equal__(expected, actual)
-            except:
-                self.__write_failure_equal__(expected, actual)
+                self.__write_report_entry__('SUCCESS', actual, 'is equal to', expected)
+            except AssertionError:
+                self.__write_report_entry__('FAILURE', actual, 'is equal to', expected)
                 raise
 
-    def assert_numbers_are_equal(self, expected, actual, tolerance : float):
+    def assert_numbers_are_equal(self, expected, actual, tolerance: float):
         """
+        Asserts that two numbers are equal within a tolerance and logs the result.
 
-        :param expected:
-        :param actual:
-        :param tolerance: this should be in percentage. e.g., pass 1 if it is for 1%
-        :return:
+        Args:
+            expected (float): The expected number.
+            actual (float): The actual number to compare.
+            tolerance (float): The tolerance for the comparison.
+
+        Raises:
+            AssertionError: If the numbers are not equal within the tolerance.
         """
-        if isinstance(tolerance, int) or isinstance(tolerance, float):
-
-            lower_bound = expected*(1 - (tolerance/100))
-            upper_bound = expected*(1 + (tolerance/100))
-
-            # need to change - this is for managing negative signs
-            actual_lower_bound = (upper_bound, lower_bound)[lower_bound < upper_bound]
-            actual_upper_bound = (lower_bound, upper_bound)[lower_bound < upper_bound]
-            try:
-
-                assert_that(actual,  is_between(actual_lower_bound, actual_upper_bound))
-                self.__write_success_equal__(expected, actual, tolerance)
-            except AssertionError as e:
-                self.__write_failure_equal__(expected, actual, tolerance)
-                raise e
-        else:
-            raise TypeError("tolerance value not allowed. Please use integer or float types")
+        lower_bound = expected * (1 - tolerance / 100)
+        upper_bound = expected * (1 + tolerance / 100)
+        try:
+            assert_that(actual, is_between(lower_bound, upper_bound))
+            self.__write_report_entry__('SUCCESS', actual, 'is equal to', expected, tolerance)
+        except AssertionError:
+            self.__write_report_entry__('FAILURE', actual, 'is equal to', expected, tolerance)
+            raise
 
     def assert_each_item_in_list_between(self, actual_list: list, lower_bound, upper_bound):
-        failure_list = []
+        """
+        Asserts that each item in a list is between two bounds and logs the result.
+
+        Args:
+            actual_list (list): The list of items to check.
+            lower_bound: The lower bound of the range.
+            upper_bound: The upper bound of the range.
+
+        Raises:
+            AssertionError: If any item in the list is not between the bounds.
+        """
         for actual in actual_list:
             try:
-
                 assert_that(actual, is_between(lower_bound, upper_bound))
-                self.__write_success_between__(actual, lower_bound, upper_bound)
-            except AssertionError as e:
-                self.__write_failure_equal__(actual, lower_bound, upper_bound)
-                failure_list.append(e)
-
-        raise_any_exception(failure_list)
+                self.__write_report_entry__('SUCCESS', actual, 'is between', f'{lower_bound} and {upper_bound}')
+            except AssertionError:
+                self.__write_report_entry__('FAILURE', actual, 'is between', f'{lower_bound} and {upper_bound}')
+                raise
 
     def assert_each_item_in_list_greater_than(self, expected, actual_list: list):
-        failure_list = []
+        """
+        Asserts that each item in a list is greater than a specified value and logs the result.
+
+        Args:
+            expected: The value that each item in the list should be greater than.
+            actual_list (list): The list of items to check.
+
+        Raises:
+            AssertionError: If any item in the list is not greater than the specified value.
+        """
         for actual in actual_list:
             try:
-
-                assert_that(actual, all_of(greater_than(expected)))
-                self.__write_success_greater__(expected, actual)
-            except AssertionError as e:
-                self.__write_failure_greater__(expected, actual)
-                failure_list.append(e)
-
-        raise_any_exception(failure_list)
-
-    def assert_items_in_unordered_list_with_length_varying(self, expected_items : list, actual_items : list):
-       """
-       :param expected_items:
-       :param actual_items:
-       :return:
-       """
-       for expected in expected_items:
-           try:
-               assert_that(actual_items, has_item(expected))
-           except:
-               self.__write_any_entry__("Item not found: {}".format(expected))
-               raise
-
-       self.__write_any_entry__("All expected in actual list")
-       self.__write_any_entry__("Actual list: {}".format(actual_items))
-       self.__write_any_entry__("Expected list: {}".format(expected_items))
-
-    def get_report_generator(self) -> ReportGenerator:
-        return self.__report_generator
+                assert_that(actual, greater_than(expected))
+                self.__write_report_entry__('SUCCESS', actual, 'is greater than', expected)
+            except AssertionError:
+                self.__write_report_entry__('FAILURE', actual, 'is greater than', expected)
+                raise
 
     def _check_list_lengths(self, expected, actual):
-        self.__write_any_entry__("Checking lengths:")
+        """
+        Checks if the lengths of two lists are equal and logs the result.
 
+        Args:
+            expected (list): The expected list.
+            actual (list): The actual list to compare.
+
+        Raises:
+            AssertionError: If the lengths of the lists are not equal.
+        """
         try:
             assert_that(len(actual), equal_to(len(expected)))
-            self.__write_success_equal__(len(expected), len(actual))
         except AssertionError:
-            diff = (list(set(expected) - set(actual)), list(set(actual) - set(expected)))[len(actual) > len(expected)]
-            error_message = "{} not equal to expected {}\n".format(str(len(actual)), str(len(expected)))
-            error_message += "differences: \n {}".format('\n'.join(str(item) for item in diff))
-
+            diff = list(set(expected) - set(actual)) + list(set(actual) - set(expected))
+            error_message = f"Lengths not equal: expected {len(expected)}, actual {len(actual)}\nDifferences: {diff}"
             self.__write_any_entry__(error_message)
-
             raise AssertionError(error_message)
 
-    def __write_failure_not_equal__(self, expected, actual, tolerance = None):
-        self.__write_report_entry__(AssertionMessages.FAILURE_MESSAGE, expected, actual, AssertionMessages.UNEQUAL_MESSAGE, tolerance)
+    def __write_report_entry__(self, status, actual, message, expected, tolerance=None):
+        """
+        Writes a report entry for an assertion.
 
-    def __write_success_not_equal__(self, expected, actual, tolerance = None):
-        self.__write_report_entry__(AssertionMessages.SUCCESS_MESSAGE, expected, actual, AssertionMessages.UNEQUAL_MESSAGE, tolerance)
+        Args:
+            status (str): The status of the assertion (e.g., 'SUCCESS' or 'FAILURE').
+            actual: The actual value involved in the assertion.
+            message (str): The message describing the assertion.
+            expected: The expected value involved in the assertion.
+            tolerance (float, optional): The tolerance used in the assertion, if applicable.
 
-    def __write_failure_equal__(self, expected, actual, tolerance = None):
-        self.__write_report_entry__(AssertionMessages.FAILURE_MESSAGE, expected, actual, AssertionMessages.EQUAL_MESSAGE, tolerance)
-
-    def __write_success_between__(self, actual, lower_bound, upper_bound):
-        full_message = "{} {} and {}".format(AssertionMessages.BETWEEN_MESSAGE, lower_bound, upper_bound)
-        self.__write_any_entry__([AssertionMessages.SUCCESS_MESSAGE, actual, full_message])
-
-    def __write_failure_between__(self, actual, lower_bound, upper_bound):
-        full_message = "{} {} and {}".format(AssertionMessages.BETWEEN_MESSAGE, lower_bound, upper_bound)
-        self.__write_any_entry__([AssertionMessages.FAILURE_MESSAGE, actual, full_message])
-
-    def __write_success_equal__(self, expected, actual, tolerance = None):
-        self.__write_report_entry__(AssertionMessages.SUCCESS_MESSAGE, expected, actual, AssertionMessages.EQUAL_MESSAGE, tolerance)
-
-    def __write_success_greater__(self, expected, actual, tolerance = None):
-        self.__write_report_entry__(AssertionMessages.SUCCESS_MESSAGE, expected, actual, AssertionMessages.GREATER_MESSAGE, tolerance)
-
-    def __write_failure_greater__(self, expected, actual, tolerance = None):
-        self.__write_report_entry__(AssertionMessages.FAILURE_MESSAGE, expected, actual, AssertionMessages.GREATER_MESSAGE, tolerance)
-
-    def __write_success_contains__(self, expected, actual, tolerance = None):
-        self.__write_report_entry__(AssertionMessages.SUCCESS_MESSAGE, expected, actual, AssertionMessages.CONTAINS_MESSAGE, tolerance)
-
-    def __write_success_not_contains__(self, expected, actual, tolerance = None):
-        self.__write_report_entry__(AssertionMessages.SUCCESS_MESSAGE, expected, actual, AssertionMessages.NOT_CONTAINS_MESSAGE, tolerance)
-
-    def __write_failure_contains__(self, expected, actual, tolerance = None):
-        self.__write_report_entry__(AssertionMessages.FAILURE_MESSAGE, expected, actual, AssertionMessages.CONTAINS_MESSAGE, tolerance)
-
-    def __write_failure_not_contains__(self, expected, actual, tolerance = None):
-        self.__write_report_entry__(AssertionMessages.FAILURE_MESSAGE, expected, actual, AssertionMessages.NOT_CONTAINS_MESSAGE, tolerance)
-
-    def __write_report_entry__(self, result, expected, actual, equality_message, tolerance = None):
+        """
+        entry = [status, actual, message, expected]
         if tolerance is not None:
-            tolerance_string = "tolerance: {}%".format(tolerance)
-            self.__write_any_entry__([result, actual, equality_message, expected, tolerance_string])
-        else:
-            self.__write_any_entry__([result, actual, equality_message, expected])
+            entry.append(f'tolerance: {tolerance}%')
+        self.__write_any_entry__(entry)
 
     def __write_any_entry__(self, entry):
+        """
+        Writes any entry to the report generator.
+
+        Args:
+            entry: The entry to be written to the report.
+        """
         if self.__report_generator is not None:
             self.__report_generator.append_row(entry)
