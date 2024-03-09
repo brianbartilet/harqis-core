@@ -3,19 +3,7 @@ import unittest
 from utilities import *
 from web.services import *
 from web.services.core.response import deserialized
-
-BASE_TEST_CONFIG = 'NEW_APP'
-apps_config = {
-    BASE_TEST_CONFIG: {
-            "client": {
-                "base_url": "https://jsonplaceholder.typicode.com/",
-                "response_encoding": "utf-8",
-                "verify": False
-            },
-            "parameters":{
-            }
-    }
-}
+from web.services.core.config.webservice import BaseAppConfigWSClient
 
 response_check_get = {
     "userId": 1,
@@ -30,15 +18,21 @@ post_payload = {
     'userId': 1
 }
 
-class BaseApiServiceTestApp(WebService, Generic[T]):
+test_config = BaseAppConfigWSClient(
+    app_id='TEST APPLICATION',
+    client='rest',
+    parameters={
+        "base_url": "https://jsonplaceholder.typicode.com/",
+        "response_encoding": "utf-8",
+        "verify_ssh": False
+    }
+)
 
-    def __init__(self, source_id, **kwargs):
-        super(BaseApiServiceTestApp, self)\
-            .__init__(source_id=source_id,
-                      apps_config_data=apps_config,
-                      **kwargs)
+class BaseTestFixtureApp(RestProtocolFixture):
+    def __init__(self):
+        super(BaseTestFixtureApp, self).__init__(config=test_config)
 
-class ChildApiServiceTestApp(BaseApiServiceTestApp):
+class ChildTestFixtureResource(BaseTestFixtureApp):
     @deserialized(dict)
     def get(self):
         self.request\
@@ -67,19 +61,20 @@ class ChildApiServiceTestApp(BaseApiServiceTestApp):
 
 class TestsUnitWebServices(unittest.TestCase):
     def test_run_unit_tests_get(self):
-        service = ChildApiServiceTestApp(source_id=BASE_TEST_CONFIG)
-        response = service.get()
-        assert_that(response.status_code, equal_to(HTTPStatus.OK))
-        assert_that(response.json_data, equal_to(response_check_get))
+        child_resource = ChildTestFixtureResource()
+        child_resource_response = child_resource.get()
+        assert_that(child_resource_response.status_code, equal_to(HTTPStatus.OK))
+        assert_that(child_resource_response.json_data, equal_to(response_check_get))
+
     def test_run_unit_tests_post(self):
-        service = ChildApiServiceTestApp(source_id=BASE_TEST_CONFIG)
-        response = service.post()
-        assert_that(response.status_code, equal_to(HTTPStatus.CREATED))
-        assert_that(response.json_data, has_entries(post_payload))
+        child_resource = ChildTestFixtureResource()
+        child_resource_response = child_resource.post()
+        assert_that(child_resource_response.status_code, equal_to(HTTPStatus.CREATED))
+        assert_that(child_resource_response.json_data, has_entries(post_payload))
 
     def test_run_unit_tests_delete(self):
-        service = ChildApiServiceTestApp(source_id=BASE_TEST_CONFIG)
-        response = service.delete()
-        assert_that(response.status_code, equal_to(HTTPStatus.NOT_FOUND))
+        child_resource = ChildTestFixtureResource()
+        child_resource_response = child_resource.delete()
+        assert_that(child_resource_response.status_code, equal_to(HTTPStatus.NOT_FOUND))
 
 

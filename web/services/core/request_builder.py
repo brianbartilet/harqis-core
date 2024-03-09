@@ -3,9 +3,9 @@ import pprint
 from requests.structures import CaseInsensitiveDict
 
 from web.services.core.contracts.request_builder import IWebRequestBuilder
-from web.services.core.constants import PayloadType
 from web.services.core.contracts.request import IWebServiceRequest
 
+from web.services.core.constants import PayloadType
 from web.services.core.constants.http_headers import HttpHeaders
 from web.services.core.constants.http_methods import HttpMethod
 
@@ -72,10 +72,10 @@ class RequestBuilder(IWebRequestBuilder):
         request = Request()
 
         self.log.debug(
-            f"PROCESSING REQUEST:\n"
-            f"Headers:\n{pprint.pformat(self._header)}\n"
-            f"Query strings:\n{pprint.pformat(self._query_strings)}\n"
-            f"URI params:\n{pprint.pformat(self._uri_params)}"
+            f"\nPROCESSING REQUEST:\n"
+            f"\theaders: {pprint.pformat(self._header)}\n"
+            f"\tquery: {pprint.pformat(self._query_strings)}\n"
+            f"\turi: {pprint.pformat(self._uri_params)}"
         )
         if self._method:
             request.set_request_method(self._method)

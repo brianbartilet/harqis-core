@@ -42,6 +42,15 @@ class IWebClient(ABC):
         ...
 
     @abstractmethod
+    def set_proxies(self, proxies: Dict[str, str]):
+        """
+        Set proxies for the web client
+
+        :param proxies: A dictionary of uri proxies to be passed to the web client
+        """
+        ...
+
+    @abstractmethod
     def set_request_timeout(self, timeout: int):
         """
         Set the request timeout for the web client.

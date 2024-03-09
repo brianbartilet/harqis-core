@@ -4,7 +4,7 @@ from utilities import *
 from behave.model import Table
 
 from utilities.apps_context import AppConfigurationContext
-from web.services.core.constants.service_client_type import ServiceClientType
+from web.services.core.constants.service_client_type import WSClientName
 from abc import abstractmethod
 
 class BasePage(SeleniumDriver):
@@ -17,7 +17,7 @@ class BasePage(SeleniumDriver):
                  app_ctx: type = AppConfigurationContext,
                  **kwargs):
 
-        self.app_ctx = app_ctx(source_id, ServiceClientType.WEBDRIVER, apps_config_data)
+        self.app_ctx = app_ctx(source_id, WSClientName.WEBDRIVER, apps_config_data)
         self.source_id = source_id
         self.parameters = self.app_ctx.load_app_parameters()
 

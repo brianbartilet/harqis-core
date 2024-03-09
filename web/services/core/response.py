@@ -19,8 +19,7 @@ def deserialized(type_hook: Type[T] = BaseDto, child: str = None, wait=None):
     def decorator(func):
         @functools.wraps(func)
         def wrapper(self, *args, **kwargs):
-            log = custom_logger()
-
+            log = custom_logger('Deserialize decorator for response')
             self.initialize()
             self.response_type = type_hook
 
@@ -29,9 +28,8 @@ def deserialized(type_hook: Type[T] = BaseDto, child: str = None, wait=None):
 
             response_instance = func(self, *args, **kwargs)
 
-            if self._return_data_only:
+            if self._config.return_data_only:
                 try:
-
                     if child is not None:
                         if isinstance(type_hook(), dict):
                             return ObjectUtil.convert_obj_to_sc(response_instance.json_data[child])

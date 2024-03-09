@@ -81,7 +81,7 @@ class SeleniumDriver:
             self.driver = ctx
             if tmp_ctx is not None:
                 self.context = tmp_ctx
-                self.data = tmp_ctx.data
+                self.data = tmp_ctx.app_data
         elif ctx is None:
             self.log.warning("Context detected as None. No browser instance created.")
         else:

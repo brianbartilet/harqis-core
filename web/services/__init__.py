@@ -1,3 +1,3 @@
-from web.services.rest.service import *
-from web.services.rest.client import *
+from web.services.fixtures.rest import *
+from web.services.core.clients.rest import *
 
