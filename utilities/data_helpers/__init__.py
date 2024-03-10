@@ -1,1 +1,1 @@
-from .query_list import *
+from .qlist import *

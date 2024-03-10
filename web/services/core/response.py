@@ -7,7 +7,7 @@ from typing import TypeVar, Type, Optional
 from requests.structures import CaseInsensitiveDict
 
 from web.services.core.contracts.response import IResponse
-from utilities.json_util import JsonUtil
+from utilities.data_helpers.json import JsonUtility
 from utilities.logging.custom_logger import custom_logger
 from utilities.data_helpers.objects import ObjectUtilities
 
@@ -74,7 +74,7 @@ class Response(IResponse[T], ABC):
     @property
     def json_data(self) -> T:
         try:
-            return JsonUtil.deserialize(self.__data.decode(self.__encoding), self.__type_hook)
+            return JsonUtility.deserialize(self.__data.decode(self.__encoding), self.__type_hook)
         except Exception as e:
             self.log.error(f"Error deserializing JSON data: {e}")
             raise

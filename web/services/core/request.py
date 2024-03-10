@@ -17,8 +17,9 @@ class Request(IWebServiceRequest, ABC):
         self.request_type: HttpMethod = kwargs.get('request_type', HttpMethod.GET)
         self.headers: Dict[str, str] = kwargs.get('headers', {})
         self.query_string: Dict[str, str] = kwargs.get('query_string', {})
-        self.__strip_right_url: bool = True
         self.auth: Optional[Dict[str, str]] = kwargs.get('auth', None)
+
+        self.__strip_right_url: bool = True
 
     def get_query_strings(self) -> Dict[str, str]:
         return self.query_string

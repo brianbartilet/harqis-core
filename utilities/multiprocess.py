@@ -1,102 +1,46 @@
-import sys, os
-import time
+import multiprocessing as mp
 import psutil
-import multiprocessing as multiprocess
-from utilities import custom_logger
 import uuid
-import functools
-from queue import Empty
 
-IS_FINISHED = False
-
-
-def multiprocess_worker():
-    def decorator(func):
-        @functools.wraps(func)
-        def wrapper(self, *args, **kwargs):
-            try:
-                func(self, *args, **kwargs)
-            except Exception:
-                pass
-        return wrapper
-
-    return decorator
-
+from utilities.logging.custom_logger import custom_logger
 
 class MultiProcessingClient:
-
-    def __init__(self, tasks: [], default_wait_secs=10, worker_count=None):
-        """
-        :param tasks:
-        :param default_wait_secs: main dependency, should be greater than average process execution time
-        :param worker_count:
-        """
-        self.log = custom_logger(logger_name="Multi Process Client")
+    def __init__(self, tasks: list, default_wait_secs=10, worker_count=None):
+        self.log = custom_logger("MultiProcessClient")
         self.default_wait = default_wait_secs
-        self.worker_count = worker_count
-        self.queue = multiprocess.Queue(0)
+        self.worker_count = worker_count or psutil.cpu_count()
+        self.manager = mp.Manager()
+        self.queue = self.manager.Queue()
         self.tasks = tasks
-        self.output_dict = multiprocess.Manager().dict()
+        self.output_dict = self.manager.dict()
         self.func = None
-
         self.add_tasks_to_queue()
 
-    def worker_wrapper(self, func, queue_parameters, *args):
-        while True:
-            item = self.queue.get(block=True, timeout=None)
-            queue_params = (item[i] for i in queue_parameters)
-
-            output = func(*queue_params, *args)
-            self.output_dict["result_{0}".format(uuid.uuid4())] = {item, output}
-
     def add_tasks_to_queue(self):
-        if len(self.tasks) > 0:
-            for task in self.tasks:
-                self.queue.put(task, )
+        for task in self.tasks:
+            self.queue.put(task)
 
     def execute_tasks(self, func, *args):
-        global IS_FINISHED
-
         self.func = func
+        processes = []
+        for _ in range(self.worker_count):
+            p = mp.Process(target=self.worker_wrapper, args=(func, args))
+            p.start()
+            processes.append(p)
 
-        pool = multiprocess.Pool(self.get_cpu_count(), func, *args)
-        pool.apply_async(self.stop_pool)
+        for p in processes:
+            p.join()
 
-        self.execute_multiprocess_controller(self.queue)
-
-        IS_FINISHED = True
-        pool.terminate()
-        pool.join()
+    def worker_wrapper(self, func, args):
+        while not self.queue.empty():
+            try:
+                task = self.queue.get(timeout=5)
+                output = func(task, *args)
+                self.output_dict[f"result_{uuid.uuid4()}"] = output
+            except self.queue.Empty:
+                break
+            except Exception as e:
+                self.log.error(f"Error executing task: {e}")
 
     def get_tasks_output(self):
-        output_list = []
-        dict_ = dict(self.output_dict)
-        for key in dict_:
-            output_list.append(dict_[key])
-
-        return output_list
-
-    def stop_pool(self):
-        while True:
-            if IS_FINISHED:
-                break
-            time.sleep(1)
-
-    def get_cpu_count(self):
-        count = 1
-        if self.worker_count is None:
-            if sys.platform == 'win32':
-                count = psutil.cpu_count()
-        else:
-            count = self.worker_count
-
-        return count
-
-    def execute_multiprocess_controller(self, queue):
-        check = False
-
-        while check is False:
-            self.log.info("{0} :: Tasks Remaining in Queue: {1}".format(self.func.__name__, queue.qsize()))
-            time.sleep(self.default_wait)
-            if self.queue.qsize() == 0:
-                break
+        return list(self.output_dict.values())

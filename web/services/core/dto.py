@@ -1,6 +1,6 @@
 from typing import TypeVar, Type, cast
 
-from utilities.json_util import JsonObject
+from utilities.data_helpers.json import JsonObject
 
 T = TypeVar("T")
 

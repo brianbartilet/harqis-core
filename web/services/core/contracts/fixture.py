@@ -8,7 +8,7 @@ from .request import IWebServiceRequest
 from .client import IWebClient
 
 from web.services.core.constants.service_client_type import WSClientName
-from web.services.core.config.webservice import BaseAppConfigWSClient
+from web.services.core.config.webservice import AppConfigWSClient
 from web.services.core.clients import *
 
 from utilities.asserts.helper import LoggedAssertHelper
@@ -79,7 +79,7 @@ class IProtocolFixture(Generic[T]):
         """
         ...
 
-    def __init__(self, config: BaseAppConfigWSClient):
+    def __init__(self, config: AppConfigWSClient):
         self._config = config
         self._client = WSClientClass.map[config.client](**config.parameters)
         self._request = None

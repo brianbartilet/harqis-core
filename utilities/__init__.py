@@ -2,9 +2,9 @@ from .config import *
 from .asserts import *
 from .data_helpers import *
 
-from .json_util import *
+from utilities.data_helpers.json import *
 
-from .csv_reader import *
+from utilities.data_helpers.csv_reader import *
 
 
 

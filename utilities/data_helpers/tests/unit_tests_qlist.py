@@ -1,11 +1,7 @@
 import unittest
-from utilities.data_helpers.query_list import QList
+from utilities.data_helpers.qlist import QList
 
 class UnitTestsQList(unittest.TestCase):
-    """
-    Unit tests for the QList class.
-    """
-
     def setUp(self):
         """Set up a QList instance for testing."""
         self.list = QList([1, 2, 3, 4, 5])

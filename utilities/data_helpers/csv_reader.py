@@ -7,7 +7,7 @@ T = TypeVar('T')
 log = custom_logger("CSV_READER")
 
 
-def generate_objects_from_csv_data(csv_file_path, kls_hook: Type[T], start_row=0, **kwargs) -> List[Type[T]]:
+def generate_objects_from_csv_data(csv_file_path: str, kls_hook: Type[T], start_row=0, **kwargs) -> List[Type[T]]:
     return_data = []
     headers = []
 

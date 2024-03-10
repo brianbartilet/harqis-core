@@ -3,7 +3,7 @@ import unittest
 from utilities import *
 from web.services import *
 from web.services.core.response import deserialized
-from web.services.core.config.webservice import BaseAppConfigWSClient
+from web.services.core.config.webservice import AppConfigWSClient
 
 response_check_get = {
     "userId": 1,
@@ -18,7 +18,7 @@ post_payload = {
     'userId': 1
 }
 
-test_config = BaseAppConfigWSClient(
+test_config = AppConfigWSClient(
     app_id='TEST APPLICATION',
     client='rest',
     parameters={
@@ -28,9 +28,30 @@ test_config = BaseAppConfigWSClient(
     }
 )
 
+
+class TestsUnitWebServices(unittest.TestCase):
+    def test_run_unit_tests_get(self):
+        child_resource = ChildTestFixtureResource()
+        child_resource_response = child_resource.get()
+        assert_that(child_resource_response.status_code, equal_to(HTTPStatus.OK))
+        assert_that(child_resource_response.json_data, equal_to(response_check_get))
+
+    def test_run_unit_tests_post(self):
+        child_resource = ChildTestFixtureResource()
+        child_resource_response = child_resource.post()
+        assert_that(child_resource_response.status_code, equal_to(HTTPStatus.CREATED))
+        assert_that(child_resource_response.json_data, has_entries(post_payload))
+
+    def test_run_unit_tests_delete(self):
+        child_resource = ChildTestFixtureResource()
+        child_resource_response = child_resource.delete()
+        assert_that(child_resource_response.status_code, equal_to(HTTPStatus.NOT_FOUND))
+
+
 class BaseTestFixtureApp(RestProtocolFixture):
     def __init__(self):
         super(BaseTestFixtureApp, self).__init__(config=test_config)
+
 
 class ChildTestFixtureResource(BaseTestFixtureApp):
     @deserialized(dict)
@@ -58,23 +79,3 @@ class ChildTestFixtureResource(BaseTestFixtureApp):
             .add_uri_parameter('posts')
 
         return self.send_request(self.request.build())
-
-class TestsUnitWebServices(unittest.TestCase):
-    def test_run_unit_tests_get(self):
-        child_resource = ChildTestFixtureResource()
-        child_resource_response = child_resource.get()
-        assert_that(child_resource_response.status_code, equal_to(HTTPStatus.OK))
-        assert_that(child_resource_response.json_data, equal_to(response_check_get))
-
-    def test_run_unit_tests_post(self):
-        child_resource = ChildTestFixtureResource()
-        child_resource_response = child_resource.post()
-        assert_that(child_resource_response.status_code, equal_to(HTTPStatus.CREATED))
-        assert_that(child_resource_response.json_data, has_entries(post_payload))
-
-    def test_run_unit_tests_delete(self):
-        child_resource = ChildTestFixtureResource()
-        child_resource_response = child_resource.delete()
-        assert_that(child_resource_response.status_code, equal_to(HTTPStatus.NOT_FOUND))
-
-

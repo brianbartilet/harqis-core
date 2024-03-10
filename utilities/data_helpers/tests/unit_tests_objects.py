@@ -1,15 +1,15 @@
 import unittest
 from utilities.data_helpers.objects import ObjectUtilities
 
-
 class UnitTestsObjectUtilities(unittest.TestCase):
-
     def test_convert_to_snake_case(self):
+        """Test converting strings from camelCase and PascalCase to snake_case."""
         self.assertEqual(ObjectUtilities.convert_to_snake_case('camelCase'), 'camel_case')
         self.assertEqual(ObjectUtilities.convert_to_snake_case('PascalCase'), 'pascal_case')
         self.assertEqual(ObjectUtilities.convert_to_snake_case('snake_case'), 'snake_case')
 
     def test_convert_dictionary_keys_to_snake_case(self):
+        """Test converting dictionary keys in an object to snake_case."""
         class TestObject:
             def __init__(self, **kwargs):
                 for key, value in kwargs.items():
@@ -24,6 +24,7 @@ class UnitTestsObjectUtilities(unittest.TestCase):
         self.assertFalse(hasattr(converted_obj, 'PascalCaseKey'))
 
     def test_convert_object_list_to_snake_case(self):
+        """Test converting a list of objects with dictionary keys to snake_case."""
         class TestObject:
             def __init__(self, **kwargs):
                 for key, value in kwargs.items():
@@ -39,6 +40,7 @@ class UnitTestsObjectUtilities(unittest.TestCase):
             self.assertFalse(hasattr(obj, 'PascalCaseKey'))
 
     def test_convert_object_keys_to_snake_case(self):
+        """Test converting keys of an object or a list of objects to snake_case."""
         class TestObject:
             def __init__(self, **kwargs):
                 for key, value in kwargs.items():
@@ -62,6 +64,7 @@ class UnitTestsObjectUtilities(unittest.TestCase):
             self.assertFalse(hasattr(obj, 'PascalCaseKey'))
 
     def test_convert_object_list(self):
+        """Test converting a list of objects from one type to another."""
         class SourceObject:
             def __init__(self, key1, key2):
                 self.key1 = key1

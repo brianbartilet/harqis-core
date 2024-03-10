@@ -1,9 +1,8 @@
 from dataclasses import dataclass
 from typing import Optional
-from web.services.core.constants import WSClientName
 
 @dataclass
-class BaseAppConfigWSClient:
+class AppConfigWSClient:
     """
     Base configuration object for web services
     """

@@ -2,7 +2,7 @@ import logging
 import os
 import subprocess
 
-from utilities.multiprocess import MultiProcessingClient, Empty
+from utilities.multiprocess import MultiProcessingClient
 
 except_folder_names = [
     '__pycache__',
@@ -28,18 +28,11 @@ def run_cmd(item):
     subprocess.call(cmd, shell=True)
 
 
-def worker_tests_mp(queue):
+def worker_tests_mp(item):
     """
     Worker function for multiprocessing that gets test file paths from a queue and runs them.
-
-    :param queue: The queue containing test file paths.
     """
-    while True:
-        try:
-            item = queue.get(block=False, timeout=None)
-            run_cmd(item)
-        except Empty:
-            continue
+    run_cmd(item)
 
 
 def workers_tests(queue):
@@ -93,9 +86,7 @@ class UnitTestLauncher:
         logging.info(f"Found {len(found_test_files)} test directories")
 
         if self.multiprocessing:
-            mp_client = MultiProcessingClient(tasks=found_test_files,
-                                              default_wait_secs=30,
-                                              worker_count=4)
-            mp_client.execute_tasks(worker_tests_mp, (mp_client.queue,))
+            mp_client = MultiProcessingClient(tasks=found_test_files, default_wait_secs=30, worker_count=4)
+            mp_client.execute_tasks(worker_tests_mp, )
         else:
             workers_tests(found_test_files)

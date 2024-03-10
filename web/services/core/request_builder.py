@@ -11,7 +11,7 @@ from web.services.core.constants.http_methods import HttpMethod
 
 from web.services.core.request import Request
 
-from utilities.json_util import JsonObject
+from utilities.data_helpers.json import JsonObject
 from utilities.logging.custom_logger import custom_logger
 
 
