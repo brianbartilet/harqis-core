@@ -3,25 +3,28 @@ from typing import Callable, TypeVar, Generic, MutableSequence, Iterable
 T = TypeVar("T")
 
 class QList(list, Generic[T], MutableSequence[T], Iterable[T]):
+    """
+    A class that mimics LINQ in C# providing a fluent way for list comprehension.
+    This class extends the built-in list class and adds methods for querying and
+    manipulating lists in a more expressive and readable way.
+    """
+
     def __getitem__(self, item):
         result = list.__getitem__(self, item)
         try:
             return result
         except TypeError:
             return result
-    """
-    A class that mimics LINQ in C# providing a fluent way for list comprehension.
-
-    This class extends the built-in list class and adds methods for querying and
-    manipulating lists in a more expressive and readable way.
-    """
 
     def any(self, condition: Callable[[T], bool] = lambda x: True) -> bool:
         """
         Checks if any element of the list satisfies the condition.
 
-        :param condition: A function that evaluates to True or False for each element.
-        :return: True if any element satisfies the condition, False otherwise.
+        Args:
+            condition: A function that evaluates to True or False for each element.
+
+        Returns:
+            True if any element satisfies the condition, False otherwise.
         """
         return any(condition(item) for item in self)
 
@@ -29,8 +32,11 @@ class QList(list, Generic[T], MutableSequence[T], Iterable[T]):
         """
         Checks if all elements of the list satisfy the condition.
 
-        :param condition: A function that evaluates to True or False for each element.
-        :return: True if all elements satisfy the condition, False otherwise.
+        Args:
+            condition: A function that evaluates to True or False for each element.
+
+        Returns:
+            True if all elements satisfy the condition, False otherwise.
         """
         return all(condition(item) for item in self)
 
@@ -38,8 +44,11 @@ class QList(list, Generic[T], MutableSequence[T], Iterable[T]):
         """
         Filters the list based on a condition.
 
-        :param condition: A function that evaluates to True or False for each element.
-        :return: A new qlist containing elements that satisfy the condition.
+        Args:
+            condition: A function that evaluates to True or False for each element.
+
+        Returns:
+            A new QList containing elements that satisfy the condition.
         """
         return QList(filter(condition, self))
 
@@ -47,9 +56,14 @@ class QList(list, Generic[T], MutableSequence[T], Iterable[T]):
         """
         Returns the first element that satisfies the condition.
 
-        :param condition: A function that evaluates to True or False for each element.
-        :return: The first element that satisfies the condition.
-        :raises: StopIteration if no element satisfies the condition.
+        Args:
+            condition: A function that evaluates to True or False for each element.
+
+        Returns:
+            The first element that satisfies the condition.
+
+        Raises:
+            StopIteration if no element satisfies the condition.
         """
         return next(filter(condition, self))
 
@@ -57,9 +71,12 @@ class QList(list, Generic[T], MutableSequence[T], Iterable[T]):
         """
         Returns the first element that satisfies the condition or a default value.
 
-        :param condition: A function that evaluates to True or False for each element.
-        :param default: The default value to return if no element satisfies the condition.
-        :return: The first element that satisfies the condition or the default value.
+        Args:
+            condition: A function that evaluates to True or False for each element.
+            default: The default value to return if no element satisfies the condition.
+
+        Returns:
+            The first element that satisfies the condition or the default value.
         """
         return next(filter(condition, self), default)
 
@@ -67,9 +84,14 @@ class QList(list, Generic[T], MutableSequence[T], Iterable[T]):
         """
         Returns the last element that satisfies the condition.
 
-        :param condition: A function that evaluates to True or False for each element.
-        :return: The last element that satisfies the condition.
-        :raises: StopIteration if no element satisfies the condition.
+        Args:
+            condition: A function that evaluates to True or False for each element.
+
+        Returns:
+            The last element that satisfies the condition.
+
+        Raises:
+            StopIteration if no element satisfies the condition.
         """
         return next(filter(condition, reversed(self)))
 
@@ -77,9 +99,12 @@ class QList(list, Generic[T], MutableSequence[T], Iterable[T]):
         """
         Returns the last element that satisfies the condition or a default value.
 
-        :param condition: A function that evaluates to True or False for each element.
-        :param default: The default value to return if no element satisfies the condition.
-        :return: The last element that satisfies the condition or the default value.
+        Args:
+            condition: A function that evaluates to True or False for each element.
+            default: The default value to return if no element satisfies the condition.
+
+        Returns:
+            The last element that satisfies the condition or the default value.
         """
         return next(filter(condition, reversed(self)), default)
 
@@ -87,9 +112,14 @@ class QList(list, Generic[T], MutableSequence[T], Iterable[T]):
         """
         Returns the single element that satisfies the condition.
 
-        :param condition: A function that evaluates to True or False for each element.
-        :return: The single element that satisfies the condition.
-        :raises: ValueError if no element or more than one element satisfies the condition.
+        Args:
+            condition: A function that evaluates to True or False for each element.
+
+        Returns:
+            The single element that satisfies the condition.
+
+        Raises:
+            ValueError if no element or more than one element satisfies the condition.
         """
         filtered = self.where(condition)
         if len(filtered) == 1:
@@ -103,10 +133,15 @@ class QList(list, Generic[T], MutableSequence[T], Iterable[T]):
         """
         Returns the single element that satisfies the condition or a default value.
 
-        :param condition: A function that evaluates to True or False for each element.
-        :param default: The default value to return if no element satisfies the condition.
-        :return: The single element that satisfies the condition or the default value.
-        :raises: ValueError if more than one element satisfies the condition.
+        Args:
+            condition: A function that evaluates to True or False for each element.
+            default: The default value to return if no element satisfies the condition.
+
+        Returns:
+            The single element that satisfies the condition or the default value.
+
+        Raises:
+            ValueError if more than one element satisfies the condition.
         """
         filtered = self.where(condition)
         if len(filtered) > 1:
@@ -117,8 +152,11 @@ class QList(list, Generic[T], MutableSequence[T], Iterable[T]):
         """
         Projects each element of the list into a new form.
 
-        :param selector: A function that transforms each element.
-        :return: A new qlist containing the transformed elements.
+        Args:
+            selector: A function that transforms each element.
+
+        Returns:
+            A new QList containing the transformed elements.
         """
         return QList(map(selector, self))
 
@@ -126,16 +164,20 @@ class QList(list, Generic[T], MutableSequence[T], Iterable[T]):
         """
         Projects each element of the list into a new iterable and flattens the result.
 
-        :param selector: A function that transforms each element into an iterable.
-        :return: A new qlist containing the flattened result of the transformations.
+        Args:
+            selector: A function that transforms each element into an iterable.
+
+        Returns:
+            A new QList containing the flattened result of the transformations.
         """
         return QList(item for sublist in map(selector, self) for item in sublist)
 
     def distinct(self) -> "QList":
         """
-        Returns a new qlist containing distinct elements from the original list.
+        Returns a new QList containing distinct elements from the original list.
 
-        :return: A new qlist with distinct elements.
+        Returns:
+            A new QList with distinct elements.
         """
         return QList(set(self))
 
@@ -143,8 +185,11 @@ class QList(list, Generic[T], MutableSequence[T], Iterable[T]):
         """
         Returns the minimum element of the list based on a key function.
 
-        :param key: A function that returns a value used for comparison.
-        :return: The minimum element of the list.
+        Args:
+            key: A function that returns a value used for comparison.
+
+        Returns:
+            The minimum element of the list.
         """
         return min(self, key=key)
 
@@ -152,7 +197,10 @@ class QList(list, Generic[T], MutableSequence[T], Iterable[T]):
         """
         Returns the maximum element of the list based on a key function.
 
-        :param key: A function that returns a value used for comparison.
-        :return: The maximum element of the list.
+        Args:
+            key: A function that returns a value used for comparison.
+
+        Returns:
+            The maximum element of the list.
         """
         return max(self, key=key)

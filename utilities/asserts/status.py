@@ -1,9 +1,9 @@
-from utilities.logging.custom_logger import custom_logger
+from utilities.logging.custom_logger import create_logger
 from enum import Enum
 import functools
 
 
-log = custom_logger("Work Status")
+log = create_logger("Work Status")
 
 
 class WorkStatus(Enum):

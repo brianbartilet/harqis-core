@@ -1,14 +1,19 @@
 import sys, json
 
-from .base import ConfigService
+from utilities.contracts.file import IFileLoader
 
-class ConfigServiceJson(ConfigService):
-    def load(self) -> object:
+
+class ConfigJson(IFileLoader):
+
+    def __init__(self, **kwargs):
+        super(ConfigJson, self).__init__(**kwargs)
+
+    def load(self) -> any:
         try:
-            config_file_location = self.file_path
+            config_file_location = self.file_name
             with open(config_file_location) as config_file:
-                config_dict = json.load(config_file)
-        except Exception as e:
-            sys.exit("Terminating application JSON configuration not loaded due to {0}.".format(e))
+                f = json.load(config_file)
+        except FileNotFoundError as e:
+            sys.exit(f"Terminating application JSON configuration not loaded due to {e}.")
 
-        return config_dict
+        return f

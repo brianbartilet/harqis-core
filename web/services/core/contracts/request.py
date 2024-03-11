@@ -14,7 +14,8 @@ class IWebServiceRequest(ABC):
         """
         Set the HTTP method for the request.
 
-        :param method: The HttpMethod enum value.
+        Args:
+            method: The HttpMethod enum value.
         """
         ...
 
@@ -23,7 +24,8 @@ class IWebServiceRequest(ABC):
         """
         Get the HTTP method for the request.
 
-        :return: The HttpMethod enum value.
+        Return:
+            The HttpMethod enum value.
         """
         ...
 
@@ -32,7 +34,8 @@ class IWebServiceRequest(ABC):
         """
         Set the headers for the request.
 
-        :param header: A dictionary of header names and values.
+        Args:
+            header: A dictionary of header names and values.
         """
         ...
 
@@ -41,7 +44,8 @@ class IWebServiceRequest(ABC):
         """
         Set the body for the request.
 
-        :param body: A dictionary representing the request body.
+        Args:
+            body: A dictionary representing the request body.
         """
         ...
 
@@ -50,7 +54,8 @@ class IWebServiceRequest(ABC):
         """
         Set the full URL for the request.
 
-        :param full_uri: The full URL as a string.
+        Args:
+            full_uri: The full URL as a string.
         """
         ...
 
@@ -59,7 +64,8 @@ class IWebServiceRequest(ABC):
         """
         Set the query string parameters for the request.
 
-        :param query_strings: A dictionary of query string parameters.
+        Args:
+            query_strings: A dictionary of query string parameters.
         """
         ...
 
@@ -68,7 +74,8 @@ class IWebServiceRequest(ABC):
         """
         Get the headers for the request.
 
-        :return: A dictionary of header names and values.
+        Return:
+            A dictionary of header names and values.
         """
         ...
 
@@ -77,7 +84,8 @@ class IWebServiceRequest(ABC):
         """
         Get the body for the request.
 
-        :return: A dictionary representing the request body, or None if not set.
+        Return:
+            A dictionary representing the request body, or None if not set.
         """
         ...
 
@@ -86,7 +94,8 @@ class IWebServiceRequest(ABC):
         """
         Get the full URL for the request.
 
-        :return: The full URL as a string.
+        Return:
+            The full URL as a string.
         """
         ...
 
@@ -95,7 +104,8 @@ class IWebServiceRequest(ABC):
         """
         Get the query string parameters for the request.
 
-        :return: A dictionary of query string parameters.
+        Return:
+            A dictionary of query string parameters.
         """
         ...
 
@@ -104,7 +114,8 @@ class IWebServiceRequest(ABC):
         """
         Set whether to strip the rightmost slash from the URL.
 
-        :param toggle: True to strip the slash, False to keep it.
+        Args:
+            toggle: True to strip the slash, False to keep it.
         """
         ...
 
@@ -113,7 +124,8 @@ class IWebServiceRequest(ABC):
         """
         Get whether the rightmost slash from the URL is stripped.
 
-        :return: True if the slash is stripped, False otherwise.
+        Return:
+            True if the slash is stripped, False otherwise.
         """
         ...
 
@@ -122,7 +134,8 @@ class IWebServiceRequest(ABC):
         """
         Set the authorization headers for the request.
 
-        :param authorization: A dictionary of authorization headers.
+        Args:
+            authorization: A dictionary of authorization headers.
         """
         ...
 
@@ -131,6 +144,7 @@ class IWebServiceRequest(ABC):
         """
         Get the authorization headers for the request.
 
-        :return: A dictionary of authorization headers, or None if not set.
+        Return:
+            A dictionary of authorization headers, or None if not set.
         """
         ...

@@ -19,7 +19,8 @@ def run_cmd(item):
     """
     Run a test command in a subprocess.
 
-    :param item: The path to the test file to be executed.
+    Args:
+        item (str): The path to the test file to be executed.
     """
     print(f"Running tests in file: {item}")
     file = os.path.dirname(item)
@@ -31,6 +32,9 @@ def run_cmd(item):
 def worker_tests_mp(item):
     """
     Worker function for multiprocessing that gets test file paths from a queue and runs them.
+
+    Args:
+        item (str): The path to the test file to be executed.
     """
     run_cmd(item)
 
@@ -39,7 +43,8 @@ def workers_tests(queue):
     """
     Runs tests for each item in the queue.
 
-    :param queue: A list containing test file paths.
+    Args:
+        queue (list): A list containing test file paths.
     """
     for item in queue:
         run_cmd(item)
@@ -54,10 +59,11 @@ class UnitTestLauncher:
         """
         Initializes the UnitTestLauncher.
 
-        :param base_directory: The base directory to search for tests.
-        :param tests_folder_name: The name of the folder containing tests.
-        :param except_folder_names: A list of folder names to exclude from the search.
-        :param multiprocessing: A boolean indicating whether to use multiprocessing.
+        Args:
+            base_directory (str): The base directory to search for tests.
+            tests_folder_name (str): The name of the folder containing tests.
+            except_folder_names (list): A list of folder names to exclude from the search.
+            multiprocessing (bool): A boolean indicating whether to use multiprocessing.
         """
         self.base_directory = kwargs.get('base_directory', os.getcwd())
         self.tests_folder_name = kwargs.get('tests_folder_name', 'tests')

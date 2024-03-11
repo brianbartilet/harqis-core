@@ -6,7 +6,6 @@ from .request import IWebServiceRequest
 
 T = TypeVar("T")
 
-
 class IWebClient(ABC):
     """
     Interface for a web client that can execute web service requests and handle responses.
@@ -17,9 +16,12 @@ class IWebClient(ABC):
         """
         Execute a web service request and return the response.
 
-        :param request_object: The request object to be executed.
-        :param type_hook: The type to deserialize the response data into.
-        :return: The response object.
+        Args:
+            request_object: The request object to be executed.
+            type_hook: The type to deserialize the response data into.
+
+        Return:
+            The response object.
         """
         ...
 
@@ -28,7 +30,8 @@ class IWebClient(ABC):
         """
         Set the cookie handler for the web client.
 
-        :param cookies: A dictionary of cookies to be used by the web client.
+        Args:
+            cookies: A dictionary of cookies to be used by the web client.
         """
         ...
 
@@ -37,16 +40,18 @@ class IWebClient(ABC):
         """
         Set the session cookies for the web client.
 
-        :param cookies: A dictionary of session cookies to be used by the web client.
+        Args:
+            cookies: A dictionary of session cookies to be used by the web client.
         """
         ...
 
     @abstractmethod
     def set_proxies(self, proxies: Dict[str, str]):
         """
-        Set proxies for the web client
+        Set proxies for the web client.
 
-        :param proxies: A dictionary of uri proxies to be passed to the web client
+        Args:
+            proxies: A dictionary of URI proxies to be passed to the web client.
         """
         ...
 
@@ -55,7 +60,8 @@ class IWebClient(ABC):
         """
         Set the request timeout for the web client.
 
-        :param timeout: The timeout in seconds.
+        Args:
+            timeout: The timeout in seconds.
         """
         ...
 
@@ -64,8 +70,11 @@ class IWebClient(ABC):
         """
         Get the response from the web client.
 
-        :param response: The response object to be processed.
-        :param type_hook: The type to deserialize the response data into.
-        :return: The processed response object.
+        Args:
+            response: The response object to be processed.
+            type_hook: The type to deserialize the response data into.
+
+        Return:
+            The processed response object.
         """
         ...

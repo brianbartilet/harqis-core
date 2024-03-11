@@ -6,8 +6,11 @@ class ObjectUtilities:
         """
         Convert the keys of a dictionary representing an object's attributes to snake_case.
 
-        :param cur_object: The object whose attributes need to be converted.
-        :return: A new object with attributes in snake_case.
+        Args:
+            cur_object: The object whose attributes need to be converted.
+
+        Returns:
+            A new object with attributes in snake_case.
         """
         object_type = type(cur_object)
         obj_dict = cur_object.__dict__
@@ -23,8 +26,11 @@ class ObjectUtilities:
         """
         Convert the keys of dictionaries representing a list of objects' attributes to snake_case.
 
-        :param object_collection: The list of objects whose attributes need to be converted.
-        :return: A new list of objects with attributes in snake_case.
+        Args:
+            object_collection: The list of objects whose attributes need to be converted.
+
+        Returns:
+            A new list of objects with attributes in snake_case.
         """
         return [ObjectUtilities.convert_dictionary_keys_to_snake_case(item) for item in object_collection]
 
@@ -33,8 +39,11 @@ class ObjectUtilities:
         """
         Convert the keys of a dictionary or a list of dictionaries representing an object's or objects' attributes to snake_case.
 
-        :param object_item: The object or list of objects whose attributes need to be converted.
-        :return: The object or list of objects with attributes in snake_case.
+        Args:
+            object_item: The object or list of objects whose attributes need to be converted.
+
+        Returns:
+            The object or list of objects with attributes in snake_case.
         """
         try:
             if isinstance(object_item, list):
@@ -50,9 +59,12 @@ class ObjectUtilities:
         """
         Convert a list of objects to a new list of objects of a specific type.
 
-        :param object_collection: The list of objects to be converted.
-        :param object_type: The new type of objects.
-        :return: A new list of objects of the specified type.
+        Args:
+            object_collection: The list of objects to be converted.
+            object_type: The new type of objects.
+
+        Returns:
+            A new list of objects of the specified type.
         """
         return [object_type(**item.__dict__) for item in object_collection]
 
@@ -61,8 +73,11 @@ class ObjectUtilities:
         """
         Convert a given text from camelCase or PascalCase to snake_case.
 
-        :param text: The text to be converted.
-        :return: The text in snake_case.
+        Args:
+            text: The text to be converted.
+
+        Returns:
+            The text in snake_case.
         """
         words = re.findall(r'[A-Z]?[a-z]+|[A-Z]{2,}(?=[A-Z][a-z]|\d|\W|$)|\d+', text)
         return '_'.join(map(str.lower, words))

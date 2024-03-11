@@ -1,6 +1,6 @@
 import abc
 from telnetlib import Telnet
-from utilities.logging.custom_logger import custom_logger
+from utilities.logging.custom_logger import create_logger
 
 
 class ReflectionClientBase(object):
@@ -22,7 +22,7 @@ class ReflectionClientBase(object):
         self.__timeout = ReflectionClientBase.TIMEOUT_DEFAULT_SECONDS
         self.__session_exists = False
         self.__encoding = "ascii"
-        self.__log = custom_logger()
+        self.__log = create_logger()
         self._client = None
 
     def initialize_client(self):
@@ -79,7 +79,7 @@ class ReflectionClientBase(object):
         :param expect: the expected response from our previous call.
         :return: str value of the response
         """
-        self.__log.info("get_expected_response - expected: {}".format(expect))
+        self.__log.info(f"get_expected_response - expected: {expect}")
 
         return self.__send_read_request__(expect)
 
@@ -103,7 +103,7 @@ class ReflectionClientBase(object):
         full_cmd = "/".join([path, request])
         self._send_request_(full_cmd, *args)
 
-    # request comprises of the full command, then arguments to the command
+    # request consists of the full command, then arguments to the command
     def _send_request_(self, request: str, *args):
         clean_args = [item.strip() for item in args if len(item) > 0]
         joined_args = " ".join(clean_args)
@@ -111,14 +111,14 @@ class ReflectionClientBase(object):
         self.__send_write_request__(full_request)
 
     def __send_write_request__(self, request: str):
-        self.__log.info("send_write_request - request: {}".format(request))
+        self.__log.info(f"send_write_request - request: {request}")
 
         if "\n" not in request:
-            request = "{}\n".format(request)
+            request = f"{request}\n"
         self._client.write(request.encode(self.__encoding))
 
     def __send_read_request__(self, request: str):
-        self.__log.info("send_read_request - request: {}".format(request))
+        self.__log.info(f"send_read_request - request: {request}")
 
         return str(self._client.read_until(request.encode(self.__encoding), self.__timeout)).encode(self.__encoding)\
             .decode(self.__encoding)

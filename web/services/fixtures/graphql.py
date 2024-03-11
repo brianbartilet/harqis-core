@@ -5,8 +5,7 @@ from typing import TypeVar
 T = TypeVar("T")
 V = TypeVar("V")
 
-
-class FixtureRest(IProtocolFixture[T]):
+class FixtureGraphQL(IProtocolFixture[T]):
     """
     A class implementing the IProtocolFixture interface for RESTful web services.
 

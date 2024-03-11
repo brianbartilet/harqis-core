@@ -1,5 +1,5 @@
 import unittest
-from utilities.data_helpers.objects import ObjectUtilities
+from utilities.data.objects import ObjectUtilities
 
 class UnitTestsObjectUtilities(unittest.TestCase):
     def test_convert_to_snake_case(self):

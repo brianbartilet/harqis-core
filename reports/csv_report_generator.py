@@ -16,7 +16,7 @@ class CsvReportGenerator(ReportGenerator):
         full_path = os.path.join(self._output_dir, self._output_filename)
 
         if not full_path.endswith('.csv'):
-            full_path = "{}.csv".format(full_path)
+            full_path = f"{full_path}.csv"
 
         # create / open our file:
         with open(full_path, 'w',  encoding='utf-8') as csvfile:

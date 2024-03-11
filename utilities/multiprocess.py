@@ -2,11 +2,11 @@ import multiprocessing as mp
 import psutil
 import uuid
 
-from utilities.logging.custom_logger import custom_logger
+from utilities.logging.custom_logger import create_logger
 
 class MultiProcessingClient:
     def __init__(self, tasks: list, default_wait_secs=10, worker_count=None):
-        self.log = custom_logger("MultiProcessClient")
+        self.log = create_logger("MultiProcessClient")
         self.default_wait = default_wait_secs
         self.worker_count = worker_count or psutil.cpu_count()
         self.manager = mp.Manager()

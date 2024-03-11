@@ -1,10 +1,10 @@
 import csv
 from typing import TypeVar, Type
 from typing import List
-from utilities.logging.custom_logger import custom_logger
+from utilities.logging.custom_logger import create_logger
 
 T = TypeVar('T')
-log = custom_logger("CSV_READER")
+log = create_logger("CSV_READER")
 
 
 def generate_objects_from_csv_data(csv_file_path: str, kls_hook: Type[T], start_row=0, **kwargs) -> List[Type[T]]:

@@ -15,7 +15,7 @@ def raise_any_exception(exception_list: list) -> None:
     """
     if len(exception_list) > 0:
         all_exceptions = "\n".join([str(exc) for exc in exception_list])
-        full_message = "Error(s) encountered: {}".format(all_exceptions)
+        full_message = f"Error(s) encountered: {all_exceptions}"
         raise AssertionError(full_message)
 
 def is_between(lower_bound, upper_bound):

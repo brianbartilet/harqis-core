@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import patch, mock_open
 import logging
-from utilities.logging.custom_logger import custom_logger, load_logging_configuration, find_logging_config, file_name
+from utilities.logging.custom_logger import create_logger, load_logging_configuration, find_logging_config, file_name
 
 class TestLogger(unittest.TestCase):
     @patch('logging.getLogger')
@@ -10,7 +10,7 @@ class TestLogger(unittest.TestCase):
         Test that the custom_logger function uses the name of the calling function as the logger name when no name is provided.
         """
         mock_get_logger.return_value.name = 'test_custom_logger_default_name'
-        logger = custom_logger()
+        logger = create_logger()
         mock_get_logger.assert_called_with('test_custom_logger_default_name')
         self.assertEqual(logger.name, 'test_custom_logger_default_name')
 
@@ -20,7 +20,7 @@ class TestLogger(unittest.TestCase):
         Test that the custom_logger function uses the provided name as the logger name.
         """
         mock_get_logger.return_value.name = 'my_custom_logger'
-        logger = custom_logger('my_custom_logger')
+        logger = create_logger('my_custom_logger')
         mock_get_logger.assert_called_with('my_custom_logger')
         self.assertEqual(logger.name, 'my_custom_logger')
 

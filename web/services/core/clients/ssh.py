@@ -1,5 +1,5 @@
 import paramiko
-from utilities.logging.custom_logger import custom_logger
+from utilities.logging.custom_logger import create_logger
 import sys
 import time
 
@@ -9,7 +9,7 @@ class SSHClient:
     def __init__(self, host, port, ssh_user, ssh_pwd):
         self._host = host
         self._port = port
-        self._log = custom_logger()
+        self._log = create_logger()
         self._encoding = "UTF-8"
         self._remote_path = None
         self._local_path = None

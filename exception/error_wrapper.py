@@ -8,7 +8,7 @@ import inspect
 import sys
 import traceback
 
-from utilities.logging.custom_logger import custom_logger
+from utilities.logging.custom_logger import create_logger
 
 
 class BaseExceptionWrapperDto:
@@ -23,7 +23,7 @@ class BaseExceptionWrapperDto:
 
 class BaseExceptionWrapper(Exception):
     """Common Base class for custom Exception handler"""
-    log = custom_logger()
+    log = create_logger()
     output = """
     [{title}]:
         Class: {class_error}

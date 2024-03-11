@@ -1,2 +1,2 @@
-from .json import *
-from .yaml import *
+from .json import ConfigJson
+from .yaml import ConfigYaml

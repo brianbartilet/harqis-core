@@ -14,7 +14,7 @@ from selenium.common.exceptions import *
 from behave.runner import Context
 
 from exception.error_wrapper import *
-from utilities.logging.custom_logger import custom_logger
+from utilities.logging.custom_logger import create_logger
 
 future_speed = os.getenv("FUTURE_SPEED", "N").lower()
 
@@ -43,7 +43,7 @@ def find_elements(locator: By, locator_value: str):
 
 class SeleniumDriver:
 
-    log = custom_logger()
+    log = create_logger()
 
     _type_map = {"id": By.ID,
                  "name": By.NAME,
@@ -1497,12 +1497,11 @@ class SeleniumDriver:
                     if destination_filename is not None:
                         os.rename(os.path.join(download_folder, source_filename),
                                   os.path.join(download_folder, destination_filename))
-                        self.log.info("\nFile downloaded to location {} with filename {}\n"
-                                      .format(download_folder, destination_filename))
+                        self.log.info(f"\nFile downloaded to location {download_folder} "
+                                      f"with filename {destination_filename}\n")
                     else:
                         self.log.info(
-                            "\nFile downloaded to location {} with filename {}\n".format(download_folder,
-                                                                                         source_filename))
+                            f"\nFile downloaded to location {download_folder} with filename {source_filename}\n")
                     break
         else:
             self.log.info("\nUnable to download file since download folder not specified\n")

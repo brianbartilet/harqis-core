@@ -1,47 +1,45 @@
 import os
-
-from typing import TypeVar
+from typing import TypeVar, Type
 from enum import Enum
-
-from .types import *
 
 T = TypeVar('T')
 
+from .types import *
+from utilities.contracts.file import IFileLoader
+
+
 class Configuration(Enum):
-    YAML = ConfigServiceYaml
-    YML = ConfigServiceYaml
-    JSON = ConfigServiceJson
+    YAML = ConfigYaml
+    YML = ConfigYaml
+    JSON = ConfigJson
+
 
 class ConfigLoader:
-    """ Loads a configuration from target file with support for dynamic path detection"""
-    def __init__(self, loader: T, base_path=os.getcwd(), name="apps_config.yaml"):
-        self.path = base_path
-        self.file_name = name
+    """
+    Loads a configuration from a target file with support for dynamic path detection.
+    """
+    def __init__(self, file: Configuration = Configuration.YAML, file_name: str = "apps_config.yaml", base_path: str = os.getcwd()):
+        """
+        Initializes the ConfigLoader.
 
-        file = self.find_apps_configuration()
-        self.loader = loader.value(file)
+        Args:
+            file (Type[IFileLoader]): The class of the file loader to use for loading the configuration.
+            file_name (str): The name of the configuration file to load.
+            base_path (str): The base path to start searching for the configuration file.
+        """
+        self._config = file.value(file_name=file_name, base_path=base_path)
 
-    def load(self):
-        self.loader.load()
+    @property
+    def config(self) -> T:
+        """
+        Loads the configuration using the specified loader.
 
-    def find_apps_configuration(self) -> str:
-        cur_dir = os.path.join(self.path)
-        file_location = None
-        while True:
-            file_list = os.listdir(cur_dir)
-            parent_dir = os.path.dirname(cur_dir)
-            if self.file_name in file_list:
-                print("Configuration file {} found in: {} ".format(self.file_name, cur_dir))
-                file_location = os.path.join(cur_dir, self.file_name)
-                break
-            else:
-                if cur_dir == parent_dir:  # if dir is root dir
-                    print("File not found")
-                    break
-                else:
-                    cur_dir = parent_dir
-        return file_location
+        Returns:
+            The loaded configuration.
+        """
+        file_path = self._config.find_file_from_base_path()
+        if file_path is None:
+            raise FileNotFoundError(f"Configuration file {self._config.file_name} not found in "
+                                    f"{self._config.base_path} or its parent directories.")
 
-
-
-
+        return self._config.load()

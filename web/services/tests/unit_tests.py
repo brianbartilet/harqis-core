@@ -48,7 +48,7 @@ class TestsUnitWebServices(unittest.TestCase):
         assert_that(child_resource_response.status_code, equal_to(HTTPStatus.NOT_FOUND))
 
 
-class BaseTestFixtureApp(RestProtocolFixture):
+class BaseTestFixtureApp(FixtureRest):
     def __init__(self):
         super(BaseTestFixtureApp, self).__init__(config=test_config)
 

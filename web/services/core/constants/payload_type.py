@@ -11,3 +11,5 @@ class PayloadType(Enum):
     DICT = 'data'    # For form-encoded data.
     UNKNOWN = 'data' # Fallback for unknown payload types.
     TEXT = 'data'    # For plain text payload.
+
+    

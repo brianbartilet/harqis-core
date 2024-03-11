@@ -1,5 +1,5 @@
 from runners.unit_tests_runner import UnitTestLauncher
 
 if __name__ == '__main__':
-    launcher = UnitTestLauncher(multiprocessing=True)
+    launcher = UnitTestLauncher(multiprocessing=False)
     launcher.run_tests()

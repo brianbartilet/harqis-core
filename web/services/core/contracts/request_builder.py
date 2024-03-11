@@ -5,7 +5,7 @@ from web.services.core.constants.http_methods import HttpMethod
 
 from web.services.core.contracts.request import IWebServiceRequest
 
-from utilities.data_helpers.json import JsonObject
+from utilities.data.json import JsonObject
 
 from requests.structures import CaseInsensitiveDict
 
@@ -15,11 +15,16 @@ class IWebRequestBuilder(ABC):
     Interface for a chainable web request builder.
     """
 
-    def set_method(self, method: HttpMethod)-> "IWebRequestBuilder":
+    @abstractmethod
+    def set_method(self, method: HttpMethod) -> "IWebRequestBuilder":
         """
-        Set request http method
+        Set the HTTP method for the request.
 
-        :param method: http method
+        Args:
+            method: The HttpMethod to be used for the request.
+
+        Returns:
+            The builder instance for chaining.
         """
         ...
 
@@ -28,9 +33,12 @@ class IWebRequestBuilder(ABC):
         """
         Adds a single header to the request.
 
-        :param header_key: The key of the header.
-        :param header_value: The value of the header.
-        :return: The builder instance for chaining.
+        Args:
+            header_key: The key of the header.
+            header_value: The value of the header.
+
+        Returns:
+            The builder instance for chaining.
         """
         ...
 
@@ -39,8 +47,11 @@ class IWebRequestBuilder(ABC):
         """
         Adds multiple headers to the request.
 
-        :param headers: A dictionary of headers.
-        :return: The builder instance for chaining.
+        Args:
+            headers: A dictionary of headers.
+
+        Returns:
+            The builder instance for chaining.
         """
         ...
 
@@ -49,9 +60,12 @@ class IWebRequestBuilder(ABC):
         """
         Adds a payload to the request with a specified type.
 
-        :param payload: The payload to add.
-        :param payload_type: The type of the payload.
-        :return: The builder instance for chaining.
+        Args:
+            payload: The payload to add.
+            payload_type: The type of the payload.
+
+        Returns:
+            The builder instance for chaining.
         """
         ...
 
@@ -60,9 +74,12 @@ class IWebRequestBuilder(ABC):
         """
         Adds a file payload to the request.
 
-        :param filename: The name of the file.
-        :param filebytes: The bytes of the file.
-        :return: The builder instance for chaining.
+        Args:
+            filename: The name of the file.
+            filebytes: The bytes of the file.
+
+        Returns:
+            The builder instance for chaining.
         """
         ...
 
@@ -71,8 +88,11 @@ class IWebRequestBuilder(ABC):
         """
         Adds a JSON object to the request.
 
-        :param payload: The JSON object to add.
-        :return: The builder instance for chaining.
+        Args:
+            payload: The JSON object to add.
+
+        Returns:
+            The builder instance for chaining.
         """
         ...
 
@@ -81,8 +101,11 @@ class IWebRequestBuilder(ABC):
         """
         Adds a JSON body to the request.
 
-        :param payload: The JSON object to use as the body.
-        :return: The builder instance for chaining.
+        Args:
+            payload: The JSON object to use as the body.
+
+        Returns:
+            The builder instance for chaining.
         """
         ...
 
@@ -91,8 +114,11 @@ class IWebRequestBuilder(ABC):
         """
         Adds a JSON payload to the request.
 
-        :param payload: The payload to add.
-        :return: The builder instance for chaining.
+        Args:
+            payload: The payload to add.
+
+        Returns:
+            The builder instance for chaining.
         """
         ...
 
@@ -101,10 +127,13 @@ class IWebRequestBuilder(ABC):
         """
         Adds a URI parameter to the request.
 
-        :param param_name: The name of the parameter.
-        :param param_value: The value of the parameter.
-        :param order: The order of the parameter in the URI.
-        :return: The builder instance for chaining.
+        Args:
+            param_name: The name of the parameter.
+            param_value: The value of the parameter.
+            order: The order of the parameter in the URI.
+
+        Returns:
+            The builder instance for chaining.
         """
         ...
 
@@ -113,9 +142,12 @@ class IWebRequestBuilder(ABC):
         """
         Adds a query string to the request.
 
-        :param query_name: The name of the query string.
-        :param query_value: The value of the query string.
-        :return: The builder instance for chaining.
+        Args:
+            query_name: The name of the query string.
+            query_value: The value of the query string.
+
+        Returns:
+            The builder instance for chaining.
         """
         ...
 
@@ -124,8 +156,11 @@ class IWebRequestBuilder(ABC):
         """
         Adds multiple query strings to the request.
 
-        :param kwargs: Keyword arguments representing query string names and values.
-        :return: The builder instance for chaining.
+        Args:
+            kwargs: Keyword arguments representing query string names and values.
+
+        Returns:
+            The builder instance for chaining.
         """
         ...
 
@@ -134,8 +169,11 @@ class IWebRequestBuilder(ABC):
         """
         Adds an object as query strings to the request.
 
-        :param object: The object to add as query strings.
-        :return: The builder instance for chaining.
+        Args:
+            object: The object to add as query strings.
+
+        Returns:
+            The builder instance for chaining.
         """
         ...
 
@@ -144,8 +182,11 @@ class IWebRequestBuilder(ABC):
         """
         Toggles stripping the rightmost slash from the URL.
 
-        :param toggle: True to strip the slash, False to keep it.
-        :return: The builder instance for chaining.
+        Args:
+            toggle: True to strip the slash, False to keep it.
+
+        Returns:
+            The builder instance for chaining.
         """
         ...
 
@@ -154,6 +195,7 @@ class IWebRequestBuilder(ABC):
         """
         Builds the web service request.
 
-        :return: The constructed IWebServiceRequest instance.
+        Returns:
+            The constructed IWebServiceRequest instance.
         """
         ...

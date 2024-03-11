@@ -1,5 +1,5 @@
 import unittest
-from utilities.data_helpers.json import JsonObject, JsonUtility, keys_exists
+from utilities.data.json import JsonObject, JsonUtility, keys_exists
 import os
 
 class TestJsonObject(unittest.TestCase):

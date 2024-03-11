@@ -65,7 +65,7 @@ class SSHTelnetClient(IProCClient, SSHClient):
         while not (expected_result is not None and expected_result in result):
             try:
                 chunk = self.__channel.recv(self.__read_block)
-                self._log.info("read: {}".format(str(chunk)))
+                self._log.info(f"read: {str(chunk)}")
 
                 result = str.format("{}{}", result, chunk.decode(self._encoding))
 

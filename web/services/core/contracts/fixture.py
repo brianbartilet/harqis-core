@@ -17,10 +17,6 @@ class WSClientClass:
     """
     A class that maps web service client names to their corresponding client classes.
 
-    This class provides a way to dynamically select the appropriate client class based on
-    the web service client name. It is used to instantiate the correct client for making
-    web service requests.
-
     Attributes:
         map (dict): A dictionary mapping web service client names to their corresponding
                     client classes. The keys are values from the WSClientName enum, and
@@ -53,7 +49,8 @@ class IProtocolFixture(Generic[T]):
         """
         Initializes the testing fixture and returns the request builder and web client components.
 
-        :return: A tuple containing the request builder and web client instances.
+        Return:
+            A tuple containing the request builder and web client instances.
         """
         ...
 
@@ -64,7 +61,8 @@ class IProtocolFixture(Generic[T]):
 
         The request builder is used to construct web service requests in a fluent and flexible manner.
 
-        :return: An instance of a class that implements the IWebRequestBuilder interface.
+        Return:
+            An instance of a class that implements the IWebRequestBuilder interface.
         """
         ...
 
@@ -73,35 +71,64 @@ class IProtocolFixture(Generic[T]):
         """
         Sends a web service request using the web client component and returns the response.
 
-        :param request: The web service request to be sent.
-        :param kwargs: Optional keyword arguments that may be required for sending the request.
-        :return: An instance of a class that implements the IResponse interface, containing the response data.
+        Args:
+            request: The web service request to be sent.
+            kwargs: Optional keyword arguments that may be required for sending the request.
+
+        Return:
+            An instance of a class that implements the IResponse interface, containing the response data.
         """
         ...
 
     def __init__(self, config: AppConfigWSClient):
+        """
+        Initializes the protocol fixture with the given configuration.
+
+        Args:
+            config: The AppConfigWSClient object containing the configuration for the web service client.
+        """
         self._config = config
         self._client = WSClientClass.map[config.client](**config.parameters)
         self._request = None
 
     @property
     def client(self) -> IWebClient:
-        """Get the web client."""
+        """
+        Returns the web client component of the protocol fixture.
+
+        Return:
+            The web client instance.
+        """
         return self._client
 
     @property
     def request(self) -> IWebRequestBuilder:
-        """Get the request instance from builder."""
+        """
+        Returns the request builder component of the protocol fixture.
+
+        Return:
+            The request builder instance.
+        """
         if self._request is None:
             self._request = self.get_request_builder()
         return self._request
 
     @property
     def app_data(self) -> dict:
-        """Get the parameters."""
+        """
+        Returns the application-specific data from the configuration.
+
+        Return:
+            A dictionary containing the application-specific data.
+        """
         return self._config.app_data
 
     @property
     def verify(self) -> LoggedAssertHelper:
-        """Get the logged assert helper."""
+        """
+        Returns the logged assert helper for performing assertions.
+
+        Return:
+            An instance of LoggedAssertHelper.
+        """
         return LoggedAssertHelper()
