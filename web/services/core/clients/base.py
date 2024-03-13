@@ -11,21 +11,15 @@ from web.services.core.response import IResponse, Response
 
 T = TypeVar('T')
 
+
 class BaseWebClient(IWebClient, ABC):
     """
     A base class for a web client that implements the IWebClient interface.
     This class provides common functionality for sending HTTP requests and processing responses.
     """
 
-    def __init__(
-        self,
-        base_url: str,
-        *,
-        response_encoding: str = "ascii",
-        verify_ssh: bool = True,
-        use_session: bool = False,
-        timeout: int = 5
-    ):
+    def __init__(self, base_url: str, *, response_encoding: str = "ascii", verify_ssh: bool = True,
+                 use_session: bool = False, timeout: int = 5, **kwargs):
         """
         Initializes the BaseWebClient with the given configuration.
 
@@ -36,7 +30,8 @@ class BaseWebClient(IWebClient, ABC):
             use_session: Whether to use a session for making requests. Defaults to False.
             timeout: The timeout in seconds for the requests. Defaults to 5.
         """
-        self.log = create_logger('Generic Web Client')
+        self.log = kwargs.get('logger', create_logger(self.__class__.__name__))
+
         self.session = requests.Session() if use_session else None
 
         self.base_url = base_url.rstrip('/')

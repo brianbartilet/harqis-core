@@ -6,10 +6,9 @@ from queue import Empty
 
 
 class MultiProcessingClient:
-    def __init__(self, tasks: list, default_wait_secs=10, worker_count=None):
+    def __init__(self, tasks: list, worker_count=None):
         self.log = create_logger(self.__class__.__name__)
 
-        self.default_wait = default_wait_secs
         self.worker_count = worker_count or psutil.cpu_count()
         self.queue = mp.Queue()
         self.tasks = tasks

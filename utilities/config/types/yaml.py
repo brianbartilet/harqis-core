@@ -1,6 +1,6 @@
-import sys, yaml
+import yaml
 
-from utilities.contracts.file import IFileLoader
+from contracts.file import IFileLoader
 
 class ConfigYaml(IFileLoader):
     def __init__(self, **kwargs):

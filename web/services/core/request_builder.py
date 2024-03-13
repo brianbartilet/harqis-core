@@ -20,16 +20,16 @@ class RequestBuilder(IWebRequestBuilder):
     A builder class for constructing web service requests.
     """
 
-    def __init__(self, routing_separator="/"):
+    def __init__(self, **kwargs):
         """
         Initializes the RequestBuilder.
 
         Args:
             routing_separator: The separator used in the URI routing. Defaults to "/".
         """
-        self.log = create_logger('Request Builder')
+        self.log = kwargs.get('logger', create_logger(self.__class__.__name__))
+        self.routing_separator = kwargs.get('routing_separator', "/")
 
-        self._routing_separator = routing_separator
         self._header = CaseInsensitiveDict()
         self._query_strings = {}
         self._uri_params = []
@@ -286,4 +286,4 @@ class RequestBuilder(IWebRequestBuilder):
         Returns:
             The URI parameter string.
         """
-        return "{}".format(self._routing_separator).join([str(i[1]) for i in self._uri_params])
+        return "{}".format(self.routing_separator).join([str(i[1]) for i in self._uri_params])

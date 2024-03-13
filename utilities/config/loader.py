@@ -5,7 +5,6 @@ from enum import Enum
 T = TypeVar('T')
 
 from .types import *
-from utilities.contracts.file import IFileLoader
 
 
 class Configuration(Enum):

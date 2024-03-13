@@ -1,10 +1,9 @@
-from utilities.logging.custom_logger import create_logger
-
-from utilities.contracts.file import IFileLoader
+from contracts.file import IFileLoader
 
 from typing import TypeVar
 
 T = TypeVar('T')
+
 
 class ResourceFileGql(IFileLoader):
     def __init__(self, **kwargs):

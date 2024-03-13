@@ -4,8 +4,6 @@ from enum import Enum
 
 T = TypeVar('T')
 
-from .types import *
-from utilities.contracts.file import IFileLoader
 from utilities.resources.types import *
 
 class Resource(Enum):

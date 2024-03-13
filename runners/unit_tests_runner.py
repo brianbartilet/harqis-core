@@ -83,7 +83,7 @@ class UnitTestLauncher:
             if self.tests_folder_name in path and not any(ext in path for ext in self.except_folder_names):
                 # Check if any test files match the pattern in this directory
                 current_dir_tests = [os.path.join(path, file) for file in files if
-                                    file.endswith('.py') and file.startswith(file_pattern)]
+                                     file.endswith('.py') and file.startswith(file_pattern)]
                 if len(current_dir_tests) > 0:
                     found_test_files.extend(current_dir_tests)
                 else:
@@ -92,7 +92,7 @@ class UnitTestLauncher:
         logging.info(f"Found {len(found_test_files)} test directories")
 
         if self.multiprocessing:
-            mp_client = MultiProcessingClient(tasks=found_test_files, default_wait_secs=30, worker_count=4)
+            mp_client = MultiProcessingClient(tasks=found_test_files, worker_count=8)
             mp_client.execute_tasks(worker_tests_mp, )
         else:
             workers_tests(found_test_files)

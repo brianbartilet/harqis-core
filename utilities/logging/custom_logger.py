@@ -6,6 +6,7 @@ import yaml
 
 file_name = "logging.yaml"
 
+
 def create_logger(logger_name=None):
     """
     Create a custom logger with the specified name or the name of the calling function.
@@ -23,6 +24,7 @@ def create_logger(logger_name=None):
 
     return new_logger
 
+
 def load_logging_configuration():
     """
     Load logging configuration from a YAML file and configure the logging module.
@@ -38,6 +40,7 @@ def load_logging_configuration():
 
     new_logger.info("Loaded logging configuration from %s\n", config_file_location)
     return new_logger
+
 
 def find_logging_config():
     """
@@ -63,6 +66,7 @@ def find_logging_config():
             else:
                 cur_dir = parent_dir
     return file_location
+
 
 logger = load_logging_configuration()
 rootLevel = logger.getEffectiveLevel()

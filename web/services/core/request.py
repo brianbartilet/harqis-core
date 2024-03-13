@@ -6,6 +6,7 @@ from web.services.core.constants.http_methods import HttpMethod
 from web.services.core.contracts.request import IWebServiceRequest
 from utilities.logging.custom_logger import create_logger
 
+
 class Request(IWebServiceRequest, ABC):
     """
     Represents a web service request.
@@ -28,7 +29,7 @@ class Request(IWebServiceRequest, ABC):
         Args:
             **kwargs: Optional keyword arguments to set the request properties.
         """
-        self.log = create_logger('Web Request')
+        self.log = kwargs.get('logger', create_logger(self.__class__.__name__))
 
         self.body: Dict[str, str] = kwargs.get('body', {})
         self.full_uri: str = kwargs.get('full_uri', "")

@@ -1,7 +1,10 @@
+import os
 import unittest
-from unittest.mock import patch, mock_open
 import logging
+
+from unittest.mock import patch, mock_open
 from utilities.logging.custom_logger import create_logger, load_logging_configuration, find_logging_config, file_name
+
 
 class TestLogger(unittest.TestCase):
     @patch('logging.getLogger')
@@ -36,7 +39,8 @@ class TestLogger(unittest.TestCase):
         mock_listdir.side_effect = [['not_logging.yaml'], [file_name]]
 
         config_path = find_logging_config()
-        self.assertEqual(config_path, '/path/' + file_name)
+        expected_path = os.path.join('/path', file_name)
+        self.assertEqual(config_path, expected_path)
 
     @patch('builtins.open', new_callable=mock_open, read_data='dummy_yaml_content')
     @patch('yaml.load', return_value={'version': 1})

@@ -15,6 +15,7 @@ from .dto import BaseDto
 
 T = TypeVar("T")
 
+
 def deserialized(type_hook: Type[T] = BaseDto, child: str = None, wait=None):
     """
     A decorator that deserializes the response data into the specified type.
@@ -30,7 +31,7 @@ def deserialized(type_hook: Type[T] = BaseDto, child: str = None, wait=None):
     def decorator(func):
         @functools.wraps(func)
         def wrapper(self, *args, **kwargs):
-            log = create_logger('Deserialize decorator for response')
+            log = create_logger('JSON Deserialization decorator for response')
             self.initialize()
             self.response_type = type_hook
 
@@ -60,12 +61,13 @@ def deserialized(type_hook: Type[T] = BaseDto, child: str = None, wait=None):
 
     return decorator
 
+
 class Response(IResponse[T], ABC):
     """
     A class representing a web service response.
     """
 
-    def __init__(self, type_hook: Type[T], data: Optional[bytes], response_encoding: str = "ascii"):
+    def __init__(self, type_hook: Type[T], data: Optional[bytes], response_encoding: str = "ascii", **kwargs):
         """
         Initializes the Response object.
 
@@ -74,7 +76,7 @@ class Response(IResponse[T], ABC):
             data: The raw response data.
             response_encoding: The encoding of the response data.
         """
-        self.log = create_logger("Web Response")
+        self.log = kwargs.get('logger', create_logger(self.__class__.__name__))
 
         self.__type_hook = type_hook
         self.__data = data

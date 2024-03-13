@@ -1,6 +1,6 @@
-import sys, json
+import json
 
-from utilities.contracts.file import IFileLoader
+from contracts.file import IFileLoader
 
 
 class ConfigJson(IFileLoader):
