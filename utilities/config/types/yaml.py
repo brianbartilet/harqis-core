@@ -8,10 +8,11 @@ class ConfigYaml(IFileLoader):
         self.loader_type = kwargs.get('loader_type', yaml.FullLoader)
 
     def load(self) -> any:
+        data = {}
         try:
             with open(self.file_name) as config_file:
                 data = yaml.load(config_file, Loader=self.loader_type)
         except FileNotFoundError as e:
-            sys.exit(f"Terminating application YAML configuration not loaded due to {e}.")
+            self.log.error(f"YAML configuration not loaded due to {e}.")
 
         return data

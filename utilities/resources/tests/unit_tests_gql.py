@@ -2,6 +2,7 @@ import unittest
 from unittest.mock import patch
 from utilities.resources.loader import ResourceDataLoader, Resource
 
+
 class TestResourceDataLoader(unittest.TestCase):
     def setUp(self):
         self.gql_mutation = 'mutation.gql'

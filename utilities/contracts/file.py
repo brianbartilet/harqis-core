@@ -3,10 +3,13 @@ from abc import ABC, abstractmethod
 from typing import TypeVar, Generic, Optional
 from pathlib import Path
 
+from utilities.logging.custom_logger import create_logger
 T = TypeVar('T')
 
 class IFileLoader(ABC, Generic[T]):
     def __init__(self, file_name: str, base_path: str = os.getcwd(), **kwargs) -> None:
+        self.log = kwargs.get('logger', create_logger(self.__class__.__name__))
+
         self.file_name = file_name
         self.base_path = Path(base_path)
 
