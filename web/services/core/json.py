@@ -1,10 +1,9 @@
-"""This module contains utilities for working with JSON, primarily for RESTful APIs."""
-
+"""This module contains utilities for working with JSON, primarily for webservice responses."""
 import json
+import jsonpickle
+
 from collections import OrderedDict
 from json import JSONDecodeError
-
-import jsonpickle
 from typing import TypeVar, Generic, Type, Union
 
 from utilities.logging.custom_logger import create_logger

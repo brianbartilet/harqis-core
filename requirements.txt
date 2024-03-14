@@ -7,6 +7,6 @@ psutil==5.9.8
 PyHamcrest==2.1.0
 pytest==8.0.2
 PyYAML==6.0.1
-requests==2.20.0
+requests==2.31.0
 selenium==3.141.0
-setuptools==28.8.0
+setuptools==69.1.1

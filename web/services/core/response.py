@@ -7,17 +7,16 @@ from typing import TypeVar, Type, Optional
 from requests.structures import CaseInsensitiveDict
 
 from web.services.core.contracts.response import IResponse
-from utilities.data.json import JsonUtility
+from web.services.core.json import JsonUtility, JsonObject
 from utilities.data.objects import ObjectUtilities
 from utilities.logging.custom_logger import create_logger
-
-from .dto import BaseDto
 
 T = TypeVar("T")
 
 
-def deserialized(type_hook: Type[T] = BaseDto, child: str = None, wait=None):
+def deserialized(type_hook: Type[T], child: str = None, wait=None):
     """
+    ***DEPRECATED***
     A decorator that deserializes the response data into the specified type.
 
     Args:
@@ -33,7 +32,6 @@ def deserialized(type_hook: Type[T] = BaseDto, child: str = None, wait=None):
         def wrapper(self, *args, **kwargs):
             log = create_logger('JSON Deserialization decorator for response')
             self.initialize()
-            self.response_type = type_hook
 
             if wait is not None:
                 time.sleep(wait)
@@ -44,11 +42,11 @@ def deserialized(type_hook: Type[T] = BaseDto, child: str = None, wait=None):
                 try:
                     if child is not None:
                         if isinstance(type_hook(), dict):
-                            return ObjectUtilities.convert_object_keys_to_snake_case(response_instance.json_data[child])
+                            return ObjectUtilities.convert_object_keys_to_snake_case(response_instance.data[child])
                         else:
                             return ObjectUtilities.convert_object_keys_to_snake_case(eval("response.deserialized_data." + child))
                     else:
-                        return ObjectUtilities.convert_object_keys_to_snake_case(response_instance.json_data)
+                        return ObjectUtilities.convert_object_keys_to_snake_case(response_instance.data)
 
                 except Exception as e:
                     log.warning(f"Cannot access deserialized data. Returning full response. ERROR: {e}")
@@ -77,6 +75,7 @@ class Response(IResponse[T], ABC):
             response_encoding: The encoding of the response data.
         """
         self.log = kwargs.get('logger', create_logger(self.__class__.__name__))
+        self.__data_key = kwargs.get('data_key', None)
 
         self.__type_hook = type_hook
         self.__data = data
@@ -114,7 +113,7 @@ class Response(IResponse[T], ABC):
         self.__status_code = HTTPStatus(status_code)
 
     @property
-    def json_data(self) -> T:
+    def data(self) -> T:
         """
         Returns the deserialized JSON data of the response.
 
@@ -122,7 +121,14 @@ class Response(IResponse[T], ABC):
             The deserialized JSON data.
         """
         try:
-            return JsonUtility.deserialize(self.__data.decode(self.__encoding), self.__type_hook)
+            data = JsonUtility.deserialize(self.__data.decode(self.__encoding), self.__type_hook)
+            if self.__data_key is not None:
+                if isinstance(data, JsonObject):
+                    return eval(f"data.{self.__data_key}")
+                else:
+                    return data[self.__data_key]
+            return data
+
         except Exception as e:
             self.log.error(f"Error deserializing JSON data: {e}")
             raise

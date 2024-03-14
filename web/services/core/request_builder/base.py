@@ -1,17 +1,15 @@
-import pprint
-
 from requests.structures import CaseInsensitiveDict
 
 from web.services.core.contracts.request_builder import IWebRequestBuilder
 from web.services.core.contracts.request import IWebServiceRequest
 
-from web.services.core.constants import PayloadType
+from web.services.core.constants.payload_type import PayloadType
 from web.services.core.constants.http_headers import HttpHeaders
 from web.services.core.constants.http_methods import HttpMethod
 
 from web.services.core.request import Request
 
-from utilities.data.json import JsonObject
+from web.services.core.json import JsonObject
 from utilities.logging.custom_logger import create_logger
 
 
@@ -62,9 +60,11 @@ class RequestBuilder(IWebRequestBuilder):
         Returns:
             The builder instance for chaining.
         """
-        if header_key in self._header:
-            self.log.debug(f"Header {header_key} already exists. Old value: {self._header[header_key.value]}, New Value: {header_value}")
+        if header_key.value in self._header:
+            self.log.debug(f"Header {header_key} already exists. Old value: {self._header[header_key.value]}, "
+                           f"New Value: {header_value}")
         self._header[header_key.value] = header_value
+
         return self
 
     def add_headers(self, headers: dict) -> IWebRequestBuilder:
@@ -78,6 +78,7 @@ class RequestBuilder(IWebRequestBuilder):
             The builder instance for chaining.
         """
         self._header.update(headers)
+
         return self
 
     def add_payload(self, payload, payload_type: PayloadType) -> IWebRequestBuilder:
@@ -93,6 +94,7 @@ class RequestBuilder(IWebRequestBuilder):
         """
         if self._body is None:
             self._body = {payload_type.value: payload}
+
         return self
 
     def add_file_payload(self, filename: str, filebytes: bytearray) -> IWebRequestBuilder:
@@ -108,6 +110,7 @@ class RequestBuilder(IWebRequestBuilder):
         """
         if self._body is None and filename is not None and filebytes is not None:
             self._body = {PayloadType.FILE.value: (filename, filebytes)}
+
         return self
 
     def add_json_object(self, payload: JsonObject) -> IWebRequestBuilder:
@@ -122,6 +125,7 @@ class RequestBuilder(IWebRequestBuilder):
         """
         if self._body is None and payload is not None:
             self._body = {PayloadType.JSON.value: payload.get_json()}
+
         return self
 
     def add_json_body(self, payload: JsonObject) -> IWebRequestBuilder:
@@ -136,6 +140,7 @@ class RequestBuilder(IWebRequestBuilder):
         """
         if self._body is None and payload is not None:
             self._body = {PayloadType.UNKNOWN.value: payload.get_json()}
+
         return self
 
     def add_json_payload(self, payload) -> IWebRequestBuilder:
@@ -150,6 +155,7 @@ class RequestBuilder(IWebRequestBuilder):
         """
         if self._body is None:
             self._body = {PayloadType.JSON.value: payload}
+
         return self
 
     def build(self) -> IWebServiceRequest:
@@ -161,12 +167,6 @@ class RequestBuilder(IWebRequestBuilder):
         """
         request = Request()
 
-        self.log.debug(
-            f"\nPROCESSING REQUEST:\n"
-            f"\theaders: {pprint.pformat(self._header)}\n"
-            f"\tquery: {pprint.pformat(self._query_strings)}\n"
-            f"\turi: {pprint.pformat(self._uri_params)}"
-        )
         if self._method:
             request.set_request_method(self._method)
         if self._header:
@@ -199,6 +199,7 @@ class RequestBuilder(IWebRequestBuilder):
             self.log.warning("query parameter '%s' already exists", query_name)
 
         self._query_strings[query_name] = query_value
+
         return self
 
     def add_query_strings(self, **kwargs) -> IWebRequestBuilder:

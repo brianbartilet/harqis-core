@@ -1,17 +1,21 @@
 from abc import abstractmethod
 from typing import TypeVar, Generic, Type
-T = TypeVar("T")
 
 from .request_builder import IWebRequestBuilder
 from .response import IResponse
 from .request import IWebServiceRequest
 from .client import IWebClient
 
-from web.services.core.constants.service_client_type import WSClientName
+from web.services.core.constants.service_client_type import WebService
 from web.services.core.config.webservice import AppConfigWSClient
-from web.services.core.clients import *
+from web.services.core.clients.rest import RestClient
+from web.services.core.clients.graphql import GraphQLClient
+from web.services.core.clients.grpc import GrpcClient
 
 from utilities.asserts.helper import LoggedAssertHelper
+
+T = TypeVar("T")
+
 
 class WSClientClass:
     """
@@ -23,12 +27,12 @@ class WSClientClass:
                     the values are the client classes.
     """
     map = {
-        str(WSClientName.GENERIC): RestClient,
-        str(WSClientName.CURL): RestClient,
-        str(WSClientName.SOAP): RestClient,
-        str(WSClientName.REST): RestClient,
-        str(WSClientName.GRAPHQL): GraphQLClient,
-        str(WSClientName.GRPC): GrpcClient
+        WebService.GENERIC.value: RestClient,
+        WebService.CURL.value: RestClient,
+        WebService.SOAP.value: RestClient,
+        WebService.REST.value: RestClient,
+        WebService.GRAPHQL.value: GraphQLClient,
+        WebService.GRPC.value: GrpcClient
     }
 
 
@@ -42,7 +46,17 @@ class IProtocolFixture(Generic[T]):
 
     The fixture uses a generic type T to represent the type of the response data expected from the web service.
     """
-    response_type: Type[T]
+
+    def __init__(self, config: AppConfigWSClient):
+        """
+        Initializes the protocol fixture with the given configuration.
+
+        Args:
+            config: The AppConfigWSClient object containing the configuration for the web service client.
+        """
+        self._config = config
+        self._client = WSClientClass.map[config.client](**config.parameters)
+        self._request = None
 
     @abstractmethod
     def initialize(self) -> (IWebRequestBuilder, IWebClient):
@@ -67,29 +81,19 @@ class IProtocolFixture(Generic[T]):
         ...
 
     @abstractmethod
-    def send_request(self, request: IWebServiceRequest, **kwargs) -> IResponse[T]:
+    def send_request(self, request: IWebServiceRequest, response_hook: Type[T] = dict, **kwargs) -> IResponse[T]:
         """
         Sends a web service request using the web client component and returns the response.
 
         Args:
             request: The web service request to be sent.
+            response_hook: The type to deserialize the response data into.
             kwargs: Optional keyword arguments that may be required for sending the request.
 
         Return:
             An instance of a class that implements the IResponse interface, containing the response data.
         """
         ...
-
-    def __init__(self, config: AppConfigWSClient):
-        """
-        Initializes the protocol fixture with the given configuration.
-
-        Args:
-            config: The AppConfigWSClient object containing the configuration for the web service client.
-        """
-        self._config = config
-        self._client = WSClientClass.map[config.client](**config.parameters)
-        self._request = None
 
     @property
     def client(self) -> IWebClient:
@@ -102,7 +106,7 @@ class IProtocolFixture(Generic[T]):
         return self._client
 
     @property
-    def request(self) -> IWebRequestBuilder:
+    def request(self) -> Type[T]:
         """
         Returns the request builder component of the protocol fixture.
 

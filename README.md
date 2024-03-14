@@ -52,4 +52,7 @@ For inquiries or feedback, please reach out to us at [brian.bartilet@gmail.com](
 
 ---
 
-Thank you, ChatGPT.
+workflows
+   get ws -> post ws -> get webbrowser
+   ws -> ws -> iot
+   getdevice -> device -> ws

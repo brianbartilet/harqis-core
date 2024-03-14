@@ -1,13 +1,15 @@
-from abc import ABC
 import requests
 import urllib.parse as url_helper
+
+from abc import ABC
 from typing import TypeVar, Type, Dict
 
 from utilities.logging.custom_logger import create_logger
 
 from web.services.core.contracts.client import IWebClient
-from web.services.core.contracts.fixture import IWebServiceRequest
+from web.services.core.contracts.request import IWebServiceRequest
 from web.services.core.response import IResponse, Response
+
 
 T = TypeVar('T')
 
@@ -18,7 +20,7 @@ class BaseWebClient(IWebClient, ABC):
     This class provides common functionality for sending HTTP requests and processing responses.
     """
 
-    def __init__(self, base_url: str, *, response_encoding: str = "ascii", verify_ssh: bool = True,
+    def __init__(self, base_url: str, *, response_encoding: str = "ascii", verify: bool = True,
                  use_session: bool = False, timeout: int = 5, **kwargs):
         """
         Initializes the BaseWebClient with the given configuration.
@@ -26,21 +28,20 @@ class BaseWebClient(IWebClient, ABC):
         Args:
             base_url: The base URL for the web service.
             response_encoding: The encoding to use for the response data. Defaults to 'ascii'.
-            verify_ssh: Whether to verify SSL certificates. Defaults to True.
+            verify: Whether to verify SSL certificates. Defaults to True.
             use_session: Whether to use a session for making requests. Defaults to False.
             timeout: The timeout in seconds for the requests. Defaults to 5.
         """
         self.log = kwargs.get('logger', create_logger(self.__class__.__name__))
 
         self.session = requests.Session() if use_session else None
-
         self.base_url = base_url.rstrip('/')
         self.response_encoding = response_encoding
-        self.verify_ssh = verify_ssh
+        self.verify = verify
         self.timeout = timeout
-
         self.cookies = {}
         self.proxies = {}
+        self.response = None
 
     def set_request_timeout(self, timeout: int) -> None:
         """
@@ -79,58 +80,64 @@ class BaseWebClient(IWebClient, ABC):
         """
         self.proxies = proxies
 
-    def execute_request(self, request: IWebServiceRequest, type_hook: Type[T], **kwargs) -> IResponse[T]:
+    def execute_request(self, r: IWebServiceRequest, response_hook: Type[T] = dict, **kwargs) -> IResponse[T]:
         """
         Executes a web service request and returns the response.
 
         Args:
-            request: The web service request to be executed.
-            type_hook: The type to deserialize the response data into.
+            r: The web service request to be executed.
+            response_hook: The type to deserialize the response data into.
             **kwargs: Additional keyword arguments to be passed to the request method.
 
         Return:
             An instance of IResponse containing the response data.
         """
         session = self.session or requests
-        raw_url = self.__get_raw_url__(request.get_full_url())
+        raw_url = self.__get_raw_url__(r.get_full_url())
 
         try:
-            response = session.request(
-                request.get_request_method().value,
+            self.log.debug(f"\nREQUEST:\n"
+                           f"\tmethod: {r.get_request_method().value.upper()}\n"
+                           f"\turl: {raw_url}\n"
+                           f"\tbody: {r.get_body()}\n"
+                           f"\theaders : {r.get_headers()}\n")
+
+            self.response = session.request(
+                r.get_request_method().value,
                 raw_url,
                 cookies=self.cookies,
-                verify=self.verify_ssh,
+                verify=self.verify,
                 timeout=self.timeout,
-                params=request.get_query_strings(),
-                headers=request.get_headers(),
-                auth=request.get_authorization(),
+                params=r.get_query_strings(),
+                headers=r.get_headers(),
+                auth=r.get_authorization(),
                 proxies=self.proxies,
-                **request.get_body(),
+                **r.get_body(),
                 **kwargs
             )
         except Exception as e:
-            self.log.error("Error sending %s request: %s", request.get_request_method().value, e)
+            self.log.error("Error sending %s request: %s", r.get_request_method().value, e)
             raise e
 
-        return self.get_response(response, type_hook)
+        return self.get_response(self.response, response_hook)
 
-    def get_response(self, response: requests.Response, type_hook: Type[T]) -> IResponse[T]:
+    def get_response(self, response: requests.Response, response_hook: Type[T]) -> IResponse[T]:
         """
         Processes the HTTP response and returns an IResponse instance.
 
         Args:
             response: The HTTP response received from the request.
-            type_hook: The type to deserialize the response data into.
+            response_hook: The type to deserialize the response data into.
 
         Return:
             An instance of IResponse containing the processed response data.
         """
-        result = Response(type_hook, data=None, response_encoding=self.response_encoding)
-        result.set_status_code(response.status_code)
-        result.set_headers(response.headers)
-        result.set_raw_data(response.content)
+        self.response = Response(response_hook, data=None, response_encoding=self.response_encoding)
+        self.response.set_status_code(response.status_code)
+        self.response.set_headers(response.headers)
+        self.response.set_raw_data(response.content)
 
-        return result
+        return self.response
 
     def __get_raw_url__(self, url_path_without_base: str, param_str: str = "", strip_right: bool = False) -> str:
         """

@@ -1,12 +1,12 @@
 import json
 
-from contracts.file import IFileLoader
+from utilities.contracts.file import IFileLoader
 
 
 class ConfigJson(IFileLoader):
 
     def __init__(self, **kwargs):
-        super(ConfigJson, self).__init__(**kwargs)
+        super(ConfigJson, self).__init__(file_extension='.json', **kwargs)
 
     def load(self) -> any:
         f = {}

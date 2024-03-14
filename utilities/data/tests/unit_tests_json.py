@@ -1,5 +1,5 @@
 import unittest
-from utilities.data.json import JsonObject, JsonUtility, keys_exists
+from web.services.core.json import JsonObject, JsonUtility, keys_exists
 import os
 
 class TestJsonObject(unittest.TestCase):

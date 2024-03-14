@@ -1,10 +1,11 @@
 import os
-from typing import TypeVar, Type
+from typing import Type
 from enum import Enum
+
+from utilities.resources.types import *
 
 T = TypeVar('T')
 
-from utilities.resources.types import *
 
 class Resource(Enum):
     JSON = ResourceFileJson
@@ -24,6 +25,10 @@ class ResourceDataLoader:
             file_name (str): The name of the configuration file to load.
             base_path (str): The base path to start searching for the configuration file.
         """
+        if not file_name.endswith('.gql'):
+            file_name += '.gql'
+        self.file_name = file_name
+
         self._resource = resource.value(file_name=file_name, base_path=base_path, **kwargs)
 
     @property

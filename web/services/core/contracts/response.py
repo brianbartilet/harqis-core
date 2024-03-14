@@ -28,7 +28,7 @@ class IResponse(Generic[T]):
 
     @property
     @abstractmethod
-    def json_data(self) -> T:
+    def data(self) -> T:
         """
         Returns a strongly typed object based on the response data.
         """

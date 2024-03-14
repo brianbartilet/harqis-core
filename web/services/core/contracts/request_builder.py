@@ -2,10 +2,11 @@ from abc import ABC, abstractmethod
 
 from web.services.core.constants.payload_type import PayloadType
 from web.services.core.constants.http_methods import HttpMethod
+from web.services.core.constants.http_headers import HttpHeaders
 
 from web.services.core.contracts.request import IWebServiceRequest
 
-from utilities.data.json import JsonObject
+from web.services.core.json import JsonObject
 
 from requests.structures import CaseInsensitiveDict
 
@@ -29,7 +30,7 @@ class IWebRequestBuilder(ABC):
         ...
 
     @abstractmethod
-    def add_header(self, header_key: str, header_value: str) -> "IWebRequestBuilder":
+    def add_header(self, header_key: HttpHeaders, header_value: str) -> "IWebRequestBuilder":
         """
         Adds a single header to the request.
 

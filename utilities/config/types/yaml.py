@@ -1,10 +1,11 @@
 import yaml
 
-from contracts.file import IFileLoader
+from utilities.contracts.file import IFileLoader
+
 
 class ConfigYaml(IFileLoader):
     def __init__(self, **kwargs):
-        super(ConfigYaml, self).__init__(**kwargs)
+        super(ConfigYaml, self).__init__(**kwargs, file_extension='.yaml')
         self.loader_type = kwargs.get('loader_type', yaml.FullLoader)
 
     def load(self) -> any:

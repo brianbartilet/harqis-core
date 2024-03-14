@@ -6,19 +6,19 @@ from .request import IWebServiceRequest
 
 T = TypeVar("T")
 
+
 class IWebClient(ABC):
     """
     Interface for a web client that can execute web service requests and handle responses.
     """
-
     @abstractmethod
-    def execute_request(self, request_object: IWebServiceRequest, type_hook: Type[T]) -> IResponse[T]:
+    def execute_request(self, request: IWebServiceRequest, response_hook: Type[T] = dict, **kwargs) -> IResponse[T]:
         """
         Execute a web service request and return the response.
 
         Args:
-            request_object: The request object to be executed.
-            type_hook: The type to deserialize the response data into.
+            request: The request object to be executed.
+            response_hook: The type to deserialize the response data into.
 
         Return:
             The response object.
@@ -76,5 +76,15 @@ class IWebClient(ABC):
 
         Return:
             The processed response object.
+        """
+        ...
+
+    @abstractmethod
+    def get_errors(self) -> Type[T]:
+        """
+        Get the errors from the web client.
+
+        Return:
+            The errors from the web client.
         """
         ...

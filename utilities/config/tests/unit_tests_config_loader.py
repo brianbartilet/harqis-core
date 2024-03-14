@@ -22,6 +22,12 @@ class UnitTestsConfigLoader(unittest.TestCase):
         loader = ConfigLoader(Configuration.YAML, file_name=file)
         self.assertIsInstance(loader.config, dict)
 
+    def test_override_path_yaml_without_file_extension(self):
+        """Test loading a YAML configuration file by specifying the file name."""
+        file = 'data'
+        loader = ConfigLoader(Configuration.YAML, file_name=file)
+        self.assertIsInstance(loader.config, dict)
+
     def test_override_path_yaml_fail(self):
         """Test loading a non-existent YAML configuration file, expecting a SystemExit exception."""
         with self.assertRaises(FileNotFoundError):

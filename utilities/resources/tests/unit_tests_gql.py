@@ -8,6 +8,7 @@ class TestResourceDataLoader(unittest.TestCase):
         self.gql_mutation = 'mutation.gql'
         self.gql_query = 'query.gql'
         self.base_path = 'path'
+        self.gql_no_extension = 'query'
 
     @patch('utilities.resources.loader.ResourceFileGql.load')
     @patch('utilities.resources.loader.ResourceFileGql.find_file_from_base_path')
@@ -27,11 +28,18 @@ class TestResourceDataLoader(unittest.TestCase):
         self.assertIn('query', data)
         self.assertIn('variables', data)
 
+    def test_gql_loader_success_file_query_no_extension(self):
+        loader = ResourceDataLoader(Resource.GQL, self.gql_no_extension, self.base_path)
+        data = loader.data
+        self.assertIn('query', data)
+        self.assertIn('variables', data)
+
     def test_gql_loader_success_file_query_with_variables(self):
         class MockedClass:
             def __init__(self):
                 self.value = 100
+
         dto = MockedClass()
-        loader = ResourceDataLoader(Resource.GQL, self.gql_query, self.base_path, variables=dto)
+        loader = ResourceDataLoader(Resource.GQL, self.gql_query, self.base_path, variables=dto.__dict__)
         data = loader.data
         self.assertIn('value', data['variables'])

@@ -1,12 +1,18 @@
-from web.services.core.contracts import *
-from web.services.core.request_builder import RequestBuilder
+from web.services.core.request_builder.rest import RequestBuilderRest
+
+from web.services.core.contracts.fixture import IProtocolFixture
+from web.services.core.contracts.request_builder import IWebRequestBuilder
+from web.services.core.contracts.client import IWebClient
+from web.services.core.contracts.response import IResponse
+from web.services.core.contracts.request import IWebServiceRequest
+
 
 from typing import TypeVar
 T = TypeVar("T")
 V = TypeVar("V")
 
 
-class FixtureRest(IProtocolFixture[T]):
+class BaseFixtureRest(IProtocolFixture[T]):
     """
     A class implementing the IProtocolFixture interface for RESTful web services.
 
@@ -14,18 +20,19 @@ class FixtureRest(IProtocolFixture[T]):
     for making those requests.
     """
 
-    def send_request(self, r: IWebServiceRequest, **kwargs) -> IResponse[T]:
+    def send_request(self, request: IWebServiceRequest, response_hook=dict, **kwargs) -> IResponse[T]:
         """
         Sends a RESTful web service request and returns the response.
 
         Args:
-            r: The web service request to be sent.
+            request: The web service request to be sent.
+            response_hook: The type to deserialize the response data into.
             **kwargs: Additional keyword arguments to be passed to the request.
 
         Returns:
             An instance of IResponse containing the response data.
         """
-        return self._client.execute_request(r, self.response_type, **kwargs)
+        return self._client.execute_request(request, response_hook, **kwargs)
 
     def get_request_builder(self) -> IWebRequestBuilder:
         """
@@ -34,7 +41,7 @@ class FixtureRest(IProtocolFixture[T]):
         Returns:
             An instance of RequestBuilder for building RESTful requests.
         """
-        return RequestBuilder()
+        return RequestBuilderRest()
 
     def initialize(self) -> (IWebRequestBuilder, IWebClient):
         """

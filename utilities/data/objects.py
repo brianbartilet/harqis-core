@@ -1,5 +1,6 @@
 import re
 
+
 class ObjectUtilities:
     @staticmethod
     def convert_dictionary_keys_to_snake_case(cur_object=None):

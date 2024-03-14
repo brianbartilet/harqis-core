@@ -3,7 +3,7 @@ from utilities import *
 
 from behave.model import Table
 
-from web.services.core.constants.service_client_type import WSClientName
+from web.services.core.constants.service_client_type import WebService
 from abc import abstractmethod
 
 class BasePage(SeleniumDriver):

@@ -1,6 +1,7 @@
 from enum import Enum
 
-class WSClientName(Enum):
+
+class WebService(Enum):
     """
     Enum for different types of service clients.
     """
