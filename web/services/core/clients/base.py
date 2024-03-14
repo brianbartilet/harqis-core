@@ -139,6 +139,15 @@ class BaseWebClient(IWebClient, ABC):
 
         return self.response
 
+    def get_errors(self) -> Type[T]:
+        """
+        Processes the HTTP response and returns an IResponse instance.
+
+        Return:
+            An instance of IResponse containing the processed response data.
+        """
+        raise NotImplementedError("This method must be implemented in a derived class.")
+
     def __get_raw_url__(self, url_path_without_base: str, param_str: str = "", strip_right: bool = False) -> str:
         """
         Constructs the full URL for the request.

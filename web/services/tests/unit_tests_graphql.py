@@ -28,7 +28,7 @@ class TestsUnitWebServices(unittest.TestCase):
         then.assert_that(when.status_code, then.equal_to(HTTPStatus.OK))
         then.assert_that(when.data, then.has_property('Media'))
 
-    def test_sample_query_with_type_error(self):
+    def test_sample_query_with_invalid_gql(self):
         given_fixture = BaseTestFixtureAppQuery(gql_file='invalid.tpl.gql')
         variables = {'invalid_key': 0 }
         given_request = given_fixture.sample_request(variables)
