@@ -99,8 +99,7 @@ class BaseWebClient(IWebClient, ABC):
             self.log.debug(f"\nREQUEST:\n"
                            f"\tmethod: {r.get_request_method().value.upper()}\n"
                            f"\turl: {raw_url}\n"
-                           f"\tbody: {r.get_body()}\n"
-                           f"\theaders : {r.get_headers()}\n")
+                           f"\tbody: {r.get_body()}\n")
 
             self.response = session.request(
                 r.get_request_method().value,

@@ -1,4 +1,6 @@
 import json
+import os
+
 from utilities.contracts.file import IFileLoader
 from typing import TypeVar, Any
 from jsonschema import validate, ValidationError
@@ -13,11 +15,8 @@ class ResourceFileJsonSchema(IFileLoader):
         self.encoding = kwargs.get('encoding', 'utf-8')
 
     def load(self) -> Any:
-        file_path = self.find_file_from_base_path()
-        if file_path is None:
-            raise FileNotFoundError
         try:
-            with open(file_path, 'r', encoding=self.encoding) as resource:
+            with open(self.full_path_to_file, 'r', encoding=self.encoding) as resource:
                 s = json.load(resource)
                 return s
         except FileNotFoundError as e:

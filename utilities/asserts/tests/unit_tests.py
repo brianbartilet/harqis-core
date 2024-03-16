@@ -3,6 +3,7 @@ from unittest.mock import MagicMock
 from utilities.asserts.helper import LoggedAssertHelper, raise_any_exception, is_between
 from hamcrest import *
 
+
 class TestLoggedAssertHelper(unittest.TestCase):
 
     def setUp(self):

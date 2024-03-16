@@ -27,7 +27,7 @@ class RequestBuilderGraphQL(RequestBuilder):
             .set_method(HttpMethod.POST)\
             .add_header(HttpHeaders.CONTENT_TYPE, MimeType.APP_JSON.value)
 
-    def set_variables(self, variables: Type[T]):
+    def set_variables(self, variables: T):
         if isinstance(variables, JsonObject):
             variables = variables.get_dict()
         else:

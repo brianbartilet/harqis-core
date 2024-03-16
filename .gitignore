@@ -1,3 +1,8 @@
 .idea
+*.log*
+*.dat*
+*.dir*
+*.bak*
 **/*.log
 **/*screenshots/
+*config.yaml*

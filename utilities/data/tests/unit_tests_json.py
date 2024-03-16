@@ -2,6 +2,7 @@ import unittest
 from web.services.core.json import JsonObject, JsonUtility, keys_exists
 import os
 
+
 class TestJsonObject(unittest.TestCase):
     """Tests for the JsonObject class."""
 

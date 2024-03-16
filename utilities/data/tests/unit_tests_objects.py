@@ -1,12 +1,13 @@
 import unittest
-from utilities.data.objects import ObjectUtilities
+from utilities.data.objects import ObjectUtils
+
 
 class UnitTestsObjectUtilities(unittest.TestCase):
     def test_convert_to_snake_case(self):
         """Test converting strings from camelCase and PascalCase to snake_case."""
-        self.assertEqual(ObjectUtilities.convert_to_snake_case('camelCase'), 'camel_case')
-        self.assertEqual(ObjectUtilities.convert_to_snake_case('PascalCase'), 'pascal_case')
-        self.assertEqual(ObjectUtilities.convert_to_snake_case('snake_case'), 'snake_case')
+        self.assertEqual(ObjectUtils.convert_to_snake_case('camelCase'), 'camel_case')
+        self.assertEqual(ObjectUtils.convert_to_snake_case('PascalCase'), 'pascal_case')
+        self.assertEqual(ObjectUtils.convert_to_snake_case('snake_case'), 'snake_case')
 
     def test_convert_dictionary_keys_to_snake_case(self):
         """Test converting dictionary keys in an object to snake_case."""
@@ -16,7 +17,7 @@ class UnitTestsObjectUtilities(unittest.TestCase):
                     setattr(self, key, value)
 
         obj = TestObject(camelCaseKey=1, PascalCaseKey=2)
-        converted_obj = ObjectUtilities.convert_dictionary_keys_to_snake_case(obj)
+        converted_obj = ObjectUtils.convert_dict_keys_to_snake(obj)
 
         self.assertTrue(hasattr(converted_obj, 'camel_case_key'))
         self.assertTrue(hasattr(converted_obj, 'pascal_case_key'))
@@ -31,7 +32,7 @@ class UnitTestsObjectUtilities(unittest.TestCase):
                     setattr(self, key, value)
 
         obj_list = [TestObject(camelCaseKey=1, PascalCaseKey=2), TestObject(camelCaseKey=3, PascalCaseKey=4)]
-        converted_list = ObjectUtilities.convert_object_list_to_snake_case(obj_list)
+        converted_list = ObjectUtils.convert_objects_to_snake(obj_list)
 
         for obj in converted_list:
             self.assertTrue(hasattr(obj, 'camel_case_key'))
@@ -47,7 +48,7 @@ class UnitTestsObjectUtilities(unittest.TestCase):
                     setattr(self, key, value)
 
         obj = TestObject(camelCaseKey=1, PascalCaseKey=2)
-        converted_obj = ObjectUtilities.convert_object_keys_to_snake_case(obj)
+        converted_obj = ObjectUtils.convert_object_keys_to_snake(obj)
 
         self.assertTrue(hasattr(converted_obj, 'camel_case_key'))
         self.assertTrue(hasattr(converted_obj, 'pascal_case_key'))
@@ -55,7 +56,7 @@ class UnitTestsObjectUtilities(unittest.TestCase):
         self.assertFalse(hasattr(converted_obj, 'PascalCaseKey'))
 
         obj_list = [TestObject(camelCaseKey=1, PascalCaseKey=2), TestObject(camelCaseKey=3, PascalCaseKey=4)]
-        converted_list = ObjectUtilities.convert_object_keys_to_snake_case(obj_list)
+        converted_list = ObjectUtils.convert_object_keys_to_snake(obj_list)
 
         for obj in converted_list:
             self.assertTrue(hasattr(obj, 'camel_case_key'))
@@ -76,7 +77,7 @@ class UnitTestsObjectUtilities(unittest.TestCase):
                 self.key2 = key2
 
         obj_list = [SourceObject(key1=1, key2=2), SourceObject(key1=3, key2=4)]
-        converted_list = ObjectUtilities.convert_object_list(obj_list, TargetObject)
+        converted_list = ObjectUtils.convert_object_list(obj_list, TargetObject)
 
         self.assertIsInstance(converted_list[0], TargetObject)
         self.assertIsInstance(converted_list[1], TargetObject)

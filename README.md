@@ -51,8 +51,17 @@ HARQIS is distributed under the [MIT License](LICENSE).
 For inquiries or feedback, please reach out to us at [brian.bartilet@gmail.com](mailto:brian.bartilet@gmail.com).
 
 ---
+automation swiss army knife
+   - may it be for testing and general automation
+   - contains fixtures for frontend, backend, and iot
+   - end to end testing, integration testing functional
 
-workflows
+workflow builder zaiper all in code, contorol data
+   - ability to create a workflow
    get ws -> post ws -> get webbrowser
    ws -> ws -> iot
    getdevice -> device -> ws
+   - publuih workflow as events to run by executor
+
+gpt assisted test code generation and analysis
+   - use cases: rest api spec -automated test code from avaiable fixture

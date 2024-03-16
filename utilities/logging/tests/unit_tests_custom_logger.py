@@ -46,13 +46,13 @@ class TestLogger(unittest.TestCase):
     @patch('yaml.load', return_value={'version': 1})
     @patch('logging.config.dictConfig')
     @patch('utilities.logging.custom_logger.find_logging_config', return_value='/path/to/' + file_name)
-    def test_load_logging_configuration(self, mock_find_logging_config, mock_dict_config, mock_yaml_load, mock_open):
+    def test_load_logging_configuration(self, mock_find_logging_config, mock_dict_config, mock_yaml_load, mock):
         """
         Test that the load_logging_configuration function correctly loads the logging configuration from the YAML file.
         """
         logger = load_logging_configuration()
         mock_find_logging_config.assert_called_once()
-        mock_open.assert_called_with('/path/to/' + file_name)
+        mock.assert_called_with('/path/to/' + file_name)
         mock_yaml_load.assert_called_once()
         mock_dict_config.assert_called_once()
         self.assertIsInstance(logger, logging.Logger)

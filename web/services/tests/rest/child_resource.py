@@ -1,7 +1,7 @@
 from web.services.core.constants.http_methods import HttpMethod
 from web.services.core.json import JsonObject
 
-from .base_resource import BaseTestFixtureApp
+from .base_resource import BaseTestFixtureService
 
 response_check_get = {"userId": 1,
                       "id": 1,
@@ -30,7 +30,7 @@ class DtoUserTestCamel(JsonObject):
     body: str = None
 
 
-class ChildTestFixtureResource(BaseTestFixtureApp):
+class ChildTestFixtureResource(BaseTestFixtureService):
 
     def get(self):
         self.request\

@@ -8,7 +8,7 @@ from requests.structures import CaseInsensitiveDict
 
 from web.services.core.contracts.response import IResponse
 from web.services.core.json import JsonUtility, JsonObject
-from utilities.data.objects import ObjectUtilities
+from utilities.data.objects import ObjectUtils
 from utilities.logging.custom_logger import create_logger
 
 T = TypeVar("T")
@@ -42,11 +42,11 @@ def deserialized(type_hook: Type[T], child: str = None, wait=None):
                 try:
                     if child is not None:
                         if isinstance(type_hook(), dict):
-                            return ObjectUtilities.convert_object_keys_to_snake_case(response_instance.data[child])
+                            return ObjectUtils.convert_object_keys_to_snake(response_instance.data[child])
                         else:
-                            return ObjectUtilities.convert_object_keys_to_snake_case(eval("response.deserialized_data." + child))
+                            return ObjectUtils.convert_object_keys_to_snake(eval("response.deserialized_data." + child))
                     else:
-                        return ObjectUtilities.convert_object_keys_to_snake_case(response_instance.data)
+                        return ObjectUtils.convert_object_keys_to_snake(response_instance.data)
 
                 except Exception as e:
                     log.warning(f"Cannot access deserialized data. Returning full response. ERROR: {e}")

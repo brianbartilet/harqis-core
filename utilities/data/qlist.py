@@ -2,6 +2,7 @@ from typing import Callable, TypeVar, Generic, MutableSequence, Iterable
 
 T = TypeVar("T")
 
+
 class QList(list, Generic[T], MutableSequence[T], Iterable[T]):
     """
     A class that mimics LINQ in C# providing a fluent way for list comprehension.

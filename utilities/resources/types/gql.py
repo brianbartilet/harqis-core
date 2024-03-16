@@ -1,6 +1,8 @@
-from utilities.contracts.file import IFileLoader
+import os
 
 from typing import TypeVar
+
+from utilities.contracts.file import IFileLoader
 
 T = TypeVar('T')
 
@@ -13,9 +15,8 @@ class ResourceFileGql(IFileLoader):
         self.variables: T = kwargs.get('variables', {})
 
     def load(self) -> any:
-        file_path = self.find_file_from_base_path()
         try:
-            with open(file_path, 'r', encoding=self.encoding) as resource:
+            with open(self.full_path_to_file, 'r', encoding=self.encoding) as resource:
                 s = resource.read()
                 data = {"query": s, "variables": self.variables}
         except FileNotFoundError as e:

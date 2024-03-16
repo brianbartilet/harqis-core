@@ -5,7 +5,7 @@ from utilities.resources.types.json_schema import ResourceFileJsonSchema
 class TestResourceFileJsonSchema(unittest.TestCase):
     def setUp(self):
         # Assuming there is a valid schema file 'test_schema.json' in the test directory
-        self.schema_loader = ResourceFileJsonSchema(file_name='test_schema.json', base_path='tests')
+        self.schema_loader = ResourceFileJsonSchema(file_name='schema.json', base_path='tests')
 
     def test_load_schema(self):
         schema = self.schema_loader.load()

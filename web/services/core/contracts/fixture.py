@@ -36,7 +36,7 @@ class WSClientClass:
     }
 
 
-class IProtocolFixture(Generic[T]):
+class IFixtureWebService(Generic[T]):
     """
     An interface for a testing fixture that aggregates components for building and sending web requests.
 
@@ -47,7 +47,7 @@ class IProtocolFixture(Generic[T]):
     The fixture uses a generic type T to represent the type of the response data expected from the web service.
     """
 
-    def __init__(self, config: AppConfigWSClient):
+    def __init__(self, config: AppConfigWSClient, **kwargs):
         """
         Initializes the protocol fixture with the given configuration.
 
@@ -57,16 +57,6 @@ class IProtocolFixture(Generic[T]):
         self._config = config
         self._client = WSClientClass.map[config.client](**config.parameters)
         self._request = None
-
-    @abstractmethod
-    def initialize(self) -> (IWebRequestBuilder, IWebClient):
-        """
-        Initializes the testing fixture and returns the request builder and web client components.
-
-        Return:
-            A tuple containing the request builder and web client instances.
-        """
-        ...
 
     @abstractmethod
     def get_request_builder(self) -> IWebRequestBuilder:
@@ -93,7 +83,17 @@ class IProtocolFixture(Generic[T]):
         Return:
             An instance of a class that implements the IResponse interface, containing the response data.
         """
-        ...
+        return self._client.execute_request(request, response_hook, **kwargs)
+
+    @property
+    def config(self) -> AppConfigWSClient:
+        """
+        Returns the web client component of the protocol fixture.
+
+        Return:
+            The web client instance.
+        """
+        return self._config
 
     @property
     def client(self) -> IWebClient:
@@ -106,7 +106,7 @@ class IProtocolFixture(Generic[T]):
         return self._client
 
     @property
-    def request(self) -> Type[T]:
+    def request(self) -> IWebRequestBuilder:
         """
         Returns the request builder component of the protocol fixture.
 
@@ -116,16 +116,6 @@ class IProtocolFixture(Generic[T]):
         if self._request is None:
             self._request = self.get_request_builder()
         return self._request
-
-    @property
-    def app_data(self) -> dict:
-        """
-        Returns the application-specific data from the configuration.
-
-        Return:
-            A dictionary containing the application-specific data.
-        """
-        return self._config.app_data
 
     @property
     def verify(self) -> LoggedAssertHelper:

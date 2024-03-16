@@ -1,4 +1,5 @@
 import yaml
+import os
 
 from utilities.contracts.file import IFileLoader
 
@@ -11,7 +12,7 @@ class ConfigYaml(IFileLoader):
     def load(self) -> any:
         data = {}
         try:
-            with open(self.file_name) as config_file:
+            with open(self.full_path_to_file) as config_file:
                 data = yaml.load(config_file, Loader=self.loader_type)
         except FileNotFoundError as e:
             self.log.error(f"YAML configuration not loaded due to {e}.")

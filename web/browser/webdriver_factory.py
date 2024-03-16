@@ -12,13 +12,9 @@ from datetime import datetime
 from selenium import webdriver
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from selenium.webdriver.common.proxy import Proxy, ProxyType
 #from win32api import GetFileVersionInfo, LOWORD, HIWORD
 
-from selenium.webdriver.ie.options import Options
 from contextlib import contextmanager
-
-from environment_variables import *
 
 
 class WebDriverFactory:
