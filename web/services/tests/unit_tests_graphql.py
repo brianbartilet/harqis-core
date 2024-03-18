@@ -46,6 +46,10 @@ class TestsUnitWebServices(unittest.TestCase):
         then.assert_that(when.status_code, then.equal_to(HTTPStatus.OK))
         then.assert_that(when.data, then.has_property('Media'))
 
+        #  test chaining
+        when = given_fixture.send_request(given_request, response_hook=TestDtoQuery)
+        then.assert_that(when.status_code, then.equal_to(HTTPStatus.OK))
+
     def test_sample_query_with_invalid_gql(self):
         given_fixture = BaseTestFixtureAppQuery(given_config, gql_file='invalid.tpl.gql')
         given_payload = {'invalid_key': 0 }

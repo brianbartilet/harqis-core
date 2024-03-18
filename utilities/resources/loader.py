@@ -4,7 +4,7 @@ from enum import Enum
 
 from utilities.resources.types import *
 
-T = TypeVar('T')
+TData = TypeVar('TData')
 
 
 class Resource(Enum):
@@ -32,7 +32,7 @@ class ResourceDataLoader:
         self._resource = resource.value(file_name=file_name, base_path=base_path, **kwargs)
 
     @property
-    def data(self) -> T:
+    def data(self) -> TData:
         """
         Loads the data of target using the specified resource type.
 

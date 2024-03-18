@@ -4,7 +4,7 @@ from typing import TypeVar
 
 from utilities.contracts.file import IFileLoader
 
-T = TypeVar('T')
+TData = TypeVar('TData')
 
 
 class ResourceFileGql(IFileLoader):
@@ -12,7 +12,7 @@ class ResourceFileGql(IFileLoader):
         super(ResourceFileGql, self).__init__(file_extension='.gql', **kwargs)
 
         self.encoding = kwargs.get('encoding', 'utf-8')
-        self.variables: T = kwargs.get('variables', {})
+        self.variables: TData = kwargs.get('variables', {})
 
     def load(self) -> any:
         try:

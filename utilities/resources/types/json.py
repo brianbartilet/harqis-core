@@ -1,5 +1,5 @@
-from config.types.json import ConfigJson
+from config.types.json import ConfigFileJson
 
 
-class ResourceFileJson(ConfigJson):
+class ResourceFileJson(ConfigFileJson):
     ...

@@ -11,7 +11,7 @@ from web.services.core.contracts.request import IWebServiceRequest
 from web.services.core.response import IResponse, Response
 
 
-T = TypeVar('T')
+TResponseData = TypeVar('TResponseData')
 
 
 class BaseWebClient(IWebClient, ABC):
@@ -80,7 +80,7 @@ class BaseWebClient(IWebClient, ABC):
         """
         self.proxies = proxies
 
-    def execute_request(self, r: IWebServiceRequest, response_hook: Type[T] = dict, **kwargs) -> IResponse[T]:
+    def execute_request(self, r: IWebServiceRequest, response_hook: Type[TResponseData] = dict, **kwargs) -> IResponse[TResponseData]:
         """
         Executes a web service request and returns the response.
 
@@ -120,7 +120,7 @@ class BaseWebClient(IWebClient, ABC):
 
         return self.get_response(self.response, response_hook)
 
-    def get_response(self, response: requests.Response, response_hook: Type[T]) -> IResponse[T]:
+    def get_response(self, response: requests.Response, response_hook: Type[TResponseData]) -> IResponse[TResponseData]:
         """
         Processes the HTTP response and returns an IResponse instance.
 
@@ -138,7 +138,7 @@ class BaseWebClient(IWebClient, ABC):
 
         return self.response
 
-    def get_errors(self) -> Type[T]:
+    def get_errors(self) -> Type[TResponseData]:
         """
         Processes the HTTP response and returns an IResponse instance.
 

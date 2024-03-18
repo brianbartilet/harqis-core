@@ -6,7 +6,8 @@ from web.services.core.clients.base import BaseWebClient
 from web.services.core.contracts.response import IResponse
 from web.services.core.response import Response
 
-T = TypeVar('T')
+TResponse = TypeVar('TResponse')
+TErrors = TypeVar('TErrors')
 
 
 class GraphQLClient(BaseWebClient):
@@ -14,7 +15,7 @@ class GraphQLClient(BaseWebClient):
     A base class for a GraphQL web client that implements the IWebClient interface.
     This class provides common functionality for sending HTTP requests and processing responses.
     """
-    def get_response(self, response: requests.Response, response_hook: Type[T]) -> IResponse[T]:
+    def get_response(self, response: requests.Response, response_hook: Type[TResponse]) -> IResponse[TResponse]:
         """
         Processes the HTTP response and returns an IResponse instance.
 
@@ -32,7 +33,7 @@ class GraphQLClient(BaseWebClient):
 
         return self.response
 
-    def get_errors(self) -> Response[T]:
+    def get_errors(self) -> Response[TErrors]:
         error_response = Response(dict, data=None, response_encoding=self.response_encoding, data_key='errors')
         error_response.set_raw_data(self.response.raw_data)
 

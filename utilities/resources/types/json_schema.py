@@ -1,12 +1,9 @@
 import json
-import os
 
 from utilities.contracts.file import IFileLoader
-from typing import TypeVar, Any
+from typing import Any
 from jsonschema import validate, ValidationError
 from json.decoder import JSONDecodeError
-
-T = TypeVar('T')
 
 
 class ResourceFileJsonSchema(IFileLoader):

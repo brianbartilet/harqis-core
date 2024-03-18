@@ -4,13 +4,17 @@ from web.services.core.contracts.request_builder import IWebRequestBuilder
 from web.services.core.contracts.request import IWebServiceRequest
 
 from web.services.core.constants.payload_type import PayloadType
-from web.services.core.constants.http_headers import HttpHeaders
 from web.services.core.constants.http_methods import HttpMethod
 
 from web.services.core.request import Request
 
 from web.services.core.json import JsonObject
 from utilities.logging.custom_logger import create_logger
+
+from enum import Enum
+from typing import TypeVar
+
+THeader = TypeVar("THeader")
 
 
 class RequestBuilder(IWebRequestBuilder):
@@ -49,21 +53,27 @@ class RequestBuilder(IWebRequestBuilder):
         self._method = method
         return self
 
-    def add_header(self, header_key: HttpHeaders, header_value: str) -> IWebRequestBuilder:
+    def add_header(self, header_key: THeader, header_value: str) -> IWebRequestBuilder:
         """
         Adds a single header to the request.
 
         Args:
-            header_key: The key of the header.
+            header_key: The key of the header defined from set of keys or string.
             header_value: The value of the header.
 
         Returns:
             The builder instance for chaining.
         """
-        if header_key.value in self._header:
-            self.log.debug(f"Header {header_key} already exists. Old value: {self._header[header_key.value]}, "
+
+        if isinstance(header_key, Enum):
+            key = header_key.value
+        else:
+            key = header_key
+
+        if key in self._header:
+            self.log.debug(f"Header {header_key} already exists. Old value: {self._header[key]}, "
                            f"New Value: {header_value}")
-        self._header[header_key.value] = header_value
+        self._header[key] = header_value
 
         return self
 
@@ -158,7 +168,7 @@ class RequestBuilder(IWebRequestBuilder):
 
         return self
 
-    def build(self) -> IWebServiceRequest:
+    def build(self, clear_all=False) -> IWebServiceRequest:
         """
         Builds the web service request.
 
@@ -180,7 +190,7 @@ class RequestBuilder(IWebRequestBuilder):
         request.set_full_url(uri_string)
         request.set_url_strip_right(self.strip_right_url_path)
 
-        self.__initialize__()
+        self.__initialize__(clear_all)
 
         return request
 
@@ -270,15 +280,20 @@ class RequestBuilder(IWebRequestBuilder):
         """
         self.strip_right_url_path = toggle
 
-    def __initialize__(self):
+    def __initialize__(self, clear_all: bool):
         """
-        Reinitializes the builder instance to its default state.
+        Re-initializes the builder instance to its default state.
         """
+
+        #  reset properties for function re-usability in service
         self._method = None
-        self._header = {}
         self._query_strings = {}
-        self._uri_params = []
         self._body = None
+
+        #  keep properties
+        if clear_all:
+            self._header = None
+            self._uri_params = None
 
     def __get_uri_param__(self):
         """

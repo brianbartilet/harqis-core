@@ -2,10 +2,10 @@ from abc import abstractmethod
 from typing import TypeVar, Generic, Dict
 from http import HTTPStatus
 
-T = TypeVar("T")
+TResponse = TypeVar("TResponse")
 
 
-class IResponse(Generic[T]):
+class IResponse(Generic[TResponse]):
     """
     A generic container for encapsulating HTTP responses.
     """
@@ -28,7 +28,7 @@ class IResponse(Generic[T]):
 
     @property
     @abstractmethod
-    def data(self) -> T:
+    def data(self) -> TResponse:
         """
         Returns a strongly typed object based on the response data.
         """

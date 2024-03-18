@@ -32,33 +32,47 @@ class DtoUserTestCamel(JsonObject):
 
 class ChildTestFixtureResource(BaseTestFixtureService):
 
-    def get(self):
+    def __init__(self):
+        super(ChildTestFixtureResource, self).__init__()
+        self.request.add_uri_parameter('posts')
+
+    def request_get(self):
         self.request\
             .set_method(HttpMethod.GET)\
-            .add_uri_parameter('posts')\
             .add_uri_parameter('1')
 
         return self.request.build()
 
-    def post(self):
+    def request_post(self):
         self.request \
             .set_method(HttpMethod.POST) \
-            .add_uri_parameter('posts')\
             .add_json_payload(post_payload)
 
         return self.request.build()
 
-    def post_with_json_object(self, payload: JsonObject):
+    def request_post_with_json_object(self, payload: JsonObject):
         self.request \
             .set_method(HttpMethod.POST) \
-            .add_uri_parameter('posts')\
             .add_json_body(payload)
 
         return self.request.build()
 
-    def delete(self):
+    def request_delete(self):
         self.request \
-            .set_method(HttpMethod.DELETE) \
-            .add_uri_parameter('posts')
+            .set_method(HttpMethod.DELETE)
 
         return self.request.build()
+
+    def get_request_no_hook(self):
+        self.request\
+            .set_method(HttpMethod.GET)\
+            .add_uri_parameter('1')
+
+        return self.client.execute_request(self.request.build())
+
+    def get_request_with_hook(self):
+        self.request\
+            .set_method(HttpMethod.GET)\
+            .add_uri_parameter('1')
+
+        return self.client.execute_request(self.request.build(), response_hook=DtoUserTest)

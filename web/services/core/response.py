@@ -11,10 +11,11 @@ from web.services.core.json import JsonUtility, JsonObject
 from utilities.data.objects import ObjectUtils
 from utilities.logging.custom_logger import create_logger
 
-T = TypeVar("T")
+TResponse = TypeVar("TResponse")
+TTypeHook = TypeVar("TTypeHook")
 
 
-def deserialized(type_hook: Type[T], child: str = None, wait=None):
+def deserialized(type_hook: Type[TTypeHook], child: str = None, wait=None):
     """
     ***DEPRECATED***
     A decorator that deserializes the response data into the specified type.
@@ -31,7 +32,7 @@ def deserialized(type_hook: Type[T], child: str = None, wait=None):
         @functools.wraps(func)
         def wrapper(self, *args, **kwargs):
             log = create_logger('JSON Deserialization decorator for response')
-            self.initialize()
+            #self.initialize()
 
             if wait is not None:
                 time.sleep(wait)
@@ -60,12 +61,12 @@ def deserialized(type_hook: Type[T], child: str = None, wait=None):
     return decorator
 
 
-class Response(IResponse[T], ABC):
+class Response(IResponse[TResponse], ABC):
     """
     A class representing a web service response.
     """
 
-    def __init__(self, type_hook: Type[T], data: Optional[bytes], response_encoding: str = "ascii", **kwargs):
+    def __init__(self, type_hook: Type[TTypeHook], data: Optional[bytes], response_encoding: str = "ascii", **kwargs):
         """
         Initializes the Response object.
 
@@ -113,7 +114,7 @@ class Response(IResponse[T], ABC):
         self.__status_code = HTTPStatus(status_code)
 
     @property
-    def data(self) -> T:
+    def data(self) -> TResponse:
         """
         Returns the deserialized JSON data of the response.
 

@@ -19,8 +19,8 @@ class BasePage(SeleniumDriver):
         self.source_id = source_id
         self.parameters = self.app_ctx.load_app_parameters()
 
-        self.base_url = self.parameters.get('base_url', None)
-        self.url = self.parameters.get('url', None)
+        self.base_url = self.parameters.request_get('base_url', None)
+        self.url = self.parameters.request_get('url', None)
 
         self.id = kwargs.get('id', None)
         self.title = kwargs.get('title', None)
@@ -51,7 +51,7 @@ class BasePage(SeleniumDriver):
         :param sorted_keys: list of keys to be executed in an order from the defined dic
         """
         if sorted_keys is not None:
-            sorted_l = list((i, target_loc_dic.get(i)) for i in sorted_keys)
+            sorted_l = list((i, target_loc_dic.request_get(i)) for i in sorted_keys)
             sorted_d = OrderedDict()
 
             for item in sorted_l:

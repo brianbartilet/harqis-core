@@ -1,1 +1,1 @@
-from .loader import ConfigLoader, Configuration
+from .loader import ConfigFileLoader, ConfigFile

@@ -6,10 +6,10 @@ from pathlib import Path
 from utilities.logging.custom_logger import create_logger
 
 
-T = TypeVar('T')
+TFile = TypeVar('TFile')
 
 
-class IFileLoader(ABC, Generic[T]):
+class IFileLoader(ABC, Generic[TFile]):
     """
     Abstract base class for a file loader.
 

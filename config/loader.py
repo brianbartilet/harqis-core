@@ -1,24 +1,22 @@
 import os
-from typing import TypeVar, Type
+from typing import TypeVar, Type, Generic
 from enum import Enum
 
-from .types import ConfigYaml, ConfigJson
-from .environment_variables import ENV_ROOT_DIRECTORY
+from .types import ConfigFileYaml, ConfigFileJson
+
+TConfig = TypeVar('TConfig')
 
 
-T = TypeVar('T')
-
-
-class Configuration(Enum):
+class ConfigFile(Enum):
     """
     Enum class for configuration file types.
     """
-    YAML = ConfigYaml
-    YML = ConfigYaml
-    JSON = ConfigJson
+    YAML = ConfigFileYaml
+    YML = ConfigFileYaml
+    JSON = ConfigFileJson
 
 
-class ConfigLoader:
+class ConfigFileLoader(Generic[TConfig]):
     """
     Class to load a configuration from a target file with support for dynamic path detection.
 
@@ -29,8 +27,8 @@ class ConfigLoader:
         config: Loads the configuration using the specified loader.
     """
     def __init__(self,
-                 file: Configuration = Configuration.YAML,
-                 file_name = "apps_config.yaml",
+                 file: ConfigFile = ConfigFile.YAML,
+                 file_name="apps_config.yaml",
                  base_path: str = os.getcwd()):
         """
         Initializes the ConfigLoader.
@@ -43,7 +41,7 @@ class ConfigLoader:
         self._config = file.value(file_name=file_name, base_path=base_path)
 
     @property
-    def config(self) -> T:
+    def config(self) -> TConfig:
         """
         Loads the configuration using the specified loader.
 
@@ -59,7 +57,4 @@ class ConfigLoader:
                                     f"{self._config.base_path} or its parent directories.")
 
         return self._config.load()
-
-
-
 

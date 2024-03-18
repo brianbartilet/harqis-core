@@ -9,7 +9,8 @@ from typing import TypeVar, Generic, Type, Union
 from utilities.logging.custom_logger import create_logger
 
 log = create_logger()
-T = TypeVar('T')
+TJsonObject = TypeVar('TJsonObject')
+TResponse = TypeVar('TResponse')
 
 
 def keys_exists(element: dict, *keys) -> Union[None, dict]:
@@ -36,7 +37,7 @@ def keys_exists(element: dict, *keys) -> Union[None, dict]:
     return _element
 
 
-class JsonObject(Generic[T]):
+class JsonObject(Generic[TJsonObject]):
     """
     A class for creating objects from JSON and converting objects to JSON.
     """
@@ -80,7 +81,7 @@ class JsonUtility:
     """A utility class for serializing and deserializing JSON."""
 
     @staticmethod
-    def serialize(obj: T) -> str:
+    def serialize(obj: TJsonObject) -> str:
         """
         Serializes an object to a JSON string.
 
@@ -93,7 +94,7 @@ class JsonUtility:
         return jsonpickle.encode(obj, unpicklable=False)
 
     @staticmethod
-    def deserialize(obj: str, type_hook: Type[T] = JsonObject[T], **kwargs) -> T:
+    def deserialize(obj: str, type_hook: Type[TResponse] = JsonObject[TJsonObject], **kwargs) -> TJsonObject:
         """
         Deserializes a JSON string to an object.
 
@@ -113,7 +114,8 @@ class JsonUtility:
             raise Exception("Could not decode data. Please check the JSON format.")
 
     @staticmethod
-    def deserialize_from_dict(obj: Union[OrderedDict, dict], type_hook: Type[T] = JsonObject[T]) -> T:
+    def deserialize_from_dict(obj: Union[OrderedDict, dict],
+                              type_hook: Type[TResponse] = JsonObject[TJsonObject]) -> TJsonObject:
         """
         Deserializes a dictionary to an object.
 
@@ -128,7 +130,7 @@ class JsonUtility:
         return JsonUtility.deserialize(raw_str, type_hook)
 
     @staticmethod
-    def deserialize_from_file(full_path: str, type_hook: Type[T] = JsonObject[T]) -> T:
+    def deserialize_from_file(full_path: str, type_hook: Type[TResponse] = JsonObject[TJsonObject]) -> TJsonObject:
         """
         Deserializes a JSON file to an object.
 

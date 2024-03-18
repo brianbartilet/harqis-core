@@ -192,7 +192,7 @@ class IWebRequestBuilder(ABC):
         ...
 
     @abstractmethod
-    def build(self) -> IWebServiceRequest:
+    def build(self, **kwargs) -> IWebServiceRequest:
         """
         Builds the web service request.
 
@@ -200,3 +200,6 @@ class IWebRequestBuilder(ABC):
             The constructed IWebServiceRequest instance.
         """
         ...
+
+
+

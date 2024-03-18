@@ -11,7 +11,7 @@ from utilities.resources.loader import ResourceDataLoader, Resource
 
 from typing import Type, TypeVar
 
-T = TypeVar('T')
+TVariables = TypeVar('TVariables')
 
 
 class RequestBuilderGraphQL(RequestBuilder):
@@ -27,7 +27,7 @@ class RequestBuilderGraphQL(RequestBuilder):
             .set_method(HttpMethod.POST)\
             .add_header(HttpHeaders.CONTENT_TYPE, MimeType.APP_JSON.value)
 
-    def set_variables(self, variables: T):
+    def set_variables(self, variables: TVariables):
         if isinstance(variables, JsonObject):
             variables = variables.get_dict()
         else:

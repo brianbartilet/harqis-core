@@ -4,17 +4,15 @@ from web.services.core.request_builder.graphql import RequestBuilderGraphQL
 from web.services.core.contracts.fixture import IFixtureWebService
 from web.services.core.contracts.response import IResponse
 from web.services.core.contracts.request import IWebServiceRequest
-
 from web.services.core.clients.graphql import GraphQLClient
-
 from web.services.core.config.webservice import AppConfigWSClient
 
 from typing import TypeVar
 
-T = TypeVar("T")
+TWebService = TypeVar("TWebService")
 
 
-class BaseFixtureServiceGraphQL(IFixtureWebService[T]):
+class BaseFixtureServiceGraphQL(IFixtureWebService[TWebService]):
     """
     A class implementing the IProtocolFixture interface for RESTful web services.
 
@@ -35,7 +33,7 @@ class BaseFixtureServiceGraphQL(IFixtureWebService[T]):
         self.gql_file = gql_file
         self.base_path = kwargs.get('base_path', os.getcwd())
 
-    def send_request(self, request: IWebServiceRequest, response_hook=dict, **kwargs) -> IResponse[T]:
+    def send_request(self, request: IWebServiceRequest, response_hook=dict, **kwargs) -> IResponse[TWebService]:
         """
         Sends a RESTful web service request and returns the response.
 
@@ -51,10 +49,10 @@ class BaseFixtureServiceGraphQL(IFixtureWebService[T]):
 
     def get_request_builder(self) -> RequestBuilderGraphQL:
         """
-        Returns a request builder for constructing RESTful web service requests.
+        Returns a request builder for constructing GraphQL web service requests.
 
         Returns:
-            An instance of RequestBuilder for building RESTful requests.
+            An instance of RequestBuilder for building GraphQL requests.
         """
         return RequestBuilderGraphQL(gql_file=self.gql_file, base_path=self.base_path)
 

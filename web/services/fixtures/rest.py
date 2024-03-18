@@ -9,11 +9,10 @@ from web.services.core.contracts.request import IWebServiceRequest
 from web.services.core.config.webservice import AppConfigWSClient
 
 from typing import TypeVar
-T = TypeVar("T")
-V = TypeVar("V")
+TWebService = TypeVar("TWebService")
 
 
-class BaseFixtureServiceRest(IFixtureWebService[T]):
+class BaseFixtureServiceRest(IFixtureWebService[TWebService]):
     """
     A class implementing the IProtocolFixture interface for RESTful web services.
 
@@ -24,7 +23,7 @@ class BaseFixtureServiceRest(IFixtureWebService[T]):
     def __init__(self, config: AppConfigWSClient, **kwargs):
         super(BaseFixtureServiceRest, self).__init__(config=config)
 
-    def send_request(self, request: IWebServiceRequest, response_hook=dict, **kwargs) -> IResponse[T]:
+    def send_request(self, request: IWebServiceRequest, response_hook=dict, **kwargs) -> IResponse[TWebService]:
         """
         Sends a RESTful web service request and returns the response.
 

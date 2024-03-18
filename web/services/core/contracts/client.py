@@ -4,7 +4,8 @@ from typing import TypeVar, Type, Dict
 from .response import IResponse
 from .request import IWebServiceRequest
 
-T = TypeVar("T")
+TClient = TypeVar("TClient")
+TResponse = TypeVar("TResponse")
 
 
 class IWebClient(ABC):
@@ -12,7 +13,7 @@ class IWebClient(ABC):
     Interface for a web client that can execute web service requests and handle responses.
     """
     @abstractmethod
-    def execute_request(self, request: IWebServiceRequest, response_hook: Type[T] = dict, **kwargs) -> IResponse[T]:
+    def execute_request(self, request: IWebServiceRequest, response_hook: Type[TResponse] = dict, **kwargs) -> IResponse[TClient]:
         """
         Execute a web service request and return the response.
 
@@ -66,7 +67,7 @@ class IWebClient(ABC):
         ...
 
     @abstractmethod
-    def get_response(self, response: IResponse, type_hook: Type[T]) -> IResponse[T]:
+    def get_response(self, response: IResponse, type_hook: Type[TResponse]) -> IResponse[TClient]:
         """
         Get the response from the web client.
 
@@ -80,7 +81,7 @@ class IWebClient(ABC):
         ...
 
     @abstractmethod
-    def get_errors(self) -> Type[T]:
+    def get_errors(self) -> Type[TClient]:
         """
         Get the errors from the web client.
 

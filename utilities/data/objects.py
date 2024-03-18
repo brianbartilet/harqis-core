@@ -1,12 +1,12 @@
 import re
 from typing import Type, TypeVar, List
 
-T = TypeVar('T')
+TObject = TypeVar('TObject')
 
 
 class ObjectUtils:
     @staticmethod
-    def convert_dict_keys_to_snake(cur_object: T) -> T:
+    def convert_dict_keys_to_snake(cur_object: TObject) -> TObject:
         """
         Convert the keys of a dictionary representing an object's attributes to snake_case.
 
@@ -26,7 +26,7 @@ class ObjectUtils:
         return new_obj
 
     @staticmethod
-    def convert_objects_to_snake(object_collection: List[T]) -> List[T]:
+    def convert_objects_to_snake(object_collection: List[TObject]) -> List[TObject]:
         """
         Convert the keys of dictionaries representing a list of objects' attributes to snake_case.
 
@@ -39,7 +39,7 @@ class ObjectUtils:
         return [ObjectUtils.convert_dict_keys_to_snake(item) for item in object_collection]
 
     @staticmethod
-    def convert_object_keys_to_snake(object_item: T) -> T:
+    def convert_object_keys_to_snake(object_item: TObject) -> TObject:
         """
         Convert the keys of a dictionary or a list of dictionaries representing an object's or objects' attributes to snake_case.
 
@@ -55,7 +55,7 @@ class ObjectUtils:
             return ObjectUtils.convert_dict_keys_to_snake(object_item)
 
     @staticmethod
-    def convert_object_list(object_collection: List, object_type: Type[T]) -> List[T]:
+    def convert_object_list(object_collection: List, object_type: Type[TObject]) -> List[TObject]:
         """
         Convert a list of objects to a new list of objects of a specific type.
 

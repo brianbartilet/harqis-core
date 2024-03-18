@@ -14,7 +14,8 @@ from web.services.core.clients.grpc import GrpcClient
 
 from utilities.asserts.helper import LoggedAssertHelper
 
-T = TypeVar("T")
+TFixture = TypeVar("TFixture")
+TResponse = TypeVar("TResponse")
 
 
 class WSClientClass:
@@ -36,7 +37,7 @@ class WSClientClass:
     }
 
 
-class IFixtureWebService(Generic[T]):
+class IFixtureWebService(Generic[TFixture]):
     """
     An interface for a testing fixture that aggregates components for building and sending web requests.
 
@@ -71,7 +72,8 @@ class IFixtureWebService(Generic[T]):
         ...
 
     @abstractmethod
-    def send_request(self, request: IWebServiceRequest, response_hook: Type[T] = dict, **kwargs) -> IResponse[T]:
+    def send_request(self, request: IWebServiceRequest, response_hook: Type[TResponse] = dict,
+                     **kwargs) -> IResponse[TFixture]:
         """
         Sends a web service request using the web client component and returns the response.
 
@@ -126,3 +128,4 @@ class IFixtureWebService(Generic[T]):
             An instance of LoggedAssertHelper.
         """
         return LoggedAssertHelper()
+
