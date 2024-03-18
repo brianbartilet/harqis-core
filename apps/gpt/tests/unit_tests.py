@@ -1,7 +1,8 @@
 import unittest
 from http import HTTPStatus as HttpStatus
-from config.loader import APPS_CONFIG
-from config.constants.app_names import AppName
+
+from apps.apps_config import APPS_CONFIG
+from apps.apps_config import AppName
 
 from web.services.core.config.webservice import AppConfigWSClient
 

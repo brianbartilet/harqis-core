@@ -61,6 +61,5 @@ class ConfigLoader:
         return self._config.load()
 
 
-# Load the application configuration from the specified file and base directory
-APPS_CONFIG = ConfigLoader(base_path=ENV_ROOT_DIRECTORY).config
+
 

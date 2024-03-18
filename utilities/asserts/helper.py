@@ -3,6 +3,7 @@ from hamcrest import *
 
 from reports.report_generator import ReportGenerator
 
+
 def raise_any_exception(exception_list: list) -> None:
     """
     Raises an AssertionError with a concatenated message of all exceptions in the list.
@@ -18,6 +19,7 @@ def raise_any_exception(exception_list: list) -> None:
         full_message = f"Error(s) encountered: {all_exceptions}"
         raise AssertionError(full_message)
 
+
 def is_between(lower_bound, upper_bound):
     """
     Returns a matcher that checks if a value is between two bounds.
@@ -30,6 +32,7 @@ def is_between(lower_bound, upper_bound):
         A Hamcrest matcher that checks if a value is between the specified bounds.
     """
     return all_of(greater_than_or_equal_to(lower_bound), less_than_or_equal_to(upper_bound))
+
 
 class LoggedAssertHelper:
     """
