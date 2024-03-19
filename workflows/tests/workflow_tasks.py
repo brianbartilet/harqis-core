@@ -1,4 +1,4 @@
-from apps.sprout_wf.sprout import SPROUT
+from apps.sprout.sprout import SPROUT
 
 
 @SPROUT.task()

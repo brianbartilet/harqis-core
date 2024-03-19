@@ -19,7 +19,7 @@ def restart_celery_scheduler(app, task_file):
         app (str): The name of the Celery app.
         task_file (str): The name of the task file.
     """
-    pid_file = f'pid.restart_celery_scheduler.{task_file}.lower()'
+    pid_file = f'pid.restart_celery_scheduler.{task_file.lower()}'
 
     target_process = read_pid_from_file(pid_file)
     if target_process:
@@ -44,7 +44,7 @@ def restart_celery_worker(app, task_file, use_eventlet=False, concurrency=10):
         use_eventlet (bool): Whether to use eventlet for concurrency.
         concurrency (int): The number of concurrent workers.
     """
-    pid_file = f'pid.restart_celery_worker.{task_file}.lower()'
+    pid_file = f'pid.restart_celery_worker.{task_file.lower()}'
 
     target_process = read_pid_from_file(pid_file)
     if target_process:

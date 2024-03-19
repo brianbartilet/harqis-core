@@ -1,7 +1,7 @@
 from workflows import *
 
-from apps.sprout_wf.tasks.apps.testing_tasks import *
-from apps.sprout_wf.sprout import SPROUT
+from apps.sprout.tasks.apps.testing_tasks import *
+from apps.sprout.sprout import SPROUT
 from config.environment_variables import ENV_TASK_APP
 
 """
