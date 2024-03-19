@@ -1,7 +1,4 @@
-from typing import Type
-
 from web.services.core.clients.base import BaseWebClient
-from web.services.core.contracts.client import TClient
 
 
 class RestClient(BaseWebClient):

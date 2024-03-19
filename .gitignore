@@ -9,5 +9,5 @@
 *config.yaml*
 *.egg
 *.egg-info/
-dist/
-build/
+harqis-core/dist/
+harqis-core/build/

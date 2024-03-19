@@ -9,7 +9,7 @@ from web.services.core.constants.http_methods import HttpMethod
 
 from utilities.resources.loader import ResourceDataLoader, Resource
 
-from typing import Type, TypeVar
+from typing import TypeVar
 
 TVariables = TypeVar('TVariables')
 
