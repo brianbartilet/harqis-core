@@ -3,8 +3,9 @@ from pathlib import Path
 
 # Target APP
 APP = 'core'  # Your app
-CELERY = 'celery'  # Add celery to installed apps if you're using Django integration features
-PACKAGE = 'apps.sprout.core.celery' # Your package for commands
+APP_CELERY = 'celery'  # Add celery to installed apps if you're using Django integration features
+APP_PACKAGE = 'apps.sprout.core.celery'  # Location of celery instance decorator
+
 WSGI_APPLICATION = f'{APP}.wsgi.application'
 ROOT_URLCONF = f'{APP}.urls'
 
@@ -27,7 +28,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     APP,
-    CELERY,
+    APP_CELERY,
 
 ]
 
