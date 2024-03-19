@@ -4,8 +4,8 @@ from apps.sprout.core.management.commands.scheduler import Command
 
 class TestRestartCelerySchedulerTasks(TestCase):
 
-    @mock.patch('apps.sprout.management.commands.scheduler.autoreload.run_with_reloader')
-    @mock.patch('apps.sprout.management.commands.scheduler.restart_celery_scheduler_tasks')
+    @mock.patch('apps.sprout.core.management.commands.scheduler.autoreload.run_with_reloader')
+    @mock.patch('apps.sprout.core.management.commands.scheduler.restart_celery_scheduler_tasks')
     def test_handle(self, mock_restart_tasks, mock_run_with_reloader):
         """Test that the handle method starts the celery scheduler with autoreload."""
         # Instantiate the Command object

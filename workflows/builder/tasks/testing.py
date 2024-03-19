@@ -11,8 +11,6 @@ References:
 - Celery Beat UnpicklingError: https://stackoverflow.com/questions/31468354/unpicklingerror-on-celerybeat-startup
 """
 
-from workflows import *  # Importing workflow functions to be scheduled
-
 from datetime import timedelta
 
 import random as r
@@ -21,10 +19,11 @@ from celery.schedules import crontab
 
 MAP_TESTING_TASKS = {
     # region Tasks To Test
-    'run-test-sample-workflow': {
-        'task': 'workflows.tests.workflow_tasks.test_run_add',
+
+    'run-test-sample-workflow-math': {
+        'task': 'workflows.integrations.math.add',
         'schedule': timedelta(seconds=10),
-        'args': [r.randint(1,5), r.randint(5,10)],
+        'args': [r.randint(1, 5), r.randint(5, 10)],
     },
 
     # endregion
