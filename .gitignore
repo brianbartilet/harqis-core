@@ -7,3 +7,7 @@
 **/*.log
 **/*screenshots/
 *config.yaml*
+*.egg
+*.egg-info/
+dist/
+build/
