@@ -1,8 +1,7 @@
 from web.services.core.json import JsonObject
 from apps.gpt.dto.assistants.common import DtoError
-from typing import TypeVar
-
-TMetaData = TypeVar("TMetaData")
+from apps.gpt.dto.assistants.thread import DtoThreadCreate
+from typing import Optional
 
 
 class DtoRequiredAction(JsonObject):
@@ -31,12 +30,45 @@ class DtoRun(JsonObject):
     instructions: str = None  # Instructions for using the run.
     tools: list = None  # A list of tools used by the run.
     file_ids: list = None  # A list of file IDs associated with the run.
-    metadata: TMetaData = None  # Optional metadata associated with the message.
+    metadata: Optional = None  # Optional metadata associated with the message.
     usage: object = None  # The usage of the run.
+
+
+class DtoRunCreate(JsonObject):
+    """
+    DTO for a Run creation.
+    """
+    assistant_id: str = None  # The ID of the Assistant associated with this run.
+    model: str = None  # The model used by the run.
+    instructions: str = None  # Instructions for using the run.
+    additional_instructions: str = None  # Additional instructions for using the run.
+    tools: list = None  # A list of tools used by the run.
+    metadata: Optional = None  # Optional metadata associated with the run.
+    stream: Optional = None  # The stream associated with the run.
+
+
+class DtoThreadRunCreate(DtoRunCreate):
+    """
+    DTO for a Thread Run creation.
+    """
+    thread: DtoThreadCreate = None  # The ID of the thread associated with this run.
 
 
 class DtoRunStep(DtoRun):
     """
     DTO for a Run step detail.
     """
-    step_details: TMetaData = None  # The details of the step.
+    step_details: Optional = None  # The details of the step.
+
+
+class DtoToolInput(JsonObject):
+    tool_call_id: str = None  # The ID of the tool call associated with this input.
+    output: str = None  # The output associated with this input.
+
+
+class DtoSubmitToolOutputs(JsonObject):
+    """
+    DTO for a Tool Outputs submission.
+    """
+    tool_outputs: list[DtoToolInput] = None
+    stream: Optional = None  # The stream associated with the outputs.

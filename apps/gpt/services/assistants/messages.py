@@ -1,6 +1,7 @@
 from apps.gpt.base import BaseServiceHarqisGPT
 from apps.gpt.constants.http_headers import HttpHeadersGPT
-from apps.gpt.dto.assistants.message import DtoMessage, DtoMessageFile, DtoListMessages, DtoListMessageFiles
+from apps.gpt.dto.assistants.message import DtoMessage, DtoMessageFile, DtoListMessages, \
+    DtoListMessageFiles, DtoMessageCreate
 from apps.gpt.dto.assistants.common import DtoListQuery
 
 from web.services.core.constants.http_methods import HttpMethod
@@ -23,7 +24,7 @@ class ServiceMessages(BaseServiceHarqisGPT):
             .add_header(HttpHeadersGPT.OPEN_API_BETA, "assistants=v1")\
             .add_uri_parameter('threads')
 
-    def create_message(self, thread_id: str, payload: DtoMessage):
+    def create_message(self, thread_id: str, payload: DtoMessageCreate):
         """
         Creates a new message.
 
@@ -38,6 +39,7 @@ class ServiceMessages(BaseServiceHarqisGPT):
             .set_method(HttpMethod.POST)\
             .add_uri_parameter(thread_id)\
             .add_json_body(payload) \
+            .add_uri_parameter('messages')\
             .build()
 
         return self.client.execute_request(request, response_hook=DtoMessage)

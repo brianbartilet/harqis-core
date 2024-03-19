@@ -1,9 +1,7 @@
 from web.services.core.json import JsonObject
 from apps.gpt.dto.assistants.common import DtoListResponse
-from typing import TypeVar
+from typing import Optional, Any
 from enum import Enum
-
-TMetaData = TypeVar("TMetaData")
 
 
 class DtoDetails(JsonObject):
@@ -38,16 +36,23 @@ class DtoMessage(JsonObject):
     id: str = None  # The unique identifier for the Assistant.
     object: str = None  # The type of the object, should be "assistant".
     created_at: int = None  # The timestamp of when the Assistant was created.
-    thread_id: str = None  # The ID of the thread associated with this message.
+    thread_id: str  # The ID of the thread associated with this message.
     status: str = None  # The status of the message.
     incomplete_details: DtoDetails = None  # The reason for the status.
     completed_at: int = None  # The timestamp of when the message was completed.
     incomplete_at: int = None  # The timestamp of when the message was marked as incomplete.
     role: str = 'user'  # The role of the message.
-    content: DtoContent = None  # The content of the message.
+    content: Any = None  # The content of the message.
     assistant_id: str = None  # The ID of the Assistant associated with this message.
     run_id: str = None  # The ID of the run associated with this message.
-    metadata: TMetaData = None  # Optional metadata associated with the message.
+    metadata: Optional = None  # Optional metadata associated with the message.
+
+
+class DtoMessageCreate(JsonObject):
+    role: str = 'user'  # The role of the message.
+    content: Any = None  # The content of the message.
+    file_ids: Optional = []
+    metadata: Optional = None  # Optional metadata associated with the message.
 
 
 class DtoMessageFile(JsonObject):

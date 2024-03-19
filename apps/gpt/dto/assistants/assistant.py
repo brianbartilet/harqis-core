@@ -1,8 +1,6 @@
 from web.services.core.json import JsonObject
 from apps.gpt.dto.assistants.common import DtoListResponse
-from typing import TypeVar
-
-TMetaData = TypeVar("TMetaData")
+from typing import Optional
 
 
 class DtoAssistant(JsonObject):
@@ -18,7 +16,7 @@ class DtoAssistant(JsonObject):
     instructions: str = None  # Instructions for using the Assistant.
     tools: [] = None  # A list of tools used by the Assistant.
     file_ids: [] = None  # A list of file IDs associated with the Assistant.
-    metadata: TMetaData = None  # Optional metadata associated with the Assistant.
+    metadata: Optional = None  # Optional metadata associated with the Assistant.
 
 
 class DtoAssistantFile(JsonObject):

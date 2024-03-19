@@ -1,7 +1,5 @@
 from web.services.core.json import JsonObject
-from typing import TypeVar
-
-TMetaData = TypeVar("TMetaData")
+from typing import Optional
 
 
 class DtoListQuery(JsonObject):
@@ -31,7 +29,7 @@ class DtoResponseStatus(JsonObject):
     deleted_at: int = None  # The timestamp of when the object was deleted.
     created_at: int = None  # The timestamp of when the object was created.
     updated_at: int = None  # The timestamp of when the object was updated.
-    metadata: TMetaData = None  # T metadata associated with the message.
+    metadata: Optional = None  # T metadata associated with the message.
 
 
 class DtoError(JsonObject):

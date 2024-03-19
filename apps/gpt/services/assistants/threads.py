@@ -1,6 +1,6 @@
 from apps.gpt.base import BaseServiceHarqisGPT
 from apps.gpt.constants.http_headers import HttpHeadersGPT
-from apps.gpt.dto.assistants.thread import DtoThread
+from apps.gpt.dto.assistants.thread import DtoThread, DtoThreadCreate
 from apps.gpt.dto.assistants.common import DtoResponseStatus
 
 from web.services.core.constants.http_methods import HttpMethod
@@ -23,7 +23,7 @@ class ServiceThreads(BaseServiceHarqisGPT):
             .add_header(HttpHeadersGPT.OPEN_API_BETA, "assistants=v1")\
             .add_uri_parameter('threads')
 
-    def create_thread(self, payload: DtoThread):
+    def create_thread(self, payload: DtoThreadCreate):
         """
         Creates a new thread.
 
