@@ -1,5 +1,7 @@
 behave==1.2.5
 Faker==24.0.0
+Django==5.0.3
+gevent==24.2.1
 jsonpickle==3.0.3
 jsonschema==4.21.1
 openai==1.14.1
@@ -12,3 +14,4 @@ requests==2.31.0
 selenium==3.141.0
 setuptools==69.1.1
 parameterized==0.9.0
+celery==5.2.3

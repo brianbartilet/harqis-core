@@ -119,10 +119,13 @@ ENV_ENABLE_PROXY = os.environ.get("ENABLE_PROXY", False)
 ENV_APP_CONFIG = os.environ.get("ENV_PATH_APP_CONFIG", "apps_config.yaml")
 
 # Root directory of the application, default is the root directory of the repository, unless specified
-ENV_ROOT_DIRECTORY = os.environ.get('ENV_APP_PATH', get_git_root(os.path.dirname(os.path.abspath(__file__))))
+ENV_ROOT_DIRECTORY = os.environ.get('ENV_ROOT_DIRECTORY', get_git_root(os.path.dirname(os.path.abspath(__file__))))
 
 # Local application data path, default is None
 ENV_LOCAL_APP_DATA = os.environ.get("LOCALAPPDATA", None)
+
+# Tasks mapping for workflows defaults to testing tasks key
+ENV_TASK_APP = os.environ.get("ENV_TASK_APP", 'MAP_TESTING_TASKS')
 
 #  endregion
 

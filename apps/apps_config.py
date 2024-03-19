@@ -12,8 +12,10 @@ class AppNames(Enum):
 
     Attributes:
         API_GPT (str): ChatGPT integration.
+        TASKS_CLIENT (str): Celery tasks client.
     """
     API_GPT = 'HARQIS_GPT'
+    TASKS_CLIENT = 'CELERY_TASKS'
 
 
 class AppConfigLoader(AppConfig):

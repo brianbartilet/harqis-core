@@ -3,6 +3,8 @@
 *.dat*
 *.dir*
 *.bak*
+*pid.*
 **/*.log
 **/*screenshots/
 *config.yaml*
+**/settings.py

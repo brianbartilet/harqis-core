@@ -1,0 +1,965 @@
+commit 9172f0ae599fca0b918e96416f074c5814339523
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Fri Dec 4 04:34:23 2020 +0800
+
+    CELERY: auto restart implemetnation
+
+commit c544af5e04241f7dcf51f4cf063e5b9d89f95583
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Fri Dec 4 04:10:20 2020 +0800
+
+    CELERY: auto restart implemetnation
+
+commit 487dc4c2e37d87f3995f2842c9dc3a2ad58e153e
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Thu Dec 3 20:54:54 2020 +0800
+
+    HF: habits references
+
+commit 8efa46af70a9712277da60168b4ef9ebca1a76b1
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Wed Dec 2 23:32:20 2020 +0800
+
+    RUNNER: added tasks for HUD
+
+commit 61177eda486ed166991ac79105ef5d6bb9658009
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Wed Dec 2 22:49:36 2020 +0800
+
+    RUNNER: added tasks for HUD
+
+commit 03d8115c02211637cf05ab76547f02fd109c95ac
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Wed Dec 2 01:12:21 2020 +0800
+
+    ECHO: completed scan uploader
+
+commit e3b36884ff431a8c5ae4d9612d44b0834b0be888
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Tue Dec 1 19:24:48 2020 +0800
+
+    HF: fix packages
+
+commit 3ccc4a773c49032c60e217824c11083675b85e97
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Tue Dec 1 19:23:30 2020 +0800
+
+    HF: fix packages
+
+commit 686c7c547bcf47829bcb1776033ed0350aa5a27a
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Tue Dec 1 14:14:02 2020 +0800
+
+    TRELLO: attachment downloads
+
+commit 6e5394e24df0ac691906cccb8a52f32baa0d0e35
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Tue Dec 1 08:28:18 2020 +0800
+
+    TRELLO: attachment downloads
+
+commit db2bd2a348c13ff0bd9cbe00354f2e224125b165
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Mon Nov 30 04:53:12 2020 +0800
+
+    RAINMETER: completed implementation
+
+commit 49035707ccef934dfbe368adebdb6273ae966a2d
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Fri Nov 27 23:51:00 2020 +0800
+
+    TRADING: update traded forex pairs
+
+commit 36f1fdf7c097395e8730543eaf764462df8aa441
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Fri Nov 27 02:06:01 2020 +0800
+
+    HABITS: cleanup
+
+commit 6340c77c93d6d450ba58bfd20ee287e5a8ca8d15
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Thu Nov 26 17:00:39 2020 +0800
+
+    PEON: Oracle timesheet
+
+commit 139665cf2713c0b3ab4e2685521a66f5ba938edb
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Thu Nov 26 02:13:31 2020 +0800
+
+    PEON: Oracle timesheet
+
+commit 0035496e4c9c13bfca4ae4d89528a4b89a8fee71
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Thu Nov 26 02:03:39 2020 +0800
+
+    PEON: Oracle timesheet
+
+commit 8c030c1953c43884c8df78c6e7757f78ec770b59
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Wed Nov 25 17:24:56 2020 +0800
+
+    TRADING: pending orders
+
+commit 5727522c2ccc0b28a12862aacb8a1bf3b417bceb
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Wed Nov 25 16:56:46 2020 +0800
+
+    TRADING: pending orders
+
+commit ae831977f5b7bee36c64f6d0bc002c1082e6d377
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Wed Nov 25 16:23:17 2020 +0800
+
+    TRADING: pending orders
+
+commit d78edf0baac5b91deb80ce6eb723c940ab5b5da4
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Wed Nov 25 16:10:50 2020 +0800
+
+    TRADING: pending orders
+
+commit 359cda274d3f79ce27f782dbeccdf3caf6aa6a22
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Wed Nov 25 04:04:31 2020 +0800
+
+    TRADING: pending orders
+
+commit 43769bf1af01642aeb335fed61eefa28d7fdb1e3
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Wed Nov 25 03:37:35 2020 +0800
+
+    TRADING: pending orders
+
+commit 478572513ca5b1731b15d94935865369108730cb
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Wed Nov 25 03:23:21 2020 +0800
+
+    TRADING: pending orders
+
+commit 756676eca7c9fe8a7c80c833c6be907660aa5f93
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Wed Nov 25 01:59:50 2020 +0800
+
+    TRADING: pending orders
+
+commit ff59834d30206f2931b48e242f6525fc0fa12ef5
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Wed Nov 25 00:37:19 2020 +0800
+
+    TRADING: pending orders
+
+commit e54228ae7ba7cecdb0ea3b4a8d071a8cedfdff7d
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Tue Nov 24 22:11:36 2020 +0800
+
+    TRADING: pending orders
+
+commit fb14d2d061bb39d25f14156904e3b19012e25ea3
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Tue Nov 24 18:20:27 2020 +0800
+
+    TRADING: pending orders
+
+commit 71561d56d2697d4ff1ba98debc15886034a35023
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Mon Nov 23 16:06:07 2020 +0800
+
+    TRADING: pending orders
+
+commit 30b74bfb0864e27e206e2bc5fe7f672c2354fd4c
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Sat Nov 21 04:25:29 2020 +0800
+
+    TRADING: pending orders
+
+commit 4ec66eeb2baa88266185c8f6b0540c0d2376ab76
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Fri Nov 20 03:51:39 2020 +0800
+
+    TRADING: pending orders
+
+commit 6ec06ae85b7b3544cd426c887ed8cfdd7e7616bb
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Fri Nov 20 03:15:53 2020 +0800
+
+    TRADING: pending orders
+
+commit 4a4a043af6d5b6cc5f75245e33928db873535d97
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Tue Nov 17 17:14:39 2020 +0800
+
+    CORE: implement contracts
+
+commit f55231ce07f0555af7dbd3e685fe129853f1ffba
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Wed Nov 11 16:34:13 2020 +0800
+
+    BUSINESS: update contracts for similar apps
+
+commit 96a3c9e53d71106746d09aa74c1efd24e6549dbc
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Fri Nov 6 00:52:07 2020 +0800
+
+    CORE: update new tasks.py
+
+commit 257378e4d9b368d09770110d2fcccc532b1308a2
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Thu Nov 5 02:45:29 2020 +0800
+
+    CORE: update new tasks.py
+
+commit fa2583eed5743fa99c8e084fe7ac644073039d2b
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Thu Nov 5 02:39:22 2020 +0800
+
+    CORE: update new tasks.py
+
+commit e0e2c97a3dca48770a75620faa472c9caa2ba878
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Thu Nov 5 02:34:38 2020 +0800
+
+    CORE: update new tasks.py
+
+commit 1366da34db96949faec62f9adcfff2bc7951dfdd
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Thu Nov 5 00:49:51 2020 +0800
+
+    CORE: update new tasks.py
+
+commit 262746fba96ed5cf6c70bc3681a778998d40a2d6
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Tue Nov 3 16:23:54 2020 +0800
+
+    CORE: update new tasks.py
+
+commit 82e6f2f83aa330da784b3d496c0d905001b89e78
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Wed Oct 28 16:54:01 2020 +0800
+
+    CORE: update new tasks.py
+
+commit 6d741bb579af21a8947a462ae66412049ed306b0
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Mon Oct 26 17:10:33 2020 +0800
+
+    CORE: update new tasks.py
+
+commit c9aab378b51f0eec17c36b949138a0046dcefae1
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Mon Oct 26 16:12:12 2020 +0800
+
+    CORE: update new tasks.py
+
+commit fbdbc7e0b1284e791e0bab0b73fc3c28f28661f3
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Mon Oct 26 15:55:57 2020 +0800
+
+    CORE: update new tasks.py
+
+commit 42572f7c722db82533547c1522ef0760a01e2740
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Sat Oct 24 01:29:17 2020 +0800
+
+    CORE: update new tasks.py
+
+commit 31b2221dc87915d03d76f626e4f75870b297c884
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Fri Oct 23 21:14:14 2020 +0800
+
+    CORE: add new tasks.py
+
+commit 9473a0536bfafd2e5f4acd03fd6bf1583fab1fd3
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Fri Oct 23 16:28:30 2020 +0800
+
+    CORE: fixed tasks.py
+
+commit 8d2edce5c4a4867ac7e0acb1c3e0036ff205ee53
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Fri Oct 23 13:56:57 2020 +0800
+
+    CORE: added business layer
+
+commit 79131563f62df7604335341392c5ce941853a2ba
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Fri Oct 23 13:47:48 2020 +0800
+
+    CORE: added business layer
+
+commit b0e9e4f63019ac7ea0d2bc414bd5321fa2fa569d
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Fri Oct 23 13:47:00 2020 +0800
+
+    CORE: added business layer
+
+commit 5d4ab0981fedefe93c37068a127e53770f1cf890
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Fri Oct 23 13:31:46 2020 +0800
+
+    TWELVE_DATA: new application implementation, updated app business contracts
+
+commit c46d5aab310ce3d79eb66f8b9cbb6bd3695a519c
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Wed Oct 21 20:33:14 2020 +0800
+
+    CORE: sandbox
+
+commit 525baa730974ba5e782132a19f8b8d6cd6789a0c
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Wed Oct 21 16:16:05 2020 +0800
+
+    TRELLO: fix board get api
+
+commit 8b3fd8d57d4a270357e84b1f2ec2ae6daf1789a7
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Wed Oct 21 00:22:25 2020 +0800
+
+    TRELLO: fix board get api
+
+commit f8ed960ebebd72be4a4635c6524748d997a8f607
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Wed Oct 21 00:08:33 2020 +0800
+
+    INVESTAGRAMS: fix and redeploy
+
+commit 6cfe245a48d6edfc48c20a676b5546538700ea76
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Mon Oct 19 23:22:55 2020 +0800
+
+    CORE: added abstraction for similar websites
+
+commit 47d17e01a7eac6b5bf637e925a56b89de730cef1
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Mon Oct 19 22:57:24 2020 +0800
+
+    CORE: added abstraction for similar websites
+
+commit 5b3e314553ff8af3436179b48d15db4ff62b3f9f
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Mon Oct 19 22:51:20 2020 +0800
+
+    CORE: added abstraction for similar websites
+
+commit 67cfd77a344f69d99637f3b6dca1745b28cde2b3
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Fri Oct 16 22:00:50 2020 +0800
+
+    NIKE_ORDER: initial commit
+
+commit 6c4e4d1022bcd06c9c54ae16b3e54c922787b6c6
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Fri Oct 16 22:00:14 2020 +0800
+
+    NIKE_ORDER: initial commit
+
+commit daaaa75deb614bfe8754afc76a8c9f69a79bffb0
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Fri Oct 16 00:57:34 2020 +0800
+
+    NIKE_ORDER: initial commit
+
+commit 0fb993b94a6c16eab9e823de838a80a4ef556f84
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Thu Oct 15 22:21:07 2020 +0800
+
+    NIKE_ORDER: initial commit
+
+commit e735e00fdf462646072a11289a246516463393ee
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Wed Oct 14 16:14:38 2020 +0800
+
+    NIKE_ORDER: initial commit
+
+commit 302d4cb259b1f6d10516b35efa569ca2e296fa49
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Mon Oct 12 07:43:39 2020 +0800
+
+    ECHOMTG: commit before messing up
+
+commit be53ca0dbb316fc10c54c29dc5c396eb6c7a8079
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Mon Oct 12 04:19:04 2020 +0800
+
+    ECHOMTG: commit before messing up
+
+commit c66c773aea5838ef94c70d13defeacebb7608df4
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Mon Oct 12 03:50:26 2020 +0800
+
+    ECHOMTG: commit before messing up
+
+commit 3b8c6a60a4fa479e6f131ca116101549469a48a4
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Sun Oct 11 23:21:34 2020 +0800
+
+    ECHOMTG: commit before messing up
+
+commit e1e1c625adafeae4bc1d7537139b95a715d83627
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Sun Oct 11 23:08:46 2020 +0800
+
+    ECHOMTG: commit before messing up
+
+commit a5d2626bb03e5e45a4127f3772fecdbf69a56f24
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Sun Oct 11 21:02:41 2020 +0800
+
+    ECHOMTG: commit before messing up
+
+commit d213df737e844ba1153cac2bb5cd9cbf1e942e5b
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Sun Oct 11 21:01:56 2020 +0800
+
+    ECHOMTG: commit before messing up
+
+commit 05b9f1ade26c874d67d1a22c8cd5f76ff4fc538c
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Sun Oct 11 20:07:19 2020 +0800
+
+    ECHOMTG: commit before messing up
+
+commit c8132c5f8fec512db24777ff6d58434bcf16e83f
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Sun Oct 11 05:57:31 2020 +0800
+
+    ECHOMTG: add mp module
+
+commit b24ecd0399ead5a2285b0503e94cb3b8d65d5115
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Fri Oct 9 17:31:01 2020 +0800
+
+    ECHOMTG: fixes
+
+commit eb0b9693389c775a2136e0191b8129617f74ae35
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Fri Oct 9 03:58:10 2020 +0800
+
+    TASKS: update tasks.py
+
+commit ac8a0fd8552956d2bdbea2f3498d4bda01ef04d7
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Fri Oct 9 03:54:14 2020 +0800
+
+    TASKS: update tasks.py
+
+commit 9505f2e9501332b8b83f4740efd56ced2975f042
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Fri Oct 9 03:02:09 2020 +0800
+
+    TASKS: update tasks.py
+
+commit 3aebeed262675d2a36e75d3162c1e2376d5b950f
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Fri Oct 9 01:44:03 2020 +0800
+
+    TASKS: update tasks.py
+
+commit 584c912222d2cd55bb56bf3bf73bf645d05ee83c
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Fri Oct 9 01:42:03 2020 +0800
+
+    TASKS: update tasks.py
+
+commit d53d2faa304f469ee63016b213e56db3238611ab
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Fri Oct 9 01:39:50 2020 +0800
+
+    TRELLO: Added IFTTT reminders as cards hoohaa
+
+commit 1e608a5fbd569edd629a5b92bc600294ddb82c0c
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Thu Oct 8 17:01:47 2020 +0800
+
+    GOOGLE: temp commit for quickstart.py
+
+commit 90542ac49e64c0bb121159412bcfde258cd40f33
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Wed Oct 7 22:05:05 2020 +0800
+
+    Revert "CORE: update logging to debug"
+    
+    This reverts commit deb53608
+
+commit e63d512c06143ebe98f07f977a58698437b07d18
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Wed Oct 7 22:05:01 2020 +0800
+
+    Revert "CORE: update logging to debug"
+    
+    This reverts commit 2751313f
+
+commit ebd5791be6dfebee5066d47cbbc87195da6a16a6
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Wed Oct 7 22:04:55 2020 +0800
+
+    Revert "CORE: update logging to debug"
+    
+    This reverts commit ea9c1cfc
+
+commit ea9c1cfc539d30a0b715c3ff84f526f25806581a
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Wed Oct 7 21:23:11 2020 +0800
+
+    CORE: update logging to debug
+
+commit 2751313f8de4673b587e23c7ccc70da1967710d3
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Wed Oct 7 21:22:20 2020 +0800
+
+    CORE: update logging to debug
+
+commit deb536080f19ab8884cb68099c465335e7415625
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Wed Oct 7 20:58:20 2020 +0800
+
+    CORE: update logging to debug
+
+commit 452a2a6ee9f4c2343e360359c934b3bcdafa41f1
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Wed Oct 7 20:36:28 2020 +0800
+
+    CORE: update env loading
+
+commit 386a31919eab4fbd7cdb73874d332e6c22df3ce4
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Wed Oct 7 00:23:40 2020 +0800
+
+    ECHOMTG: fix shit
+
+commit ace9b332eb1ca6052e2e10acb1633cc43f9ac0c9
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Wed Oct 7 00:12:21 2020 +0800
+
+    ECHOMTG: fix shit
+
+commit 5d167e2ec3bc89cb488a19af7b17370a29fc6ad5
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Wed Oct 7 00:01:33 2020 +0800
+
+    ECHOMTG: fix shit
+
+commit f0558e4707314e142c1c1372701f3309c26743c8
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Tue Oct 6 23:39:33 2020 +0800
+
+    ECHOMTG: fix shit
+
+commit e36a067517be9423d271203d4ad2a94ebc1ef5ec
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Tue Oct 6 23:01:41 2020 +0800
+
+    CORE: app node param service applied
+
+commit a4e3a5aa5598c76a44197d14a666a91db9bc6416
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Tue Oct 6 00:03:47 2020 +0800
+
+    CORE: update config context implementation to clean
+
+commit 87a5bbfb568d4c69656e81199ce6590b1ae60d20
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Mon Oct 5 19:47:28 2020 +0800
+
+    OANDA: temp commits before messing up
+
+commit e9b25ca407bc2647d980306a22a0ab5122673186
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Mon Oct 5 12:35:29 2020 +0800
+
+    ECHOMTG: fix note handling to prevent resetting to cleared from collection updates
+
+commit 3a4b20823d81023fcec538357251c6fd9b50d452
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Mon Oct 5 11:32:37 2020 +0800
+
+    CORE: revert constants to api_client.py
+
+commit fcc9c7231d969f68e22cb80b0014ec0102d921af
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Sat Oct 3 02:34:46 2020 +0800
+
+    OANDA: add limit orders.py
+
+commit 7b1959fd775ba2a8dbab4aebffc2517c3635682e
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Sat Oct 3 01:11:03 2020 +0800
+
+    OANDA: updated dtos
+
+commit cdf534a8a9582c75c8cbdb40c2204a2067557f3d
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Sat Oct 3 01:04:48 2020 +0800
+
+    OANDA: updated dtos
+
+commit 41ad65846d36ca12e699998dbc35693d36ada487
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Fri Oct 2 22:28:30 2020 +0800
+
+    ECHOMTG: completed YNAB new tasks.py
+
+commit 01ac08d7dbc4fe889ca53d406a8c91cf8a67c451
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Fri Oct 2 20:54:41 2020 +0800
+
+    ECHOMTG: completed YNAB new tasks.py
+
+commit 6873f7f451bc9bbfe306465a87bbae311792dc5c
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Fri Oct 2 18:44:14 2020 +0800
+
+    ECHOMTG: completed update note
+
+commit 1c95423d895c73f869cf4b6e57b65c4131df19c3
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Fri Oct 2 18:36:31 2020 +0800
+
+    ECHOMTG: completed create note
+
+commit e8f879b37c6e52ce96128592ed42b699ba14fa92
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Fri Oct 2 17:18:15 2020 +0800
+
+    CORE: commit before messing up
+
+commit 1f58b8529bd63374a9a90ddd0383e1af4565ea6c
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Fri Oct 2 16:29:03 2020 +0800
+
+    CORE: commit before messing up
+
+commit 1aa0ad7517ec85a6d4a5785dd7d05607349108d8
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Fri Oct 2 00:32:33 2020 +0800
+
+    ECHOMTG: notes.py update
+
+commit 8df8a35f695eac6cb9fb3cae1d2a0e8327b99b3c
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Thu Oct 1 19:48:31 2020 +0800
+
+    ECHOMTG: notes.py create
+
+commit 981c5a36a24d4f71c2e59a32b7a55c56996889f3
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Wed Sep 30 19:34:45 2020 +0800
+
+    CORE: access update to api_client.py
+
+commit e503022ec8d3d31e6d2792ab6e03cd684dedb2e1
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Wed Sep 30 19:23:42 2020 +0800
+
+    ECHOMTG: Updated tasks.py schedules
+
+commit 7291570442b3ed930a99398c8f0d9b9f77a84273
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Wed Sep 30 19:13:14 2020 +0800
+
+    ECHOMTG: Completed workflows
+
+commit b1c18d7f34bca71273a482463b8c8b005f99deed
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Wed Sep 30 18:14:16 2020 +0800
+
+    CORE: updated api base client optimized
+
+commit c7ea9a0612de8cf4f66d10ec62fcf07f5e9c5a73
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Wed Sep 30 17:11:52 2020 +0800
+
+    CMD: updated runner
+
+commit f6a758cd42e89b29099ead72fea3c87f2ac3c575
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Wed Sep 30 16:50:15 2020 +0800
+
+    CMD: updated runner
+
+commit 06990e88858db4df26b536d1eae6a8617f109675
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Wed Sep 30 16:46:24 2020 +0800
+
+    TRELLO: updated tasks.py
+
+commit afa0ed032738060c2801cac687d9c76f05cfc23e
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Wed Sep 30 04:25:35 2020 +0800
+
+    NOTIFICATIONS: fix tests
+
+commit 43a5da5f534229eaab23a65f618e4dede3f12e02
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Wed Sep 30 03:33:38 2020 +0800
+
+    ECHOMTG: updated YNAB workflow update from prices + put request
+
+commit cd41b40ef40598c1ff1cefc5d91f6a7462807ba4
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Wed Sep 30 02:18:40 2020 +0800
+
+    ECHOMTG: completed YNAB workflow update from prices + put request
+
+commit f45ff4fc67e61d1a7c208731ab94b999b350ce51
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Wed Sep 30 01:12:07 2020 +0800
+
+    ECHOMTG: completed YNAB workflow add
+
+commit e14173bd8b7fbd8f137893abd61a2dc4649b8719
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Tue Sep 29 00:38:23 2020 +0800
+
+    ECHOMTG: completed collection request
+
+commit b56564c49c79e501dc5bc6214ff133550d1dd96f
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Mon Sep 28 22:35:56 2020 +0800
+
+    PUSH: fixed signals.py
+
+commit c421304f5f88b21d324e423053b08bc11ad8d4aa
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Mon Sep 28 21:52:53 2020 +0800
+
+    TRELLO: fix workflow signals.py
+
+commit 0f5b69ca8cd74d8430854373727a4d90ecb16f72
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Mon Sep 28 20:33:37 2020 +0800
+
+    ECHOMTG: initial commit
+
+commit d688ded0854f93124a7379ac46ebabeaa0eb29dc
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Mon Sep 28 15:46:46 2020 +0800
+
+    CORE: add curl base class
+
+commit 6e050fe79d326c9580a095b660020b4cd02e9568
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Sat Sep 26 02:09:47 2020 +0800
+
+    YNAB: updated unit tests
+
+commit dae807c7f923c904d9d11b631c8d23949e5d6ffd
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Sat Sep 26 02:01:30 2020 +0800
+
+    YNAB: updated unit tests
+
+commit b94b88ece1235f971aa03070d2969e4f9d7a644d
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Sat Sep 26 01:59:55 2020 +0800
+
+    YNAB: updated unit tests
+
+commit 7322bd6005aa48ae0f5e59f241af6b99d1cc552c
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Sat Sep 26 01:56:57 2020 +0800
+
+    YNAB: completed transaction services
+
+commit fa62070f5d2aeb30dd9b1ca9dc026d557d021011
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Sat Sep 26 00:06:20 2020 +0800
+
+    YNAB: added initial services
+
+commit 0d4b984993a7cc23c4c03513bae918b9688699fa
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Sat Sep 26 00:05:59 2020 +0800
+
+    CORE: make uri parameter setting with only key if not required
+
+commit 2c7b7965542f6c63195eba1ae454761f25163ddd
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Fri Sep 25 21:43:56 2020 +0800
+
+    CORE: fix response encoding issue
+
+commit 6fffac921880564440c5d920761249381f333885
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Fri Sep 25 17:21:45 2020 +0800
+
+    CORE: fix response encoding issue
+
+commit 138c47db8bc888927fcbc96db7ea1b9e8e5654aa
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Fri Sep 25 16:20:30 2020 +0800
+
+    YNAB: initial commit + cleanup
+
+commit 5dec7541d4ff3bd85ba1eaacb167d702cdc9152b
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Fri Sep 25 02:57:16 2020 +0800
+
+    OANDA: updated signals.py
+
+commit 01ee1f38bd7fbfad278a8d9231c1a1b6da43e22c
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Fri Sep 25 01:18:52 2020 +0800
+
+    OANDA: updated signals.py
+
+commit 4a38f830aec3d7eb78a24cf5a9203072fbfb0df4
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Fri Sep 25 00:54:12 2020 +0800
+
+    OANDA: updated signals.py
+
+commit ad381c686fdbec86b2ab15146146123f676fb709
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Thu Sep 24 19:58:28 2020 +0800
+
+    OANDA: update unit tests
+
+commit 3ce4fadf2a1348e3f18a5361ac90225ec15b8540
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Thu Sep 24 19:55:20 2020 +0800
+
+    OANDA: update signals.py
+
+commit 540646a1b56b748627a1a11bfc5e9f1a734ef34c
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Thu Sep 24 01:09:01 2020 +0800
+
+    OANDA: update signals.py
+
+commit 6c06e71421e59fe76af582c880874574de1f6e05
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Wed Sep 23 21:28:13 2020 +0800
+
+    added notification on failed work flow
+
+commit 657c5bb464fcfe59c81fe153867602095a98f3db
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Wed Sep 23 02:25:49 2020 +0800
+
+    added POC django restart
+
+commit 74641ef230bde96fee2d10370d264ad000be7388
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Wed Sep 23 01:47:07 2020 +0800
+
+    added POC django restart
+
+commit 55e23e2127183d2c28506ed0a68a56df6d55f595
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Tue Sep 15 20:48:44 2020 +0800
+
+    added POC django restart
+
+commit c7d0a81e78557a6b7ddf845630c060c40dac0057
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Tue Sep 15 20:47:53 2020 +0800
+
+    added POC django restart
+
+commit 67acff425545ed84f35f76221ce15ef4ae104de5
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Tue Sep 15 17:33:33 2020 +0800
+
+    added POC django restart
+
+commit 83e7ecfd6162e0a3ecffd501c82f086769d9c4ac
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Tue Sep 15 17:09:45 2020 +0800
+
+    added POC django restart
+
+commit 109dd3c948a98ee3a6758448d1a21d0d7816fcc7
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Tue Sep 15 17:07:48 2020 +0800
+
+    added POC django restart
+
+commit 10101607c39da9b13940546b97e97d27b07f4ad2
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Tue Sep 15 17:07:28 2020 +0800
+
+    added POC django restart
+
+commit 6f93efc9c12c61508877c8414a49863b8ae2e027
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Tue Sep 15 16:48:47 2020 +0800
+
+    added POC django restart
+
+commit 45ed96a0bbc6011f2359c283bbc2f36fe38ed050
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Sat Sep 12 03:57:29 2020 +0800
+
+    added POC django restart
+
+commit 966b735d9cda56eb6433245d7638835e4a59c106
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Sat Sep 12 03:56:29 2020 +0800
+
+    added POC django restart
+
+commit 5db2480d05e1902339c72e048adeb9e2d24a61f2
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Fri Sep 11 18:32:36 2020 +0800
+
+    POC working already for rabbitMQ
+
+commit dc2982e58b15215b20e148904c7f26ddc8311a37
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Fri Sep 11 17:13:14 2020 +0800
+
+    POC working already for rabbitMQ
+
+commit a243121b882ca168cdd1e77b680c0fdb6b300367
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Fri Sep 11 17:06:26 2020 +0800
+
+    POC working already for rabbitMQ
+
+commit 00c8ac7ca268f7b2d07ac6615ff96255d6a27b8f
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Thu Sep 10 21:23:18 2020 +0800
+
+    add bat files
+
+commit 530debb149dd1edda2f8645be0b709a88f79e19f
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Thu Sep 10 21:16:09 2020 +0800
+
+    updated tasks.py
+
+commit 796a2d9237aa0c95e027e1ab0b0b9161a91d9689
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Thu Sep 10 21:15:25 2020 +0800
+
+    updated tasks.py
+
+commit 3f6c7a583a420ab93a201b3af9ce86f9f19b58bf
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Thu Sep 10 21:04:35 2020 +0800
+
+    completed celery implementation for jobs
+
+commit 393cbc0cc92ddb22260960526d37a6b86906c48b
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Thu Sep 10 01:00:53 2020 +0800
+
+    change for the redis
+
+commit a1dce9da653bfdcab437d6a54977a526dbb1f36f
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Wed Sep 9 02:09:38 2020 +0800
+
+    added git ignore
+
+commit 4d6f65ed30658358ef6975540329710eecf706aa
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Wed Sep 9 02:02:35 2020 +0800
+
+    add git ignore
+
+commit a1d298a6c8a4bcca4229645162118cfabeb33125
+Author: DICKB587 <dick.brian.bartilet@willistowerswatson.com>
+Date:   Wed Sep 9 01:42:51 2020 +0800
+
+    Initial commit

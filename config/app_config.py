@@ -5,23 +5,23 @@ from config.loader import ConfigFileLoader
 from utilities.logging.custom_logger import create_logger
 from .environment_variables import ENV_ROOT_DIRECTORY
 
-AppName = TypeVar('AppName', bound=Enum)
+TApp = TypeVar('TApp', bound=Enum)
 """
 TypeVar for application names, bound to the Enum class.
-This restricts the AppName type variable to only Enum subclasses,
+This restricts the TApp type variable to only Enum subclasses,
 ensuring that app names are defined as enumerations.
 """
 
-ConfigClass = TypeVar('ConfigClass', bound=Any)
+TCfg = TypeVar('TCfg', bound=Any)
 """
 TypeVar for configuration classes.
-The bound=Any allows ConfigClass to be any type,
+The bound=Any allows TCfg to be any type,
 but in practice, it is expected to be a class that can be instantiated
 with keyword arguments from a configuration dictionary.
 """
 
 
-class AppConfig(Generic[ConfigClass]):
+class AppConfig(Generic[TCfg]):
     """
     A class for loading and accessing application configuration.
 
@@ -37,7 +37,7 @@ class AppConfig(Generic[ConfigClass]):
     Raises:
         KeyError: If the specified application key is not found in the configuration file.
     """
-    def __init__(self, app: AppName, type_hook_config: Type[ConfigClass], **kwargs):
+    def __init__(self, app: TApp, type_hook_config: Type[TCfg], **kwargs):
         """
         Initializes the AppConfig instance.
 
@@ -57,7 +57,7 @@ class AppConfig(Generic[ConfigClass]):
             raise KeyError
 
     @property
-    def config(self) -> ConfigClass:
+    def config(self) -> TCfg:
         """
         Returns the configuration instance.
 
