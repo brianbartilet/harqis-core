@@ -10,6 +10,7 @@ References:
 - Celery Periodic Tasks: https://docs.celeryproject.org/en/stable/userguide/periodic-tasks.html
 - Celery Beat UnpicklingError: https://stackoverflow.com/questions/31468354/unpicklingerror-on-celerybeat-startup
 """
+
 from workflows import *  # Importing workflow functions to be scheduled
 
 from datetime import timedelta
