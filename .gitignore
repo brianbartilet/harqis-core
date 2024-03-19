@@ -6,7 +6,7 @@
 *pid.*
 **/*.log
 **/*screenshots/
-*config.yaml*
+apps_config.yaml
 *.egg
 *.egg-info/
 harqis-core/dist/
