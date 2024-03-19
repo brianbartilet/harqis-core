@@ -1,10 +1,10 @@
 from setuptools import setup, find_packages
 
-with open('harqis-core/requirements.txt') as f:
+with open('harqis_core/requirements.txt') as f:
     requirements = f.read().splitlines()
 
 setup(
-    name='harqis_core',
+    name='harqis-core',
     version="0.1.0",
     packages=find_packages(),
     author="Brian Bartilet",

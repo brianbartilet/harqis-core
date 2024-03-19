@@ -1,5 +1,5 @@
 [project]
-name = "harqis_core"
+name = "harqis-core"
 version = "0.1.0"
 description = "Heuristic Automation for a Reliable Quality Integration System"
 authors = [
