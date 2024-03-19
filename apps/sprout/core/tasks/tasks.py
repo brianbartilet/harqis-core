@@ -1,7 +1,8 @@
 from workflows import *
 
-from apps.sprout.tasks.apps.testing_tasks import *
-from apps.sprout.sprout import SPROUT
+from apps.sprout.core.tasks.apps.testing_tasks import *
+from apps.sprout.core.celery import SPROUT
+from apps.sprout.settings import TIME_ZONE, USE_TZ
 from config.environment_variables import ENV_TASK_APP
 
 """
@@ -19,5 +20,5 @@ CONFIG_DICTIONARY = {
 
 SPROUT.conf.beat_schedule = CONFIG_DICTIONARY[ENV_TASK_APP]
 
-SPROUT.conf.enable_utc = False
-SPROUT.conf.timezone = 'Asia/Manila'
+SPROUT.conf.enable_utc = USE_TZ
+SPROUT.conf.timezone = TIME_ZONE

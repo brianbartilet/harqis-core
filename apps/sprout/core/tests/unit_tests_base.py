@@ -1,5 +1,5 @@
 from unittest import TestCase, mock
-from apps.sprout.management.commands.scheduler import Command
+from apps.sprout.core.management.commands.scheduler import Command
 
 
 class TestRestartCelerySchedulerTasks(TestCase):

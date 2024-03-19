@@ -1,4 +1,4 @@
-from apps.sprout.sprout import SPROUT
+from apps.sprout.core.celery import SPROUT
 
 
 @SPROUT.task()
