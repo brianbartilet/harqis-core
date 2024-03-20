@@ -35,9 +35,7 @@ dependencies = [
 Homepage = "https://github.com/brianbartilet/harqis-core"
 
 [build-system]
-requires = ["setuptools>=42", "wheel"]
+requires = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"
 
-[tool.setuptools]
-packages = ["harqis-core"]
-package_data = {"harqis-core"= ['*.yaml', '*.tpl.gql', '*.gql', '*.graphql']}
+
