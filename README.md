@@ -65,3 +65,12 @@ workflow builder zaiper all in code, contorol data
 
 gpt assisted test code generation and analysis
    - use cases: rest api spec -automated test code from avaiable fixture
+
+use cases
+   end to end
+reporting tool TBD
+testing decoratprs for princinples
+
+
+GPT based
+   from fixtures generate test code from gpt

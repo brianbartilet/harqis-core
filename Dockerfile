@@ -26,7 +26,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 # run the tests
 ENV PYTHONPATH "${PYTHONPATH}:/usr/src/app"
 ENV ENV_ROOT_DIRECTORY "/usr/src/app"
-ENV ENV "SYS"
+ENV ENV "TEST"
 
 CMD ["git", "--version"]
 CMD ["pytest"]

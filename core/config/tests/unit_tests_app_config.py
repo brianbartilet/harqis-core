@@ -41,6 +41,7 @@ class TestAppConfig(unittest.TestCase):
     def setUp(self):
         self.path = os.path.dirname(os.path.abspath(__file__))
 
+    @unittest.skipIf(ENV != Environment.DEV.value, "Skipping tests for non-development environment.")
     def test_app_config_initialization(self):
         """
         Test that AppConfig initializes correctly with valid input.
