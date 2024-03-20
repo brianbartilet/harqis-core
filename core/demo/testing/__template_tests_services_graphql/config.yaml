@@ -1,6 +1,0 @@
-__template_tests_services_graphql:
-  client: 'graphql'
-  parameters:
-    base_url: 'https://graphql.anilist.co/'
-    response_encoding: 'utf-8'
-    "verify": True
