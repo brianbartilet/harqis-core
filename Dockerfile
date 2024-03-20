@@ -22,10 +22,11 @@ ENV PATH="/venv/bin:$PATH"
 RUN pip install --no-cache-dir --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt
 
-# expose port 80
-EXPOSE 80
 
 # run the tests
 ENV PYTHONPATH "${PYTHONPATH}:/usr/src/app"
-ENV ENV_ROOT_DIRECTORY "/usr/src/app"
+CMD ["git", "--version"]
 CMD ["pytest"]
+
+# expose port 80
+EXPOSE 80
