@@ -10,13 +10,11 @@ on:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
-
     steps:
-    - name: Checkout code
+    - name: Set up Git repository
       uses: actions/checkout@v2
-      
-    - name: Build Docker image
-      run: docker build . -t my-unit-tests:test
-      
-    - name: Run tests
-      run: docker run my-unit-tests:test
+
+    - name: Build and run tests
+      run: docker build . -t my-app && docker run my-app
+      env:
+        ENV_ROOT_DIRECTORY: /app

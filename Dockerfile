@@ -1,6 +1,5 @@
 # use an official Python runtime as a parent image as interpreter
 FROM python:3.10-alpine
-RUN apt-get update && apt-get install -y git
 
 # create a mount point for the volume
 VOLUME /app/data
