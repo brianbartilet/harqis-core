@@ -20,7 +20,7 @@ class BaseFixtureServiceGraphQL(IFixtureWebService[TWebService]):
     for making those requests.
     """
 
-    def __init__(self, config: AppConfigWSClient, gql_file, **kwargs):
+    def __init__(self, config: AppConfigWSClient, gql_file=None, **kwargs):
         """
         Initializes the protocol fixture with the given configuration.
 

@@ -1,0 +1,8 @@
+mutation SaveMediaListEntry($id: Int, $mediaId: Int, $status: MediaListStatus) {
+  SaveMediaListEntry(id: $id, mediaId: $mediaId, status: $status) {
+    id
+    mediaId
+    status
+  }
+}
+

@@ -33,12 +33,19 @@ def load_logging_configuration():
         The root logger object after loading the configuration.
     """
     config_file_location = find_logging_config()
-    with open(config_file_location) as config_file:
-        config_dict = yaml.load(config_file, Loader=yaml.FullLoader)
-        logging.config.dictConfig(config_dict)
+    try:
+        with open(config_file_location) as config_file:
+            config_dict = yaml.load(config_file, Loader=yaml.FullLoader)
+            logging.config.dictConfig(config_dict)
+    except FileNotFoundError as e:
+        raise FileNotFoundError(f"Logging configuration file not found: {config_file_location}")
+    except TypeError as e:
+        raise NotImplementedError(f"Please add a logging file {file_name} in root directory.")
+
     new_logger = logging.getLogger()
 
     new_logger.info("Loaded logging configuration from %s\n", config_file_location)
+
     return new_logger
 
 
