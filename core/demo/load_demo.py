@@ -5,7 +5,15 @@ import yaml
 # RUN THIS ONLY IN DEMO PROJECT https://github.com/brianbartilet/harqis-demo-testing
 
 
-def create_and_move_yaml(filename: str, data: dict, destination):
+def create_and_move_yaml(filename: str, data: dict, destination: str):
+    """
+    Creates a YAML file with the given data and moves it to the specified destination.
+
+    Args:
+        filename (str): The name of the YAML file to be created.
+        data (dict): The data to be written to the YAML file.
+        destination (str): The path to the destination directory where the YAML file will be moved.
+    """
     # Create the YAML file with content
     with open(filename, 'w') as file:
         yaml.dump(data, file)
@@ -16,8 +24,11 @@ def create_and_move_yaml(filename: str, data: dict, destination):
 
 
 def create_demo_configurations():
-
-    # Create the config.yaml file for the __template_tests_services_graphql
+    """
+    Creates demo configuration YAML files for the __template_tests_services_rest and
+    __template_tests_services_graphql directories in the demo/testing directory.
+    """
+    # Create the config.yaml file for the __template_tests_services_rest
     config_template_rest = {
         "__template_tests_services_rest": {
             "client": "rest",
@@ -45,7 +56,7 @@ def create_demo_configurations():
             }
         }
     }
-    create_and_move_yaml("config.yaml", config_template_rest,
+    create_and_move_yaml("config.yaml", config_template_graph,
                          os.path.join(os.getcwd(),
                                       "demo",
                                       "testing",
