@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-with open('harqis_core/requirements.txt') as f:
+with open('core/requirements.txt') as f:
     requirements = f.read().splitlines()
 
 setup(

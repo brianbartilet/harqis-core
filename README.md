@@ -17,7 +17,7 @@ HARQIS (Heuristic Automation for a Reliable Quality Integration System) is a mul
 
 - **Generic Test Automation Framework**:
 
-## Getting Started
+## Getting Started python setup.py sdist bdist_wheel
 To install as a package, follow these steps:
 
 To contribute using HARQIS, follow these steps:
