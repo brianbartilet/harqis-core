@@ -2,7 +2,7 @@ from typing import Type, TypeVar, cast
 
 from behave.runner import Context
 
-from web.services.core.contracts.response import IResponse
+from core.web.services.core.contracts.response import IResponse
 
 Service = TypeVar("Service")
 

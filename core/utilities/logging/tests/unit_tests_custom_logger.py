@@ -3,7 +3,7 @@ import unittest
 import logging
 
 from unittest.mock import patch, mock_open
-from utilities.logging.custom_logger import create_logger, load_logging_configuration, find_logging_config, file_name
+from core.utilities.logging.custom_logger import create_logger, load_logging_configuration, find_logging_config, file_name
 
 
 class TestLogger(unittest.TestCase):

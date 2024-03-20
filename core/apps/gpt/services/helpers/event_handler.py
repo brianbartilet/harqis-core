@@ -1,6 +1,6 @@
 from typing_extensions import override
 from openai import AssistantEventHandler
-from utilities.logging.custom_logger import create_logger
+from core.utilities.logging.custom_logger import create_logger
 
 
 class EventHandler(AssistantEventHandler):

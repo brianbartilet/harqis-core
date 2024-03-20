@@ -1,6 +1,6 @@
 import json
 
-from utilities.contracts.file import IFileLoader
+from core.utilities.contracts.file import IFileLoader
 from typing import Any
 from jsonschema import validate, ValidationError
 from json.decoder import JSONDecodeError

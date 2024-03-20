@@ -1,5 +1,5 @@
 import unittest
-from exception.error_wrapper import *
+from core.exception.error_wrapper import *
 import pytest
 
 class TestsExceptionHandler(unittest.TestCase):

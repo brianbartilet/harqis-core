@@ -1,13 +1,13 @@
 import os
 
-from web.services.core.request_builder.base import RequestBuilder
-from web.services.core.json import JsonObject
-from web.services.core.constants.payload_type import PayloadType
-from web.services.core.constants.http_headers import HttpHeaders
-from web.services.core.constants.mime_type import MimeType
-from web.services.core.constants.http_methods import HttpMethod
+from core.web.services.core.request_builder.base import RequestBuilder
+from core.web.services.core.json import JsonObject
+from core.web.services.core.constants.payload_type import PayloadType
+from core.web.services.core.constants.http_headers import HttpHeaders
+from core.web.services.core.constants.mime_type import MimeType
+from core.web.services.core.constants.http_methods import HttpMethod
 
-from utilities.resources.loader import ResourceDataLoader, Resource
+from core.utilities.resources.loader import ResourceDataLoader, Resource
 
 from typing import TypeVar
 
@@ -21,7 +21,7 @@ class RequestBuilderGraphQL(RequestBuilder):
     def __init__(self, gql_file: str, **kwargs):
         super(RequestBuilderGraphQL, self).__init__(**kwargs)
         self.gql_file = gql_file
-        self.base_path = kwargs.get('base_path', os.getcwd())
+        self.base_path = kwargs.get('base_path', os.path.dirname(os.path.abspath(__file__)))
 
         self\
             .set_method(HttpMethod.POST)\

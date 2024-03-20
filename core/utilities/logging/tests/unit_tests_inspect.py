@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import MagicMock
-from utilities.logging.inspect import log_current_function  # Replace 'your_module' with the actual module name
+from core.utilities.logging.inspect import log_current_function  # Replace 'your_module' with the actual module name
 
 
 class TestLogCurrentFunction(unittest.TestCase):

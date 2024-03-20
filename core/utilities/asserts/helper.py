@@ -1,7 +1,7 @@
 import hamcrest
 from hamcrest import *
 
-from reports.report_generator import ReportGenerator
+from core.reports.report_generator import ReportGenerator
 
 
 def raise_any_exception(exception_list: list) -> None:

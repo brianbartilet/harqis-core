@@ -2,9 +2,9 @@ from abc import ABC
 from typing import Optional, Dict
 
 from requests.structures import CaseInsensitiveDict
-from web.services.core.constants.http_methods import HttpMethod
-from web.services.core.contracts.request import IWebServiceRequest
-from utilities.logging.custom_logger import create_logger
+from core.web.services.core.constants.http_methods import HttpMethod
+from core.web.services.core.contracts.request import IWebServiceRequest
+from core.utilities.logging.custom_logger import create_logger
 
 
 class Request(IWebServiceRequest, ABC):

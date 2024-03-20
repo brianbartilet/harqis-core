@@ -1,4 +1,4 @@
-from web.services.core.clients.base import BaseWebClient
+from core.web.services.core.clients.base import BaseWebClient
 
 
 class GrpcClient(BaseWebClient):

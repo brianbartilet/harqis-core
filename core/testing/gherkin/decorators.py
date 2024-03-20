@@ -1,5 +1,5 @@
 from functools import wraps
-from utilities.logging.custom_logger import create_logger
+from core.utilities.logging.custom_logger import create_logger
 
 log = create_logger("Loading Gherkin decorators")
 

@@ -1,12 +1,12 @@
 from abc import ABC, abstractmethod
 
-from web.services.core.constants.payload_type import PayloadType
-from web.services.core.constants.http_methods import HttpMethod
-from web.services.core.constants.http_headers import HttpHeaders
+from core.web.services.core.constants.payload_type import PayloadType
+from core.web.services.core.constants.http_methods import HttpMethod
+from core.web.services.core.constants.http_headers import HttpHeaders
 
-from web.services.core.contracts.request import IWebServiceRequest
+from core.web.services.core.contracts.request import IWebServiceRequest
 
-from web.services.core.json import JsonObject
+from core.web.services.core.json import JsonObject
 
 from requests.structures import CaseInsensitiveDict
 

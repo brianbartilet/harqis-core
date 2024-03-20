@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import MagicMock
-from utilities.asserts.helper import LoggedAssertHelper, raise_any_exception, is_between
+from core.utilities.asserts.helper import LoggedAssertHelper, raise_any_exception, is_between
 from hamcrest import *
 
 

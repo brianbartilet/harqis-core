@@ -2,7 +2,7 @@ import logging
 import os
 import subprocess
 
-from utilities.multiprocess import MultiProcessingClient
+from core.utilities.multiprocess import MultiProcessingClient
 
 except_folder_names = [
     '__pycache__',

@@ -15,5 +15,5 @@ Note:
 
 Additionally, the module imports the `SPROUT` configuration from `workflows.builder.config`, ensuring that task execution is aligned with the predefined settings of the Celery application.
 """
-from workflows.builder.config import SPROUT
+#from core.workflows.builder.config import SPROUT
 

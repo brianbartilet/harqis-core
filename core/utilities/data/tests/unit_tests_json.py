@@ -1,5 +1,5 @@
 import unittest
-from web.services.core.json import JsonObject, JsonUtility, keys_exists
+from core.web.services.core.json import JsonObject, JsonUtility, keys_exists
 import os
 
 

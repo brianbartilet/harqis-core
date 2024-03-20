@@ -6,7 +6,7 @@ from collections import OrderedDict
 from json import JSONDecodeError
 from typing import TypeVar, Generic, Type, Union
 
-from utilities.logging.custom_logger import create_logger
+from core.utilities.logging.custom_logger import create_logger
 
 log = create_logger()
 TJsonObject = TypeVar('TJsonObject')

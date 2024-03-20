@@ -1,7 +1,7 @@
 import os
 import json
 
-from utilities.contracts.file import IFileLoader
+from core.utilities.contracts.file import IFileLoader
 
 
 class ConfigFileJson(IFileLoader):

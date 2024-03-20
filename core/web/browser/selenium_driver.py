@@ -13,8 +13,8 @@ from selenium.common.exceptions import *
 
 from behave.runner import Context
 
-from exception.error_wrapper import *
-from utilities.logging.custom_logger import create_logger
+from core.exception.error_wrapper import *
+from core.utilities.logging.custom_logger import create_logger
 
 future_speed = os.getenv("FUTURE_SPEED", "N").lower()
 

@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Dict, Optional
 
-from web.services.core.constants.http_methods import HttpMethod
+from core.web.services.core.constants.http_methods import HttpMethod
 
 
 class IWebServiceRequest(ABC):

@@ -1,5 +1,5 @@
 import unittest
-from utilities.data.qlist import QList
+from core.utilities.data.qlist import QList
 
 
 class UnitTestsQList(unittest.TestCase):

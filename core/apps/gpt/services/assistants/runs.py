@@ -1,9 +1,9 @@
-from apps.gpt.base import BaseServiceHarqisGPT
-from apps.gpt.constants.http_headers import HttpHeadersGPT
-from apps.gpt.dto.assistants.run import DtoRun, DtoRunCreate, DtoThreadRunCreate, DtoRunStep, DtoSubmitToolOutputs
-from apps.gpt.dto.assistants.common import DtoListQuery
+from core.apps.gpt.base import BaseServiceHarqisGPT
+from core.apps.gpt.constants.http_headers import HttpHeadersGPT
+from core.apps.gpt.dto.assistants.run import DtoRun, DtoRunCreate, DtoThreadRunCreate, DtoRunStep, DtoSubmitToolOutputs
+from core.apps.gpt.dto.assistants.common import DtoListQuery
 
-from web.services.core.constants.http_methods import HttpMethod
+from core.web.services.core.constants.http_methods import HttpMethod
 
 
 class ServiceRuns(BaseServiceHarqisGPT):

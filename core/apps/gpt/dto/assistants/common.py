@@ -1,4 +1,4 @@
-from web.services.core.json import JsonObject
+from core.web.services.core.json import JsonObject
 from typing import Optional
 
 

@@ -1,5 +1,5 @@
 import unittest
-from utilities.resources.types.json_schema import ResourceFileJsonSchema
+from core.utilities.resources.types.json_schema import ResourceFileJsonSchema
 
 
 class TestResourceFileJsonSchema(unittest.TestCase):

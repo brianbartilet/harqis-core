@@ -2,7 +2,7 @@ import os
 
 from typing import TypeVar
 
-from utilities.contracts.file import IFileLoader
+from core.utilities.contracts.file import IFileLoader
 
 TData = TypeVar('TData')
 

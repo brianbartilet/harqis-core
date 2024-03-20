@@ -1,10 +1,10 @@
-from apps.gpt.base import BaseServiceHarqisGPT
-from apps.gpt.constants.http_headers import HttpHeadersGPT
-from apps.gpt.dto.assistants.assistant import DtoAssistant, DtoAssistantFile, DtoListAssistants
-from apps.gpt.dto.assistants.common import DtoListQuery, DtoResponseStatus
+from core.apps.gpt.base import BaseServiceHarqisGPT
+from core.apps.gpt.constants.http_headers import HttpHeadersGPT
+from core.apps.gpt.dto.assistants.assistant import DtoAssistant, DtoAssistantFile, DtoListAssistants
+from core.apps.gpt.dto.assistants.common import DtoListQuery, DtoResponseStatus
 
-from web.services.core.json import JsonObject
-from web.services.core.constants.http_methods import HttpMethod
+from core.web.services.core.json import JsonObject
+from core.web.services.core.constants.http_methods import HttpMethod
 
 
 class ServiceAssistants(BaseServiceHarqisGPT):

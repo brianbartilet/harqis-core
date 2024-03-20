@@ -1,5 +1,6 @@
-from apps.gpt.dto.assistants.message import DtoMessage
-from web.services.core.json import JsonObject
+from core.apps.gpt.dto.assistants.message import DtoMessage
+from core.web.services.core.json import JsonObject
+
 from typing import Optional
 
 

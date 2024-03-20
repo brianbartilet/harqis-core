@@ -1,6 +1,6 @@
 import os
 
-from web.services.fixtures.graphql import BaseFixtureServiceGraphQL
+from core.web.services.fixtures.graphql import BaseFixtureServiceGraphQL
 
 
 class BaseTestFixtureAppQuery(BaseFixtureServiceGraphQL):

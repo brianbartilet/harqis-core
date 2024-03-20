@@ -1,4 +1,4 @@
-from web.services.core.request_builder.base import RequestBuilder
+from core.web.services.core.request_builder.base import RequestBuilder
 
 
 class RequestBuilderRest(RequestBuilder):

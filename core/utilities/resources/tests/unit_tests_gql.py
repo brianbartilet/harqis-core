@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import patch
-from utilities.resources.loader import ResourceDataLoader, Resource
+from core.utilities.resources.loader import ResourceDataLoader, Resource
 
 
 class TestResourceDataLoader(unittest.TestCase):
@@ -10,8 +10,8 @@ class TestResourceDataLoader(unittest.TestCase):
         self.base_path = 'path'
         self.gql_no_extension = 'query'
 
-    @patch('utilities.resources.loader.ResourceFileGql.load')
-    @patch('utilities.resources.loader.ResourceFileGql.find_file_from_base_path')
+    @patch('core.utilities.resources.loader.ResourceFileGql.load')
+    @patch('core.utilities.resources.loader.ResourceFileGql.find_file_from_base_path')
     def test_gql_loader_success(self, mock_find_file, mock_load):
         mock_find_file.return_value = '/path/to/resources/test_data.gql'
         mock_load.return_value = 'query { test }'

@@ -6,10 +6,10 @@ from http import HTTPStatus
 from typing import TypeVar, Type, Optional
 from requests.structures import CaseInsensitiveDict
 
-from web.services.core.contracts.response import IResponse
-from web.services.core.json import JsonUtility, JsonObject
-from utilities.data.objects import ObjectUtils
-from utilities.logging.custom_logger import create_logger
+from core.web.services.core.contracts.response import IResponse
+from core.web.services.core.json import JsonUtility, JsonObject
+from core.utilities.data.objects import ObjectUtils
+from core.utilities.logging.custom_logger import create_logger
 
 TResponse = TypeVar("TResponse")
 TTypeHook = TypeVar("TTypeHook")

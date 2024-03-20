@@ -4,20 +4,20 @@ from uuid import uuid4
 from http import HTTPStatus as HttpStatus
 from parameterized import parameterized
 
-from apps.gpt.services.assistants.assistant import ServiceAssistants
-from apps.gpt.services.assistants.threads import ServiceThreads
-from apps.gpt.services.assistants.messages import ServiceMessages
-from apps.gpt.services.assistants.runs import ServiceRuns
+from core.apps.gpt.services.assistants.assistant import ServiceAssistants
+from core.apps.gpt.services.assistants.threads import ServiceThreads
+from core.apps.gpt.services.assistants.messages import ServiceMessages
+from core.apps.gpt.services.assistants.runs import ServiceRuns
 
-from apps.gpt.dto.assistants.assistant import DtoAssistant
-from apps.gpt.dto.assistants.thread import DtoThread, DtoThreadCreate
-from apps.gpt.dto.assistants.message import DtoMessage, DtoMessageCreate
-from apps.gpt.dto.assistants.run import DtoRunCreate
+from core.apps.gpt.dto.assistants.assistant import DtoAssistant
+from core.apps.gpt.dto.assistants.thread import DtoThread, DtoThreadCreate
+from core.apps.gpt.dto.assistants.message import DtoMessage, DtoMessageCreate
+from core.apps.gpt.dto.assistants.run import DtoRunCreate
 
-from apps.apps_config import AppConfigLoader, AppNames
-from web.services.core.json import JsonObject
+from core.apps.apps_config import AppConfigLoader, AppNames
+from core.web.services.core.json import JsonObject
 
-from utilities.data.qlist import QList
+from core.utilities.data.qlist import QList
 
 
 class TestGPTServicesSmoke(unittest.TestCase):

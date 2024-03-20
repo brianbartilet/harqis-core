@@ -6,13 +6,13 @@ from .response import IResponse
 from .request import IWebServiceRequest
 from .client import IWebClient
 
-from web.services.core.constants.service_client_type import WebService
-from web.services.core.config.webservice import AppConfigWSClient
-from web.services.core.clients.rest import RestClient
-from web.services.core.clients.graphql import GraphQLClient
-from web.services.core.clients.grpc import GrpcClient
+from core.web.services.core.constants.service_client_type import WebService
+from core.web.services.core.config.webservice import AppConfigWSClient
+from core.web.services.core.clients.rest import RestClient
+from core.web.services.core.clients.graphql import GraphQLClient
+from core.web.services.core.clients.grpc import GrpcClient
 
-from utilities.asserts.helper import LoggedAssertHelper
+from core.utilities.asserts.helper import LoggedAssertHelper
 
 TFixture = TypeVar("TFixture")
 TResponse = TypeVar("TResponse")

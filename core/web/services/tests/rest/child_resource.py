@@ -1,5 +1,5 @@
-from web.services.core.constants.http_methods import HttpMethod
-from web.services.core.json import JsonObject
+from core.web.services.core.constants.http_methods import HttpMethod
+from core.web.services.core.json import JsonObject
 
 from .base_resource import BaseTestFixtureService
 

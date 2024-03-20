@@ -1,11 +1,11 @@
 import os
-from web.services.core.request_builder.graphql import RequestBuilderGraphQL
+from core.web.services.core.request_builder.graphql import RequestBuilderGraphQL
 
-from web.services.core.contracts.fixture import IFixtureWebService
-from web.services.core.contracts.response import IResponse
-from web.services.core.contracts.request import IWebServiceRequest
-from web.services.core.clients.graphql import GraphQLClient
-from web.services.core.config.webservice import AppConfigWSClient
+from core.web.services.core.contracts.fixture import IFixtureWebService
+from core.web.services.core.contracts.response import IResponse
+from core.web.services.core.contracts.request import IWebServiceRequest
+from core.web.services.core.clients.graphql import GraphQLClient
+from core.web.services.core.config.webservice import AppConfigWSClient
 
 from typing import TypeVar
 
@@ -31,7 +31,7 @@ class BaseFixtureServiceGraphQL(IFixtureWebService[TWebService]):
             .__init__(config=config, gql_file=gql_file, **kwargs)
 
         self.gql_file = gql_file
-        self.base_path = kwargs.get('base_path', os.getcwd())
+        self.base_path = kwargs.get('base_path', os.path.dirname(os.path.abspath(__file__)))
 
     def send_request(self, request: IWebServiceRequest, response_hook=dict, **kwargs) -> IResponse[TWebService]:
         """

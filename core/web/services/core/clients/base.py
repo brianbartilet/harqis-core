@@ -4,11 +4,11 @@ import urllib.parse as url_helper
 from abc import ABC
 from typing import TypeVar, Type, Dict
 
-from utilities.logging.custom_logger import create_logger
+from core.utilities.logging.custom_logger import create_logger
 
-from web.services.core.contracts.client import IWebClient
-from web.services.core.contracts.request import IWebServiceRequest
-from web.services.core.response import IResponse, Response
+from core.web.services.core.contracts.client import IWebClient
+from core.web.services.core.contracts.request import IWebServiceRequest
+from core.web.services.core.response import IResponse, Response
 
 
 TResponseData = TypeVar('TResponseData')

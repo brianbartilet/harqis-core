@@ -2,8 +2,8 @@ import os
 from typing import TypeVar, Type, Generic
 from enum import Enum
 
-from config.types.json import ConfigFileJson
-from config.types.yaml import ConfigFileYaml
+from core.config.types.json import ConfigFileJson
+from core.config.types.yaml import ConfigFileYaml
 
 TConfig = TypeVar('TConfig')
 

@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 from typing import TypeVar, Generic, Optional
 from pathlib import Path
 
-from utilities.logging.custom_logger import create_logger
+from core.utilities.logging.custom_logger import create_logger
 
 
 TFile = TypeVar('TFile')

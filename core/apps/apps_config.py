@@ -1,6 +1,6 @@
 from enum import Enum
-from web.services.core.config.webservice import AppConfigWSClient
-from config.app_config import AppConfig
+from core.web.services.core.config.webservice import AppConfigWSClient
+from core.config.app_config import AppConfig
 from typing import TypeVar, Generic
 
 TConfig = TypeVar("TConfig")

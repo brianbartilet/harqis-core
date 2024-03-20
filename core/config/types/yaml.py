@@ -1,6 +1,6 @@
 import yaml
 
-from utilities.contracts.file import IFileLoader
+from core.utilities.contracts.file import IFileLoader
 
 
 class ConfigFileYaml(IFileLoader):

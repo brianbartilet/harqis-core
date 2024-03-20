@@ -2,8 +2,8 @@ import os
 from typing import Type, TypeVar
 from enum import Enum
 
-from utilities.resources.types.json import ResourceFileJson
-from utilities.resources.types.gql import ResourceFileGql
+from core.utilities.resources.types.json import ResourceFileJson
+from core.utilities.resources.types.gql import ResourceFileGql
 
 TData = TypeVar('TData')
 
@@ -17,7 +17,7 @@ class ResourceDataLoader:
     """
     Loads data from a target file with support for dynamic path detection.
     """
-    def __init__(self, resource: Resource, file_name: str, base_path: str = os.getcwd(), **kwargs):
+    def __init__(self, resource: Resource, file_name: str, base_path: str = os.path.dirname(os.path.abspath(__file__)), **kwargs):
         """
         Initializes the ConfigLoader.
 

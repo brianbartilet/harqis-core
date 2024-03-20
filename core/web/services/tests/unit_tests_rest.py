@@ -2,7 +2,7 @@ import unittest
 
 from http import HTTPStatus
 
-from web.services.tests.rest.child_resource \
+from core.web.services.tests.rest.child_resource \
     import ChildTestFixtureResource, DtoUserTest, DtoUserTestCamel, post_payload, response_check_get
 
 

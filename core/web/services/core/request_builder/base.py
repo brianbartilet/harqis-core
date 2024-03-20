@@ -1,15 +1,15 @@
 from requests.structures import CaseInsensitiveDict
 
-from web.services.core.contracts.request_builder import IWebRequestBuilder
-from web.services.core.contracts.request import IWebServiceRequest
+from core.web.services.core.contracts.request_builder import IWebRequestBuilder
+from core.web.services.core.contracts.request import IWebServiceRequest
 
-from web.services.core.constants.payload_type import PayloadType
-from web.services.core.constants.http_methods import HttpMethod
+from core.web.services.core.constants.payload_type import PayloadType
+from core.web.services.core.constants.http_methods import HttpMethod
 
-from web.services.core.request import Request
+from core.web.services.core.request import Request
 
-from web.services.core.json import JsonObject
-from utilities.logging.custom_logger import create_logger
+from core.web.services.core.json import JsonObject
+from core.utilities.logging.custom_logger import create_logger
 
 from enum import Enum
 from typing import TypeVar

@@ -1,8 +1,8 @@
 import unittest
 import os
 from enum import Enum
-from web.services.core.json import JsonObject
-from config.app_config import AppConfig
+from core.web.services.core.json import JsonObject
+from core.config.app_config import AppConfig
 
 
 class MockedTypeObject(JsonObject):

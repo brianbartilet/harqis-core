@@ -49,7 +49,7 @@ def find_logging_config():
     Returns:
         The file path of the logging configuration file if found, otherwise None.
     """
-    cur_dir = os.getcwd()  # Dir from where search starts can be replaced with any path
+    cur_dir = os.path.dirname(os.path.abspath(__file__))  # Dir from where search starts can be replaced with any path
 
     file_location = None
     while True:

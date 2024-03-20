@@ -14,9 +14,9 @@ Known Issues:
 
 from workflows.builder.tasks.testing import MAP_TESTING_TASKS
 
-from apps.sprout.core.celery import SPROUT
-from apps.sprout.settings import TIME_ZONE, USE_TZ
-from config.environment_variables import ENV_TASK_APP
+from core.apps.sprout.core.celery import SPROUT
+from core.apps.sprout.settings import TIME_ZONE, USE_TZ
+from core.config.environment_variables import ENV_TASK_APP
 
 # Configuration dictionary mapping environment variable values to specific task mappings.
 CONFIG_DICTIONARY = {

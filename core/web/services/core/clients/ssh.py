@@ -1,5 +1,5 @@
 import paramiko
-from utilities.logging.custom_logger import create_logger
+from core.utilities.logging.custom_logger import create_logger
 import sys
 import time
 

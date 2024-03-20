@@ -1,7 +1,7 @@
 import csv
 import os
 
-from reports.report_generator import ReportGenerator
+from core.reports.report_generator import ReportGenerator
 
 
 class CsvReportGenerator(ReportGenerator):

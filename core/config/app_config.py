@@ -1,8 +1,8 @@
 from typing import TypeVar, Type, Any, Generic
 from enum import Enum
 
-from config.loader import ConfigFileLoader
-from utilities.logging.custom_logger import create_logger
+from core.config.loader import ConfigFileLoader
+from core.utilities.logging.custom_logger import create_logger
 from .environment_variables import ENV_ROOT_DIRECTORY
 
 TApp = TypeVar('TApp', bound=Enum)

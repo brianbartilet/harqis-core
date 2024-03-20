@@ -1,5 +1,5 @@
-from web.services.fixtures.rest import BaseFixtureServiceRest
-from web.services.core.config.webservice import AppConfigWSClient
+from core.web.services.fixtures.rest import BaseFixtureServiceRest
+from core.web.services.core.config.webservice import AppConfigWSClient
 
 # this would be the configuration for the application would be loaded externally
 test_config = AppConfigWSClient(

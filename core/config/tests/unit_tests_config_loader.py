@@ -1,7 +1,7 @@
 import os.path
 import unittest
 
-from config.loader import ConfigFileLoader, ConfigFile
+from core.config.loader import ConfigFileLoader, ConfigFile
 
 
 class UnitTestsConfigLoader(unittest.TestCase):

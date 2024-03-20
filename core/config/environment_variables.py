@@ -3,7 +3,7 @@ import inspect
 import re
 import subprocess
 
-from config.constants.environment import EnvSettings
+from core.config.constants.environment import EnvSettings
 
 
 # region Environment Variables Helpers

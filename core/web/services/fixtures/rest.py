@@ -1,12 +1,12 @@
-from web.services.core.request_builder.rest import RequestBuilderRest
+from core.web.services.core.request_builder.rest import RequestBuilderRest
 
-from web.services.core.clients.rest import RestClient
+from core.web.services.core.clients.rest import RestClient
 
-from web.services.core.contracts.fixture import IFixtureWebService
-from web.services.core.contracts.response import IResponse
-from web.services.core.contracts.request import IWebServiceRequest
+from core.web.services.core.contracts.fixture import IFixtureWebService
+from core.web.services.core.contracts.response import IResponse
+from core.web.services.core.contracts.request import IWebServiceRequest
 
-from web.services.core.config.webservice import AppConfigWSClient
+from core.web.services.core.config.webservice import AppConfigWSClient
 
 from typing import TypeVar
 TWebService = TypeVar("TWebService")

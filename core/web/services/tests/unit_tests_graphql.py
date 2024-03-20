@@ -1,10 +1,10 @@
 import unittest
 
 from http import HTTPStatus
-from web.services.tests.graphql.sample_query import BaseTestFixtureAppQuery
+from core.web.services.tests.graphql.sample_query import BaseTestFixtureAppQuery
 
-from web.services.core.config.webservice import AppConfigWSClient
-from web.services.core.json import JsonObject
+from core.web.services.core.config.webservice import AppConfigWSClient
+from core.web.services.core.json import JsonObject
 
 # this would be the configuration for the application would be loaded externally
 given_config = AppConfigWSClient(

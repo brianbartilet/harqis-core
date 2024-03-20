@@ -1,7 +1,7 @@
 from openai import OpenAI
 
-from web.services.fixtures.rest import BaseFixtureServiceRest
-from web.services.core.constants.http_headers import HttpHeaders
+from core.web.services.fixtures.rest import BaseFixtureServiceRest
+from core.web.services.core.constants.http_headers import HttpHeaders
 
 
 class BaseServiceHarqisGPT(BaseFixtureServiceRest):

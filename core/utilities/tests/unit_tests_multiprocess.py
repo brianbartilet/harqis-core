@@ -1,5 +1,5 @@
 import unittest
-from utilities.multiprocess import MultiProcessingClient
+from core.utilities.multiprocess import MultiProcessingClient
 
 
 def sample_task(x):

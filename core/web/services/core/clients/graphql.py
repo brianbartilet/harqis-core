@@ -2,9 +2,9 @@ import requests
 
 from typing import Type, TypeVar
 
-from web.services.core.clients.base import BaseWebClient
-from web.services.core.contracts.response import IResponse
-from web.services.core.response import Response
+from core.web.services.core.clients.base import BaseWebClient
+from core.web.services.core.contracts.response import IResponse
+from core.web.services.core.response import Response
 
 TResponse = TypeVar('TResponse')
 TErrors = TypeVar('TErrors')

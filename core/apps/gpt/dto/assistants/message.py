@@ -1,5 +1,6 @@
-from web.services.core.json import JsonObject
-from apps.gpt.dto.assistants.common import DtoListResponse
+from core.web.services.core.json import JsonObject
+from core.apps.gpt.dto.assistants.common import DtoListResponse
+
 from typing import Optional, Any
 from enum import Enum
 

@@ -1,10 +1,10 @@
-from config.environment_variables import ENV_TASK_APP
+from core.config.environment_variables import ENV_TASK_APP
 from django.core.management.base import BaseCommand
 from django.utils import autoreload
 
 from .restart import restart_celery_scheduler
 
-from apps.sprout.settings import APP_PACKAGE
+from core.apps.sprout.settings import APP_PACKAGE
 
 
 def restart_celery_scheduler_tasks():

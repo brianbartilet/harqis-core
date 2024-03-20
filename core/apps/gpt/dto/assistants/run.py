@@ -1,6 +1,7 @@
-from web.services.core.json import JsonObject
-from apps.gpt.dto.assistants.common import DtoError
-from apps.gpt.dto.assistants.thread import DtoThreadCreate
+from core.web.services.core.json import JsonObject
+from core.apps.gpt.dto.assistants.common import DtoError
+from core.apps.gpt.dto.assistants.thread import DtoThreadCreate
+
 from typing import Optional
 
 

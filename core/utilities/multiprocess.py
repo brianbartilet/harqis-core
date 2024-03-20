@@ -1,7 +1,7 @@
 import multiprocessing as mp
 import psutil
 
-from utilities.logging.custom_logger import create_logger
+from core.utilities.logging.custom_logger import create_logger
 from queue import Empty
 
 
