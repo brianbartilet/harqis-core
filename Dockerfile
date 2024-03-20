@@ -5,10 +5,10 @@ FROM python:3.10-alpine
 VOLUME /app/data
 
 # set the working directory in the container
-WORKDIR /app
+WORKDIR /app/core
 
 # run command if interpreter is installed on windows machine
-COPY requirements.txt .
+COPY core/. .
 
 # install dependencies
 RUN apk add gcc python3-dev musl-dev linux-headers
@@ -23,3 +23,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # expose port 80
 EXPOSE 80
+
+# run the tests
+
+CMD ["pytest"]
