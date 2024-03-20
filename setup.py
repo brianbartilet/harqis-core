@@ -21,4 +21,7 @@ setup(
     ],
     python_requires='>=3.10',
     homepage="https://github.com/brianbartilet/harqis-core",
+    package_data={
+        'your_package_name': ['*.yaml', '*.tpl.gql', '*.gql', '*.graphql'],
+    },
 )
