@@ -33,7 +33,7 @@ class BaseExceptionWrapper(Exception):
         Element Key: {element_key}
         Locator Type: {locator_type}
         Locator Value: {locator_value}
-        Message: {text} {message}      
+        Message: {text} {message}
     """
 
     def __init__(self, message_dto):

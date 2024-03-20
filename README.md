@@ -6,11 +6,11 @@ HARQIS (Heuristic Automation for a Reliable Quality Integration System) is a mul
 
 ## Key Features
 
-- **Automated Testing**: 
+- **Automated Testing**:
 - **Creating Workflows**: Enables the creation of automated workflows to improve efficiency and reduce manual effort.
 - **Swiss Army Knife**: A versatile set of tools for various automation tasks, making it a comprehensive solution for your automation needs.
 - **Quality Integration System**: Ensures superior integration of components and systems, maintaining high-quality standards and performance.
-- **Reporting and Analytics**: 
+- **Reporting and Analytics**:
 - **Adaptability**: Capable of adjusting to dynamic environments and requirements, ensuring ongoing enhancement and innovation.
 - **GPT Assisted Test Development**: Utilizes GPT technology to assist with creation of test code aligned with core testing techniques and principles.
 ## Use Cases

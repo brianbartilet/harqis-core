@@ -33,7 +33,7 @@ class SSHClient:
             self._log.error("Unable to establish SSH client connection to the Host %s" % self._host)
 
     '''
-    Starts new session on SSH server and returns a Channel object. 
+    Starts new session on SSH server and returns a Channel object.
     '''
     def get_channel_for_new_session(self):
         if self.__ssh_client is None:

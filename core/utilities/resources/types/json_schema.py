@@ -31,4 +31,4 @@ class ResourceFileJsonSchema(IFileLoader):
         except ValidationError as e:
             self.log.error(f"JSON data validation failed: {e}")
             return False
-            
+

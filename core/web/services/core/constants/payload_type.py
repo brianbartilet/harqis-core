@@ -12,4 +12,3 @@ class PayloadType(Enum):
     UNKNOWN = 'data' # Fallback for unknown payload types.
     TEXT = 'data'    # For plain text payload.
 
-    
