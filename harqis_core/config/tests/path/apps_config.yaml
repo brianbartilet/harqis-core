@@ -1,9 +1,0 @@
-APPLICATION_CONFIG:
-  name: 'Cool Application'
-  url: 'https://coolapplication.com'
-  author: 'Brian Myers'
-
-ANOTHER_APPLICATION_CONFIG:
-  name: 'Another Application'
-  url: 'https://anotherapplication.com'
-  author: 'Sonny Duke'
