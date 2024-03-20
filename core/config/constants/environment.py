@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class EnvSettings(Enum):
+class Environment(Enum):
     """
     Enum class for environment settings.
 

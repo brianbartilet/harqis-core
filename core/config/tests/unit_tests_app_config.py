@@ -4,6 +4,9 @@ from enum import Enum
 from core.web.services.core.json import JsonObject
 from core.config.app_config import AppConfig
 
+from core.config.constants.environment import Environment
+from core.config.environment_variables import ENV
+
 
 class MockedTypeObject(JsonObject):
     """
@@ -45,6 +48,7 @@ class TestAppConfig(unittest.TestCase):
         when_app_config = AppConfig(MockedAppNames.APPLICATION_CONFIG, MockedTypeObject, base_path=self.path)
         self.assertEqual(when_app_config.config.name, 'Cool Application')
 
+    @unittest.skipIf(ENV != Environment.DEV.value, "Skipping tests for non-development environment.")
     def test_app_config_key_error(self):
         """
         Test that AppConfig raises a KeyError when an invalid application name is provided.

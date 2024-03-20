@@ -3,7 +3,7 @@ import inspect
 import re
 import subprocess
 
-from core.config.constants.environment import EnvSettings
+from core.config.constants.environment import Environment
 
 
 # region Environment Variables Helpers
@@ -101,7 +101,7 @@ def get_git_root(path):
 #  region Default Environment Variables
 
 # Environment setting, default is development environment
-ENV = os.environ.get("ENV", EnvSettings.DEV.value)
+ENV = os.environ.get("ENV", Environment.DEV.value)
 
 # Debug setting, default is '1'
 ENV_DEBUG = os.environ.get("DEBUG", '1')
@@ -119,7 +119,7 @@ ENV_ENABLE_PROXY = os.environ.get("ENABLE_PROXY", False)
 ENV_APP_CONFIG = os.environ.get("ENV_PATH_APP_CONFIG", "apps_config.yaml")
 
 # Root directory of the application, default is the root directory of the repository, unless specified
-ENV_ROOT_DIRECTORY = os.environ.get('ENV_ROOT_DIRECTORY', get_git_root(os.path.dirname(os.path.abspath(__file__))))
+ENV_ROOT_DIRECTORY = os.environ.get('ENV_ROOT_DIRECTORY', os.path.dirname(os.path.abspath(__file__)))
 
 # Local application data path, default is None
 ENV_LOCAL_APP_DATA = os.environ.get("LOCALAPPDATA", None)
