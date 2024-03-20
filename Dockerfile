@@ -1,5 +1,6 @@
 # use an official Python runtime as a parent image as interpreter
 FROM python:3.10-alpine
+RUN apk update && apk add git
 
 # create a mount point for the volume
 VOLUME /app/data
