@@ -1,5 +1,4 @@
 import yaml
-import os
 
 from utilities.contracts.file import IFileLoader
 

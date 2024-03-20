@@ -1,8 +1,9 @@
 import os
-from typing import Type
+from typing import Type, TypeVar
 from enum import Enum
 
-from utilities.resources.types import *
+from utilities.resources.types.json import ResourceFileJson
+from utilities.resources.types.gql import ResourceFileGql
 
 TData = TypeVar('TData')
 
