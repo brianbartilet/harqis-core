@@ -1,0 +1,23 @@
+name: Run Unit Tests
+
+# Trigger the workflow on push or pull request to the main branch
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+      
+    - name: Build Docker image
+      run: docker build . -t my-unittests:test
+      
+    - name: Run tests
+      run: docker run my-unittests:test
