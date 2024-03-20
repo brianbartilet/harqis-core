@@ -9,7 +9,6 @@ on:
 
 jobs:
   build-and-test:
-
     runs-on: ubuntu-latest
 
     steps:
@@ -17,7 +16,7 @@ jobs:
       uses: actions/checkout@v2
       
     - name: Build Docker image
-      run: docker build . -t my-unittests:test
+      run: docker build . -t my-unit-tests:test
       
     - name: Run tests
-      run: docker run my-unittests:test
+      run: docker run my-unit-tests:test
