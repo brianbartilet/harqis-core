@@ -34,18 +34,23 @@ class TestLogger(unittest.TestCase):
         """
         Test that the find_logging_config function correctly finds the logging configuration file in the directory tree.
         """
-        mock_get_cwd.return_value = '/path/to'
-        mock_dirname.side_effect = lambda x: '/path' if x == '/path/to' else '/'
-        mock_listdir.side_effect = [['not_logging.yaml'], [file_name]]
+        file_name = 'logging.yaml'  # Define the expected file name
+        initial_cwd = '/path/to'
+        up_one_level = '/path'
+        root_dir = '/'
+
+        mock_get_cwd.return_value = initial_cwd
+        mock_dirname.side_effect = [up_one_level, root_dir]  # Simulate walking up the directory tree
+        mock_listdir.side_effect = lambda x: [file_name] if x == up_one_level else []
 
         config_path = find_logging_config()
-        expected_path = os.path.join('/path', file_name)
+        expected_path = os.path.join(up_one_level, file_name)
         self.assertEqual(config_path, expected_path)
 
     @patch('builtins.open', new_callable=mock_open, read_data='dummy_yaml_content')
     @patch('yaml.load', return_value={'version': 1})
     @patch('logging.config.dictConfig')
-    @patch('utilities.logging.custom_logger.find_logging_config', return_value='/path/to/' + file_name)
+    @patch('core.utilities.logging.custom_logger.find_logging_config', return_value='/path/to/' + file_name)
     def test_load_logging_configuration(self, mock_find_logging_config, mock_dict_config, mock_yaml_load, mock):
         """
         Test that the load_logging_configuration function correctly loads the logging configuration from the YAML file.

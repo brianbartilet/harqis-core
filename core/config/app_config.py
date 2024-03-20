@@ -1,9 +1,10 @@
+import os
 from typing import TypeVar, Type, Any, Generic
 from enum import Enum
 
 from core.config.loader import ConfigFileLoader
 from core.utilities.logging.custom_logger import create_logger
-from .environment_variables import ENV_ROOT_DIRECTORY
+from core.config.environment_variables import ENV_ROOT_DIRECTORY
 
 TApp = TypeVar('TApp', bound=Enum)
 """
@@ -47,10 +48,9 @@ class AppConfig(Generic[TCfg]):
             **kwargs: Optional keyword arguments. Can include 'logger' for a custom logger and 'base_path' for a custom configuration file path.
         """
         self.log = kwargs.get('logger', create_logger(self.__class__.__name__))
-        self.base_path = kwargs.get('base_path', ENV_ROOT_DIRECTORY)
 
         try:
-            self.app_config = ConfigFileLoader(base_path=self.base_path).config[app.value]
+            self.app_config = ConfigFileLoader(**kwargs).config[app.value]
             self._config = type_hook_config(**self.app_config)  # Instantiate ConfigClass
         except KeyError:
             self.log.error(f"Cannot find application key for {app}.")

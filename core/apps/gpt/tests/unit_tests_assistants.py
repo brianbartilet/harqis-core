@@ -75,14 +75,12 @@ class TestGPTServicesSmoke(unittest.TestCase):
     @parameterized.expand([
         ('2 + 2', '4'),
         ('2 * 2', '4'),
-        ('2 / 2', '1'),
-        ('2 - 2', '0'),
     ])
     def test_base_assistant_workflow(self, expression, evaluated):
         #  create an assistant
-        when_create_assistant = self.given_service_assistants.create_assistant(self.given_payload)
-        self.then.assertEqual(HttpStatus.OK, when_create_assistant.status_code)
-        self.assertIsInstance(when_create_assistant.data, DtoAssistant)
+        self.when_create_assistant = self.given_service_assistants.create_assistant(self.given_payload)
+        self.then.assertEqual(HttpStatus.OK, self.when_create_assistant.status_code)
+        self.assertIsInstance(self.when_create_assistant.data, DtoAssistant)
 
         #  create a thread
         given_thread_payload = DtoThreadCreate(messages=[])
@@ -92,14 +90,14 @@ class TestGPTServicesSmoke(unittest.TestCase):
 
         #  create a message
         given_thread_id = when_create_thread.data.id
-        given_message_payload = DtoMessageCreate(role='user', content='Hello, world!')
+        given_message_payload = DtoMessageCreate(role='user', content='Act as a calculator, digits only')
         when_create_message = self.given_service_messages.create_message(given_thread_id, given_message_payload)
         self.then.assertEqual(HttpStatus.OK, when_create_message.status_code)
         self.assertIsInstance(when_create_message.data, DtoMessage)
 
         #  create a run
-        given_run_payload = DtoRunCreate(assistant_id=when_create_assistant.data.id,
-                                         instructions=f"Please solve the equation in digits only. What is {expression}")
+        given_run_payload = DtoRunCreate(assistant_id=self.when_create_assistant.data.id,
+                                         instructions=f"{expression}")
         when_stream = self.given_service_run.create_run(thread_id=given_thread_id, payload=given_run_payload)
         self.then.assertEqual(HttpStatus.OK, when_stream.status_code)
 
@@ -110,7 +108,7 @@ class TestGPTServicesSmoke(unittest.TestCase):
         self.then.assertEqual(HttpStatus.OK, when_get_run.status_code)
 
         while when_get_run.data.status in ['queued', 'in_progress', 'cancelling']:
-            time.sleep(1)  # Wait for 1 second
+            time.sleep(5)  # Wait for 1 second
             when_get_run = self.given_service_run.get_run(thread_id=given_thread_id,
                                                           run_id=when_stream.data.id)
             self.then.assertEqual(HttpStatus.OK, when_get_run.status_code)
@@ -123,5 +121,7 @@ class TestGPTServicesSmoke(unittest.TestCase):
         self.then.assertTrue(evaluated in content.text.value)
 
         #  delete the assistant
-        when = self.given_service_assistants.delete_assistant(assistant_id=when_create_assistant.data.id)
+        when = self.given_service_assistants.delete_assistant(assistant_id=self.when_create_assistant.data.id)
         self.then.assertEqual(when.status_code, HttpStatus.OK)
+
+

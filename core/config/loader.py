@@ -30,7 +30,7 @@ class ConfigFileLoader(Generic[TConfig]):
     def __init__(self,
                  file: ConfigFile = ConfigFile.YAML,
                  file_name="apps_config.yaml",
-                 base_path: str = os.getcwd()):
+                 **kwargs):
         """
         Initializes the ConfigLoader.
 
@@ -39,7 +39,7 @@ class ConfigFileLoader(Generic[TConfig]):
             file_name (str): The name of the configuration file to load.
             base_path (str): The base path to start searching for the configuration file.
         """
-        self._config = file.value(file_name=file_name, base_path=base_path)
+        self._config = file.value(file_name=file_name, **kwargs)
 
     @property
     def config(self) -> TConfig:

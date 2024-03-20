@@ -17,7 +17,7 @@ class ResourceDataLoader:
     """
     Loads data from a target file with support for dynamic path detection.
     """
-    def __init__(self, resource: Resource, file_name: str, base_path: str = os.path.dirname(os.path.abspath(__file__)), **kwargs):
+    def __init__(self, resource: Resource, file_name: str, **kwargs):
         """
         Initializes the ConfigLoader.
 
@@ -30,7 +30,7 @@ class ResourceDataLoader:
             file_name += '.gql'
         self.file_name = file_name
 
-        self._resource = resource.value(file_name=file_name, base_path=base_path, **kwargs)
+        self._resource = resource.value(file_name=file_name, **kwargs)
 
     @property
     def data(self) -> TData:

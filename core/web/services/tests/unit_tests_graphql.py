@@ -1,4 +1,5 @@
 import unittest
+import os
 
 from http import HTTPStatus
 from core.web.services.tests.graphql.sample_query import BaseTestFixtureAppQuery
@@ -23,40 +24,37 @@ class TestDtoQuery(JsonObject):
 
 
 class TestsUnitWebServices(unittest.TestCase):
+    def setUp(self):
+        self.path = os.path.dirname(os.path.abspath(__file__))
+        self.given_fixture = BaseTestFixtureAppQuery(given_config, base_path=os.path.join(self.path, 'graphql'))
 
     def test_sample_query(self):
-        given_fixture = BaseTestFixtureAppQuery(given_config)
+
         given_payload = {'id': 1, 'type': "ANIME" }
-        given_request = given_fixture.get_sample_request(given_payload)
+        given_request = self.given_fixture.get_sample_request(given_payload)
 
-        when = given_fixture.send_request(given_request)
+        when = self.given_fixture.send_request(given_request)
 
-        then = given_fixture.verify.common
+        then = self.given_fixture.verify.common
         then.assert_that(when.status_code, then.equal_to(HTTPStatus.OK))
         then.assert_that(when.data, then.has_key('Media'))
 
     def test_sample_query_with_type(self):
-        given_fixture = BaseTestFixtureAppQuery(given_config)
         given_payload = {'id': 1, 'type': "ANIME" }
-        given_request = given_fixture.get_sample_request(given_payload)
+        given_request = self.given_fixture.get_sample_request(given_payload)
 
-        when = given_fixture.send_request(given_request, response_hook=TestDtoQuery)
+        when = self.given_fixture.send_request(given_request, response_hook=TestDtoQuery)
 
-        then = given_fixture.verify.common
+        then = self.given_fixture.verify.common
         then.assert_that(when.status_code, then.equal_to(HTTPStatus.OK))
         then.assert_that(when.data, then.has_property('Media'))
 
         #  test chaining
-        when = given_fixture.send_request(given_request, response_hook=TestDtoQuery)
+        when = self.given_fixture.send_request(given_request, response_hook=TestDtoQuery)
         then.assert_that(when.status_code, then.equal_to(HTTPStatus.OK))
 
     def test_sample_query_with_invalid_gql(self):
-        given_fixture = BaseTestFixtureAppQuery(given_config, gql_file='invalid.tpl.gql')
-        given_payload = {'invalid_key': 0 }
-        given_request = given_fixture.get_sample_request(given_payload)
-        when = given_fixture.send_request(given_request)
-        when_errors = given_fixture.client.get_errors()
-
-        then = given_fixture.verify.common
-        then.assert_that(when.status_code, then.equal_to(HTTPStatus.BAD_REQUEST))
-        then.assert_that(isinstance(when_errors.data, list), True)
+        with self.assertRaises(FileNotFoundError):
+            given_fixture = BaseTestFixtureAppQuery(given_config, gql_file='invalid.tpl.gql', base_path=self.path)
+            given_payload = {'invalid_key': 0 }
+            given_fixture.get_sample_request(given_payload)

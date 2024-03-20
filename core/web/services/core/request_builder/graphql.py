@@ -33,7 +33,7 @@ class RequestBuilderGraphQL(RequestBuilder):
         else:
             variables = variables
 
-        loader = ResourceDataLoader(Resource.GQL, self.gql_file, self.base_path, variables=variables)
+        loader = ResourceDataLoader(Resource.GQL, self.gql_file, variables=variables, base_path=self.base_path)
 
         self.add_payload(loader.data, PayloadType.JSON)
 
