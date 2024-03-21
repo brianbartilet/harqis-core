@@ -3,7 +3,7 @@
 ## Introduction
 
 - **HARQIS** (Heuristic Automation for a Reliable Quality Integration System) is a versatile automation platform designed to facilitate a wide range of automation tasks across various domains.
-- **GPT** integrated functionalities, leverages the **OpenAI API** to assist with code generation and analysis.
+- Supports **GPT** integrated functionalities, leverages the **OpenAI API** to assist with code generation and analysis.
 - Provides fixtures, utilities, and templates for implementing automation for various applications and systems. It enables the creation of automated workflows for testing, cross application integration, and more, adapting to both small and large-scale projects with ease.
 
 ## Key Features

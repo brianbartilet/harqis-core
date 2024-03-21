@@ -1,48 +1,57 @@
+# Logging configuration dictionary
 version: 1
-disable_existing_loggers: true
-level: DEBUG
+disable_existing_loggers: true  # Disables all loggers created prior to this configuration
 
+# Log level: DEBUG, INFO, WARNING, ERROR, CRITICAL
+level: DEBUG  # The root logger will log debug and higher-level messages
+
+# Formatter definitions
 formatters:
-  simple:
+  simple:  # A formatter named 'simple'
     format: '%(asctime)s - %(process)d - %(threadName)s - %(levelname)s - %(module)s - %(message)s'
+    # Format string for the message log
+    # Includes timestamp, process ID, thread name, log level, module name, and the log message
 
+# Handler definitions
 handlers:
-  console:
-    class: logging.StreamHandler
-    level: DEBUG
-    formatter: simple
-    stream: ext://sys.stdout
+  console:  # Console handler to output logs to stdout
+    class: logging.StreamHandler  # Uses Python's built-in StreamHandler
+    level: DEBUG  # Captures debug and higher level messages
+    formatter: simple  # Uses the 'simple' formatter
+    stream: ext://sys.stdout  # Specifies that the stream is standard output
 
-  debuglogfile:
-    class: logging.handlers.RotatingFileHandler
-    filename: "app-debug.log"
-    mode: "a"
-    maxBytes: 10485760
-    backupCount: 3
-    level: DEBUG
-    formatter: simple
+  debuglogfile:  # File handler for debugging logs
+    class: logging.handlers.RotatingFileHandler  # Rotating file handler to manage log file size
+    filename: "app-debug.log"  # Log file name
+    mode: "a"  # Append mode
+    maxBytes: 10485760  # Maximum log file size before rotation, in bytes (10MB)
+    backupCount: 3  # Number of backup files to keep
+    level: DEBUG  # Captures debug and higher level messages
+    formatter: simple  # Uses the 'simple' formatter
 
-  logfile:
-    class: logging.handlers.RotatingFileHandler
-    filename: "app.log"
-    mode: "a"
-    maxBytes: 10485760
-    backupCount: 3
-    level: DEBUG
-    formatter: simple
+  logfile:  # File handler for general logs
+    class: logging.handlers.RotatingFileHandler  # Rotating file handler to manage log file size
+    filename: "app.log"  # Log file name
+    mode: "a"  # Append mode
+    maxBytes: 10485760  # Maximum log file size before rotation, in bytes (10MB)
+    backupCount: 3  # Number of backup files to keep
+    level: DEBUG  # Captures debug and higher level messages
+    formatter: simple  # Uses the 'simple' formatter
 
+# Logger definitions
 loggers:
-  myapp:
-    level: INFO
-    handlers: [console, logfile]
-    propagate: no
+  harqis:  # Custom logger for the application
+    level: INFO  # Captures info and higher level messages
+    handlers: [console, logfile]  # Uses console and logfile handlers
+    propagate: no  # Prevents logs from propagating to the root logger
 
-  debug:
-    level: DEBUG
-    handlers: [console, debuglogfile]
-    propagate: no
+  debug:  # Custom logger for debugging purposes
+    level: DEBUG  # Captures all log messages
+    handlers: [console, debuglogfile]  # Uses console and debuglogfile handlers
+    propagate: no  # Prevents logs from propagating to the root logger
 
+# Root logger configuration
 root:
-  level: DEBUG
-  handlers: [console, logfile]
-  propagate: no
+  level: DEBUG  # Captures debug and higher level messages
+  handlers: [console, logfile]  # Uses console and logfile handlers
+  propagate: no  # Prevents logs from propagating further
