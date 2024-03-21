@@ -39,7 +39,7 @@
 - Support e2e testing and task automation
 
 ## Demo Project
-- Please refer here [harqis-demo-generic-framework](https://github.com/brianbartilet/harqis-demo-generic-framework) for an sample application of HARQIS-core.
+- Please refer here [harqis-demo-generic-framework](https://github.com/brianbartilet/harqis-demo-generic-framework) for an sample application of **HARQIS-core**.
 - The demo project can be used as a template for creating new projects and provide basic operations of fixtures and templates.
 - See the [README.md](https://github.com/brianbartilet/harqis-demo-generic-framework/blob/main/README.md)
 
@@ -76,22 +76,21 @@ To get started with **HARQIS-core**, follow these steps:
 **Configuration**:
    - A configuration requirement is needed to run the application. Create a `apps_config.yaml` file in the root directory and add the following:
       ```yaml
-     CELERY_TASKS:
-      application_name: 'workflow-harqis'
-      broker: 'your_broker_url'
-
-     HARQIS_GPT:
-     client: 'rest'
-     parameters:
-       base_url: 'https://api.openai.com/v1'
-       response_encoding: 'utf-8'
-       verify: False
-       timeout: 60
-       stream: True
-     app_data:
-       api_key: 'your_openai_api_key'
-       model: 'your_target_assistant_mode'
-       max_tokens: 500
+      CELERY_TASKS:
+        application_name: 'workflow-harqis'
+        broker: 'your_broker_url'
+      HARQIS_GPT:
+        client: 'rest'
+        parameters:
+          base_url: 'https://api.openai.com/v1'
+          response_encoding: 'utf-8'
+          verify: False
+          timeout: 60
+          stream: True
+      app_data:
+        api_key: 'your_openai_api_key'
+        model: 'your_target_assistant_mode'
+        max_tokens: 500
       ```
 **Run Unit Tests**:
 - Execute all tests using the following command:
@@ -107,12 +106,13 @@ To get started with **HARQIS-core**, follow these steps:
    ```
 
 **Test Package Build**:
+- To build the package, execute the following command:
    ```sh
    python setup.py sdist bdist_wheel
    ```
 
 ## License
 
-HARQIS-core is distributed under the [MIT License](LICENSE).
+**HARQIS-core** is distributed under the [MIT License](LICENSE).
 
 
