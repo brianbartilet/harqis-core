@@ -36,7 +36,7 @@
 
 #### Use Cases
 - Publish workflows tasks as events that can be consumed for execution.
-- Support e2e testing and task automation
+- Support e2e testing and task automation.
 
 ## Demo Project
 - Please refer here [harqis-demo-generic-framework](https://github.com/brianbartilet/harqis-demo-generic-framework) for an sample application of **HARQIS-core**.
