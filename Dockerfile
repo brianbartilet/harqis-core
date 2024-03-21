@@ -1,4 +1,4 @@
-#set arugments for the dockerfile
+# set arguments for the dockerfile
 ARG PYTHON_VERSION=3.10
 
 # use an official Python runtime as a parent image as interpreter
