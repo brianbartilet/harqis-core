@@ -99,12 +99,12 @@ To get started with **HARQIS-core**, follow these steps:
    pytest
    ```
 **Docker**:
-- For local testing please execute `docker-compose up` to run the application dependencies.
 - Alternatively you may test the package from provided `Dockerfile`, by executing the following commands:
    ```sh
    docker build . -t harqis-core
    docker run harqis-core
    ```
+- Execute `docker-compose up` to setup dependencies.
 
 **Test Package Build**:
 - To build the package, execute the following command:
