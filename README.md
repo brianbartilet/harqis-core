@@ -2,75 +2,117 @@
 
 ## Introduction
 
-HARQIS (Heuristic Automation for a Reliable Quality Integration System) is a multipurpose automation tools solution designed to deliver the quality integration process across diverse systems. By leveraging advanced heuristic algorithms and the power of automated robots, HARQIS aims to streamline operations, ensure seamless integration, and uphold high-quality standards in complex environments.
+- **HARQIS** (Heuristic Automation for a Reliable Quality Integration System) is a versatile automation platform designed to facilitate a wide range of automation tasks across various domains. With GPT-assisted functionalities, powered by the OpenAI API, HARQIS enhances code generation and analysis, making it a powerful tool for developers and QA engineers alike.
+- **GPT** integrated functionalities, leverages the **OpenAI API** to assist with code generation and analysis.
+- Provides fixtures, utilities, and templates for implementing automation for various applications and systems. It enables the creation of automated workflows for testing, cross application integration, and more, adapting to both small and large-scale projects with ease.
 
 ## Key Features
 
-- **Automated Testing**:
-- **Creating Workflows**: Enables the creation of automated workflows to improve efficiency and reduce manual effort.
-- **Swiss Army Knife**: A versatile set of tools for various automation tasks, making it a comprehensive solution for your automation needs.
-- **Quality Integration System**: Ensures superior integration of components and systems, maintaining high-quality standards and performance.
-- **Reporting and Analytics**:
-- **Adaptability**: Capable of adjusting to dynamic environments and requirements, ensuring ongoing enhancement and innovation.
-- **GPT Assisted Test Development**: Utilizes GPT technology to assist with creation of test code aligned with core testing techniques and principles.
-## Use Cases
+### Automation Swiss Army Knife
 
-- **Generic Test Automation Framework**:
+- **Generic Automation**: Provides comprehensive support for both general automation tasks and testing.
+- **Ease of Use**: Offers automation fixtures for frontend, backend, embedded systems, and IoT applications.
+- **Adaptability**: Easily adjusts to dynamic environments and evolving requirements.
+- **Quality Integration System**: Ensures testing standards and optimal performance of integrated components and systems.
 
-## Getting Started python setup.py sdist bdist_wheel
-To install as a package, follow these steps:
+#### Use Cases
+- Facilitates the creation of a generic test automation framework.
+- Supports end-to-end, integration, and functional testing.
+- Provide reporting and analytics.
+- Provide utility decorators to apply testing principles and techniques.
 
-To contribute using HARQIS, follow these steps:
+### GPT Assisted Development
+- **Development Assistant**: Utilizes the *OpenAI API* to generate test code, analyze fixtures, and apply testing techniques.
+- **OpenAI Integration**: Directly integrates with the *OpenAI API* to create scripts and perform other useful tasks.
 
-1. **Installation**: Clone and install, you may use available `Dockerfile` for setting up a remote interpreter
-   ```
-   git clone https://github.com/yourusername/harqis.git
-   ```
-   ```
-   docker build -t pyi .
-   docker run -d --name pyi_ctr pyi
-   ```
-   ```
-   cd harqis
-   pip install -r requirements.txt
-   ```
+#### Use Cases
+- Automates the generation of test code based on existing fixtures and templates.
+- Offers code analysis and suggestions for testing techniques.
+- Generates test code from analyzing static specifications or schemas (e.g. *OpenAPI*, *GraphQL*, *WSDL*) from available fixtures and templates.
 
-2. **Configuration**: Tailor the HARQIS configuration settings to meet your specific integration requirements and system needs.
+### Cross Application Integration and Workflow Builder
+- **Create Robots**: Provides RPA-like capabilities to automate any workflow from integrated applications.
+- **Workflow Builder**: Features a workflow builder (akin to *Zapier* or *IFTTT*) for code-based, fully controllable application data and task scheduling.
+
+#### Use Cases
+- Publish workflows tasks as events that can be consumed for execution.
+- Support e2e testing and task automation
+
+## Demo Project
+- Please refer here [harqis-demo-generic-framework](https://github.com/brianbartilet/harqis-demo-generic-framework) for an sample application of HARQIS-core.
+- The demo project can be used as a template for creating new projects and provide basic operations of fixtures and templates.
+- See the [README.md](https://github.com/brianbartilet/harqis-demo-generic-framework/blob/main/README.md)
+
+## Contact
+
+For questions or feedback, please contact [brian.bartilet@gmail.com](mailto:brian.bartilet@gmail.com).
 
 
 ## Contributing
 
-Contributions to HARQIS are highly appreciated! If you have ideas for improvements or new features, feel free to submit a pull request or open an issue.
+We welcome contributions! If you have ideas for new features or improvements, please submit a pull request or open an issue.
+
+## Getting Started
+
+To get started with **HARQIS-core**, follow these steps:
+
+**Setup and Installation**:
+   - Runs on Python 3.10 or greater.
+   - Clone the repository
+      ```sh
+      git https://github.com/brianbartilet/harqis-core.git
+      ```
+   - Set up and activate virtual environment
+      ```sh
+      python -m venv venv
+      source venv/bin/activate
+      ```
+   - Install the required packages using the requirements file
+      ```sh
+      pip install --no-cache-dir --upgrade pip
+      pip install -r requirements.txt
+      ```
+
+**Configuration**:
+   - A configuration requirement is needed to run the application. Create a `apps_config.yaml` file in the root directory and add the following:
+      ```yaml
+     CELERY_TASKS:
+      application_name: 'workflow-harqis'
+      broker: 'your_broker_url'
+
+     HARQIS_GPT:
+     client: 'rest'
+     parameters:
+       base_url: 'https://api.openai.com/v1'
+       response_encoding: 'utf-8'
+       verify: False
+       timeout: 60
+       stream: True
+     app_data:
+       api_key: 'your_openai_api_key'
+       model: 'your_target_assistant_mode'
+       max_tokens: 500
+      ```
+**Run Unit Tests**:
+- Execute all tests using the following command:
+   ```sh
+   pytest
+   ```
+**Docker**:
+- For local testing please execute `docker-compose up` to run the application dependencies.
+- Alternatively you may test the package from provided `Dockerfile`, by executing the following commands:
+   ```sh
+   docker build . -t harqis-core
+   docker run harqis-core
+   ```
+
+**Test Package Build**:
+   ```sh
+   python setup.py sdist bdist_wheel
+   ```
 
 ## License
 
-HARQIS is distributed under the [MIT License](LICENSE).
-
-## Contact
-
-For inquiries or feedback, please reach out to us at [brian.bartilet@gmail.com](mailto:brian.bartilet@gmail.com).
-
----
-automation swiss army knife
-   - may it be for testing and general automation
-   - contains fixtures for frontend, backend, and iot
-   - end to end testing, integration testing functional
-
-workflow builder zaiper all in code, contorol data
-   - ability to create a workflow
-   get ws -> post ws -> get webbrowser
-   ws -> ws -> iot
-   getdevice -> device -> ws
-   - publuih workflow as events to run by executor
-
-gpt assisted test code generation and analysis
-   - use cases: rest api spec -automated test code from avaiable fixture
-
-use cases
-   end to end
-reporting tool TBD
-testing decoratprs for princinples
+HARQIS-core is distributed under the [MIT License](LICENSE).
 
 
-GPT based
-   from fixtures generate test code from gpt
