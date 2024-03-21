@@ -17,7 +17,7 @@
 
 #### Use Cases
 - Facilitates the creation of a generic test automation framework.
-- Supports end-to-end, integration, and functional testing.
+- Supports end-to-end, integration, functional and non-functional testing.
 - Provide reporting and analytics.
 - Provide utility decorators to apply testing principles and techniques.
 
