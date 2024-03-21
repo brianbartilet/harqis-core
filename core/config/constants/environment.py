@@ -12,3 +12,4 @@ class Environment(Enum):
 
     DEV = 'DEV'
     PROD = 'PROD'
+    TEST = 'TEST'

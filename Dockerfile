@@ -1,5 +1,8 @@
+#set arugments for the dockerfile
+ARG PYTHON_VERSION=3.10
+
 # use an official Python runtime as a parent image as interpreter
-FROM python:3.10-alpine
+FROM python:${PYTHON_VERSION}-alpine
 RUN apk update && apk add git
 
 # create a mount point for the volume
@@ -27,9 +30,5 @@ RUN pip install --no-cache-dir -r requirements.txt
 ENV PYTHONPATH "${PYTHONPATH}:/usr/src/app"
 ENV ENV_ROOT_DIRECTORY "/usr/src/app"
 ENV ENV "TEST"
-
-CMD ["git", "--version"]
 CMD ["pytest"]
 
-# expose port 80
-EXPOSE 80
