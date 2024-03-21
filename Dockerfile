@@ -18,8 +18,8 @@ COPY core/. .
 RUN apk add gcc python3-dev musl-dev linux-headers
 
 # load virtual environment
-RUN python -m venv /venv
-ENV PATH="/venv/bin:$PATH"
+RUN python -m venv /app/venv
+ENV PATH="/app/venv/bin:$PATH"
 
 # install packages
 RUN pip install --no-cache-dir --upgrade pip
