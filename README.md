@@ -96,6 +96,7 @@ To get started with **HARQIS-core**, follow these steps:
 **Run Unit Tests**:
 - Execute all tests using the following command:
    ```sh
+   cd core
    pytest
    ```
 **Docker**:

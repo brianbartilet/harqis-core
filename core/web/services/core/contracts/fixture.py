@@ -128,4 +128,3 @@ class IFixtureWebService(Generic[TFixture]):
             An instance of LoggedAssertHelper.
         """
         return LoggedAssertHelper()
-

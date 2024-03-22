@@ -23,6 +23,7 @@ from core.config.environment_variables import ENV
 from core.config.constants.environment import Environment
 
 
+@unittest.skipIf(ENV != Environment.DEV.value, "Skipping tests for non-development environment.")
 class TestGPTServicesSmoke(unittest.TestCase):
     """
     Smoke tests for GPT Services.

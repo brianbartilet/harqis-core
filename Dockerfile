@@ -1,6 +1,7 @@
 # set arguments for the dockerfile
-ARG PYTHON_VERSION=3.10
-
+ARG PYTHON_VERSION=3.12
+ARG ENV_ROOT_DIRECTORY="/usr/src/app"
+ARG ENV="TEST"
 # use an official Python runtime as a parent image as interpreter
 FROM python:${PYTHON_VERSION}-alpine
 RUN apk update && apk add git
@@ -27,8 +28,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 
 # run the tests
-ENV PYTHONPATH "${PYTHONPATH}:/usr/src/app"
-ENV ENV_ROOT_DIRECTORY "/usr/src/app"
-ENV ENV "TEST"
+ENV ENV_ROOT_DIRECTORY ${ENV_ROOT_DIRECTORY}
+ENV ENV ${ENV}
 CMD ["pytest"]
 
