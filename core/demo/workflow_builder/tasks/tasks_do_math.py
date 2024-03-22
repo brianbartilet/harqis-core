@@ -18,7 +18,6 @@ import datetime
 from celery.schedules import crontab
 
 
-test = "core.demo.workflow_builder"
 TASKS_DO_MATH = {
     # region Tasks To Test
 

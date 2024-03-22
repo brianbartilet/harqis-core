@@ -22,7 +22,7 @@ TASKS_SEND_WEB_REQUESTS = {
 
     'run-test-sample-workflow-web-request': {
         'task': 'core.demo.workflow_builder.workflows.workflows_example_group_web_requests.wf_cross_application_web_request',
-        'schedule': timedelta(seconds=2),
+        'schedule': timedelta(seconds=10),
         'args': [],
     },
 

@@ -1,1 +1,0 @@
-set PYTHONPATH=C:\GIT\harqis-core;%PYTHONPATH%

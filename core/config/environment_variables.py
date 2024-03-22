@@ -82,23 +82,12 @@ def get_env_variable_value(env):
         raise Exception('Environment variable was not set')
 
 
-def get_git_root(path):
-    """
-    Function to get the root directory of a git repository.
-
-    Args:
-        path (str): The path where to start searching for the git root.
-
-    Returns:
-        The root directory of the git repository.
-    """
-    git_root = subprocess.check_output(['git', 'rev-parse', '--show-toplevel'], cwd=path)
-    return git_root.decode('utf-8').strip()
 
 # endregion
 
 
 #  region Default Environment Variables
+
 
 # Environment setting, default is development environment
 ENV = os.environ.get("ENV", Environment.DEV.value)
@@ -129,6 +118,8 @@ ENV_TASK_APP = os.environ.get("ENV_TASK_APP", 'MAP_TESTING_TASKS')
 
 # Performs dynamic import to connect the sprout task application to any task module
 ENV_WORKFLOW_CONFIG = os.environ.get('ENV_WF_TASK_PATH', 'core.demo.workflow_builder.config')
+
+ENV_PYTHON_PATH = os.environ.get('PYTHONPATH', os.getcwd())
 
 #  endregion
 

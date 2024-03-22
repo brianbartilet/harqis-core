@@ -11,12 +11,11 @@ References:
 Known Issues:
 - Potential issues with Celery and Eventlet: https://github.com/eventlet/eventlet/issues/616
 """
+from core.apps.sprout.app.celery import SPROUT
+from core.apps.sprout.settings import TIME_ZONE, USE_TZ
 
 from core.demo.workflow_builder.tasks.tasks_do_math import TASKS_DO_MATH
 from core.demo.workflow_builder.tasks.tasks_send_web_requests import TASKS_SEND_WEB_REQUESTS
-
-from core.apps.sprout.app.celery import SPROUT
-from core.apps.sprout.settings import TIME_ZONE, USE_TZ
 
 # Set Celery to use the same timezone settings as the Django project.
 SPROUT.conf.enable_utc = USE_TZ
