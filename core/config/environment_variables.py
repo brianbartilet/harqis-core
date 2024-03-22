@@ -128,7 +128,7 @@ ENV_LOCAL_APP_DATA = os.environ.get("LOCALAPPDATA", None)
 ENV_TASK_APP = os.environ.get("ENV_TASK_APP", 'MAP_TESTING_TASKS')
 
 # Performs dynamic import to connect the sprout task application to any task module
-ENV_WORKFLOW_CONFIG = os.environ.get('ENV_WF_TASK_PATH', 'core.demo.workflows.__template_workflow_group.builder.config')
+ENV_WORKFLOW_CONFIG = os.environ.get('ENV_WF_TASK_PATH', 'core.demo.workflow_builder.config')
 
 #  endregion
 

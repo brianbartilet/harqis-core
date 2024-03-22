@@ -17,11 +17,13 @@ import random as r
 import datetime
 from celery.schedules import crontab
 
-MAP_TESTING_TASKS = {
+
+test = "core.demo.workflow_builder"
+TASKS_DO_MATH = {
     # region Tasks To Test
 
     'run-test-sample-workflow-math': {
-        'task': 'core.demo.workflows.__template_workflow_group.integrations.math.add',
+        'task': 'core.demo.workflow_builder.workflows.workflows_example_group_math.add',
         'schedule': timedelta(seconds=10),
         'args': [r.randint(1, 5), r.randint(5, 10)],
     },
