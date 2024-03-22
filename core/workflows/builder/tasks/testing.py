@@ -21,7 +21,7 @@ MAP_TESTING_TASKS = {
     # region Tasks To Test
 
     'run-test-sample-workflow-math': {
-        'task': 'workflows.integrations.math.add',
+        'task': 'core.workflows.integrations.math.add',
         'schedule': timedelta(seconds=10),
         'args': [r.randint(1, 5), r.randint(5, 10)],
     },

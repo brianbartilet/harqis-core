@@ -1,7 +1,7 @@
 import unittest
 import os
 from unittest.mock import patch, MagicMock
-from core.apps.sprout.core.management.commands.restart import restart_celery_scheduler, restart_celery_worker
+from core.apps.sprout.app.management.commands.restart import restart_celery_scheduler, restart_celery_worker
 
 
 class TestCeleryRestart(unittest.TestCase):
@@ -18,8 +18,8 @@ class TestCeleryRestart(unittest.TestCase):
         if os.path.exists(self.worker_pid_file):
             os.remove(self.worker_pid_file)
 
-    @patch('core.apps.sprout.core.management.commands.restart.subprocess.Popen')
-    @patch('core.apps.sprout.core.management.commands.restart.psutil.process_iter')
+    @patch('core.apps.sprout.app.management.commands.restart.subprocess.Popen')
+    @patch('core.apps.sprout.app.management.commands.restart.psutil.process_iter')
     def test_restart_celery_scheduler(self, mock_process_iter, mock_popen):
         mock_process = MagicMock()
         mock_process.pid = 1234
@@ -34,8 +34,8 @@ class TestCeleryRestart(unittest.TestCase):
             pid = file.read().strip()
             self.assertEqual(pid, '1234')
 
-    @patch('core.apps.sprout.core.management.commands.restart.subprocess.Popen')
-    @patch('core.apps.sprout.core.management.commands.restart.psutil.process_iter')
+    @patch('core.apps.sprout.app.management.commands.restart.subprocess.Popen')
+    @patch('core.apps.sprout.app.management.commands.restart.psutil.process_iter')
     def test_restart_celery_worker(self, mock_process_iter, mock_popen):
         mock_process = MagicMock()
         mock_process.pid = 5678
