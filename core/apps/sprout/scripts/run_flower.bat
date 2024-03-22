@@ -1,1 +1,1 @@
-start /high flower.exe -A apps.sprout_wf
+start /high flower.exe -A apps.sprout
