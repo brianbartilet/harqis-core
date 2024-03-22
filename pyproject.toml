@@ -12,24 +12,10 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 requires-python = ">=3.12"
-dependencies = [
-"behave==1.2.5",
-"celery==5.3.6",
-"Django==5.0.3",
-"grpc_requests==0.1.16",
-"jsonpickle==3.0.3",
-"jsonschema==4.21.1",
-"openai==1.14.2",
-"parameterized==0.9.0",
-"paramiko==3.4.0",
-"psutil==5.9.8",
-"PyHamcrest==2.1.0",
-"pytest==8.0.2",
-"Requests==2.31.0",
-"selenium==3.141.0",
-"setuptools==69.2.0",
-"typing_extensions==4.10.0",
-]
+dynamic = ["dependencies"]
+
+[tool.setuptools.dynamic]
+dependencies = { file = ["requirements.txt"] }
 
 [project.urls]
 Homepage = "https://github.com/brianbartilet/harqis-core"

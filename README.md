@@ -107,11 +107,16 @@ To get started with **HARQIS-core**, follow these steps:
    ```
 - Execute `docker-compose up` to setup dependencies.
 
-**Test Package Build**:
+**Package Management**:
 - To build the package, execute the following command:
    ```sh
    python setup.py sdist bdist_wheel
    ```
+ - Use `pip freeze` to generate the requirements file from `root` directory:
+   ```sh
+   pip freeze > requirements.txt
+   ```
+
 
 ## License
 
