@@ -4,7 +4,7 @@ import os
 import sys
 
 
-def main(settings='settings'):
+def main(settings='core.apps.sprout.settings'):
     """Run administrative tasks."""
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', settings)
     try:

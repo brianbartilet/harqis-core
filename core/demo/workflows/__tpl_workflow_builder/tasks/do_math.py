@@ -22,7 +22,6 @@ References:
 
 from datetime import timedelta
 
-import random as r
 from celery.schedules import crontab
 
 
@@ -42,14 +41,14 @@ TASKS_DO_MATH = {
     # region Tasks To Test
 
     'run-test-sample-workflow-math': {
-        'task': 'demo.workflows.__tpl_workflow_builder.workflows.do_math.add',
+        'task': 'demo.workflows.__tpl_workflow_builder.workflows.do_math.add_random_numbers',
         'schedule': timedelta(seconds=2),
-        'args': [r.randint(1, 1000), r.randint(1, 1000)],
+        'args': [],
     },
     'run-test-sample-workflow-math-cron': {
-        'task': 'demo.workflows.__tpl_workflow_builder.workflows.do_math.add',
+        'task': 'demo.workflows.__tpl_workflow_builder.workflows.do_math.add_random_numbers',
         'schedule': crontab(minute='*', hour='*', day_of_week='mon,tue,wed,thu,fri'),
-        'args': [r.randint(1, 2), r.randint(50, 100)],
+        'args': [],
     },
 
     # endregion
