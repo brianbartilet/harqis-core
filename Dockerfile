@@ -4,6 +4,7 @@ ARG ENV_ROOT_DIRECTORY="/usr/src/app"
 ARG ENV="TEST"
 # use an official Python runtime as a parent image as interpreter
 FROM python:${PYTHON_VERSION}-alpine
+# add git to the image
 RUN apk update && apk add git
 
 # create a mount point for the volume
@@ -12,7 +13,7 @@ VOLUME /app/data
 # set the working directory in the container
 WORKDIR /app/core
 
-# run command if interpreter is installed on windows machine
+# copy files
 COPY core/. .
 
 # install dependencies

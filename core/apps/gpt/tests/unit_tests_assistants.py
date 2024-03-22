@@ -19,11 +19,7 @@ from core.web.services.core.json import JsonObject
 
 from core.utilities.data.qlist import QList
 
-from core.config.environment_variables import ENV
-from core.config.constants.environment import Environment
 
-
-@unittest.skipIf(ENV != Environment.DEV.value, "Skipping tests for non-development environment.")
 class TestGPTServicesSmoke(unittest.TestCase):
     """
     Smoke tests for GPT Services.
@@ -46,7 +42,6 @@ class TestGPTServicesSmoke(unittest.TestCase):
         )
         self.then = self
 
-    @unittest.skipIf(ENV != Environment.DEV.value, "Skipping tests for non-development environment.")
     def test_assistants_list(self):
         """
         Test the retrieval of the list of assistants.
@@ -55,7 +50,6 @@ class TestGPTServicesSmoke(unittest.TestCase):
         self.then.assertEqual(when.status_code, HttpStatus.OK)
         self.then.assertIsInstance(when.data, JsonObject)
 
-    @unittest.skipIf(ENV != Environment.DEV.value, "Skipping tests for non-development environment.")
     def test_assistants_crud_flow(self):
         """
         Test the CRUD (Create, Read, Update, Delete) flow for assistants.
@@ -82,7 +76,6 @@ class TestGPTServicesSmoke(unittest.TestCase):
         ('2 + 2', '4'),
         ('2 * 2', '4'),
     ])
-    @unittest.skipIf(ENV != Environment.DEV.value, "Skipping tests for non-development environment.")
     def test_base_assistant_workflow(self, expression, evaluated):
         #  create an assistant
         self.when_create_assistant = self.given_service_assistants.create_assistant(self.given_payload)
