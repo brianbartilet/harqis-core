@@ -12,7 +12,7 @@ Known Issues:
 - Potential issues with Celery and Eventlet: https://github.com/eventlet/eventlet/issues/616
 """
 
-from core.workflows.builder.tasks.testing import MAP_TESTING_TASKS
+from core.demo.workflows.__template_workflow_group.builder.tasks.testing import MAP_TESTING_TASKS
 
 from core.apps.sprout.app.celery import SPROUT
 from core.apps.sprout.settings import TIME_ZONE, USE_TZ

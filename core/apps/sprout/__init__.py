@@ -15,4 +15,21 @@ Note:
 
 Additionally, the module imports the `SPROUT` configuration from `workflows.builder.config`, ensuring that task execution is aligned with the predefined settings of the Celery application.
 """
-from core.workflows.builder.config import SPROUT
+import importlib
+
+# Read the environment variable to determine which tasks module to import
+from core.config.environment_variables import ENV_WORKFLOW_CONFIG
+
+# Dynamically import the tasks module based on the environment variable
+tasks_module = importlib.import_module(ENV_WORKFLOW_CONFIG)
+
+# Import the SPROUT configuration from the dynamically imported tasks module
+# Ensure your tasks modules have a consistent interface/structure for SPROUT
+SPROUT = getattr(tasks_module, 'SPROUT', None)
+
+# If needed, dynamically import tasks or other symbols from the tasks module
+# Example: SomeTask = getattr(tasks_module, 'SomeTask', None)
+
+# Include a check to ensure SPROUT is not None to handle import errors gracefully
+if SPROUT is None:
+    raise ImportError(f"Failed to import 'SPROUT' from '{ENV_WORKFLOW_CONFIG}'")
