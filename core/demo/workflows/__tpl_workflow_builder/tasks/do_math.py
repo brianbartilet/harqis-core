@@ -22,7 +22,7 @@ TASKS_DO_MATH = {
     # region Tasks To Test
 
     'run-test-sample-workflow-math': {
-        'task': 'core.demo.workflow_builder.workflows.workflows_example_group_math.add',
+        'task': 'core.demo.workflows.__tpl_.workflow_builder.workflows.do_math.add',
         'schedule': timedelta(seconds=10),
         'args': [r.randint(1, 5), r.randint(5, 10)],
     },

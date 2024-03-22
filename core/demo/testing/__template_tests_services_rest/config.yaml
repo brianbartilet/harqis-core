@@ -1,6 +1,0 @@
-__template_tests_services_rest:
-  client: 'rest'
-  parameters:
-    base_url: 'https://jsonplaceholder.typicode.com/'
-    response_encoding: 'utf-8'
-    "verify": True

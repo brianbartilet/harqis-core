@@ -4,7 +4,7 @@ import unittest
 from core.config.loader import ConfigFileLoader, ConfigFile
 
 from core.config.constants.environment import Environment
-from core.config.environment_variables import ENV
+from core.config.env_variables import ENV
 
 
 class UnitTestsConfigLoader(unittest.TestCase):

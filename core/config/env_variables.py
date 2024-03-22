@@ -82,7 +82,6 @@ def get_env_variable_value(env):
         raise Exception('Environment variable was not set')
 
 
-
 # endregion
 
 
@@ -117,9 +116,8 @@ ENV_LOCAL_APP_DATA = os.environ.get("LOCALAPPDATA", None)
 ENV_TASK_APP = os.environ.get("ENV_TASK_APP", 'MAP_TESTING_TASKS')
 
 # Performs dynamic import to connect the sprout task application to any task module
-ENV_WORKFLOW_CONFIG = os.environ.get('ENV_WF_TASK_PATH', 'core.demo.workflow_builder.config')
+ENV_WORKFLOW_CONFIG = os.environ.get('ENV_WF_TASK_PATH', 'core.demo.workflows.__tpl_workflow_builder.config')
 
 ENV_PYTHON_PATH = os.environ.get('PYTHONPATH', os.getcwd())
 
 #  endregion
-

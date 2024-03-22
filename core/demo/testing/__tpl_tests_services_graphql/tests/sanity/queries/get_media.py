@@ -2,8 +2,8 @@ import unittest
 
 from http import HTTPStatus
 
-from demo.testing.__template_tests_services_graphql.config import CONFIG
-from demo.testing.__template_tests_services_graphql.queries.get_media.query import ServiceQueryGetMedia
+from demo.testing.__tpl_tests_services_graphql.config import CONFIG
+from demo.testing.__tpl_tests_services_graphql.queries.get_media.query import ServiceQueryGetMedia
 
 
 class TestsUnitWebServices(unittest.TestCase):

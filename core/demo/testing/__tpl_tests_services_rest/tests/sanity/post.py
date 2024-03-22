@@ -2,10 +2,10 @@ import unittest
 
 from http import HTTPStatus
 
-from demo.testing.__template_tests_services_rest.services.posts.post import ServiceRestExamplePost
-from demo.testing.__template_tests_services_rest.config import CONFIG
-from demo.testing.__template_tests_services_rest.dto.user import DtoUser
-from demo.testing.__template_tests_services_rest.dto.payload import DtoPostPayload
+from demo.testing.__tpl_tests_services_rest.services.posts.post import ServiceRestExamplePost
+from demo.testing.__tpl_tests_services_rest.config import CONFIG
+from demo.testing.__tpl_tests_services_rest.dto.user import DtoUser
+from demo.testing.__tpl_tests_services_rest.dto.payload import DtoPostPayload
 
 
 class TestsUnitWebServices(unittest.TestCase):

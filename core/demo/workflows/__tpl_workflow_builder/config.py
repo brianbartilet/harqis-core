@@ -14,8 +14,8 @@ Known Issues:
 from core.apps.sprout.app.celery import SPROUT
 from core.apps.sprout.settings import TIME_ZONE, USE_TZ
 
-from core.demo.workflow_builder.tasks.tasks_do_math import TASKS_DO_MATH
-from core.demo.workflow_builder.tasks.tasks_send_web_requests import TASKS_SEND_WEB_REQUESTS
+from core.demo.workflows.__tpl_workflow_builder.tasks.do_math import TASKS_DO_MATH
+from core.demo.workflows.__tpl_workflow_builder.tasks.send_web_requests import TASKS_SEND_WEB_REQUESTS
 
 # Set Celery to use the same timezone settings as the Django project.
 SPROUT.conf.enable_utc = USE_TZ

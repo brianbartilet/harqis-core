@@ -4,7 +4,7 @@ from enum import Enum
 
 from core.config.loader import ConfigFileLoader
 from core.utilities.logging.custom_logger import create_logger
-from core.config.environment_variables import ENV_ROOT_DIRECTORY
+from core.config.env_variables import ENV_ROOT_DIRECTORY
 
 TApp = TypeVar('TApp', bound=Enum)
 """

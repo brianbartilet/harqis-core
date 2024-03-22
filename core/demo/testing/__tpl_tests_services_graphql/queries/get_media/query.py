@@ -1,6 +1,6 @@
 import os
 from core.web.services.fixtures.graphql import BaseFixtureServiceGraphQL
-from demo.testing.__template_tests_services_graphql.queries.get_media.dto.media import DtoMedia
+from demo.testing.__tpl_tests_services_graphql.queries.get_media.dto.media import DtoMedia
 
 
 class ServiceQueryGetMedia(BaseFixtureServiceGraphQL):

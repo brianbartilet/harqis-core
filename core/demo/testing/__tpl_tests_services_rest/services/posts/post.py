@@ -1,8 +1,8 @@
 from core.web.services.core.constants.http_methods import HttpMethod
 
-from demo.testing.__template_tests_services_rest.services.base_service import BaseServiceApp
-from demo.testing.__template_tests_services_rest.dto.user import DtoUser
-from demo.testing.__template_tests_services_rest.dto.payload import DtoPostPayload
+from demo.testing.__tpl_tests_services_rest.services.base_service import BaseServiceApp
+from demo.testing.__tpl_tests_services_rest.dto.user import DtoUser
+from demo.testing.__tpl_tests_services_rest.dto.payload import DtoPostPayload
 
 
 class ServiceRestExamplePost(BaseServiceApp):

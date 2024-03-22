@@ -1,6 +1,6 @@
 import os
 import subprocess
-from core.config.environment_variables import ENV_PYTHON_PATH, set_env_variable_value, get_env_variable_value
+from core.config.env_variables import ENV_PYTHON_PATH, set_env_variable_value, get_env_variable_value
 
 
 def get_subdirectories(path, level=1):

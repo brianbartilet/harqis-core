@@ -1,5 +1,5 @@
 import os
-from core.config.environment_variables import update_python_path, get_git_root
+from core.config.env_variables import update_python_path, get_git_root
 
 """
 set PYTHONPATH=C:\GIT\harqis-core;%PYTHONPATH%

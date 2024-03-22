@@ -18,7 +18,7 @@ Additionally, the module imports the `SPROUT` configuration from `workflows.buil
 import importlib
 
 # Read the environment variable to determine which tasks module to import
-from core.config.environment_variables import ENV_WORKFLOW_CONFIG
+from core.config.env_variables import ENV_WORKFLOW_CONFIG
 
 # Dynamically import the tasks module based on the environment variable
 tasks_module = importlib.import_module(ENV_WORKFLOW_CONFIG)

@@ -5,7 +5,7 @@ from core.web.services.core.json import JsonObject
 from core.config.app_config import AppConfig
 
 from core.config.constants.environment import Environment
-from core.config.environment_variables import ENV
+from core.config.env_variables import ENV
 
 
 class MockedTypeObject(JsonObject):

@@ -4,7 +4,7 @@ from django.utils import autoreload
 from .restart import restart_celery_worker
 
 from core.apps.sprout.settings import APP_PACKAGE
-from core.config.environment_variables import ENV_TASK_APP
+from core.config.env_variables import ENV_TASK_APP
 
 
 def restart_celery_worker_tasks():
