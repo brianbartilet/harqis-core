@@ -70,7 +70,7 @@ To get started with **HARQIS-core**, follow these steps:
       ```
    - Install the required packages using the requirements file
       ```sh
-      pip install --upgrade pip
+      python -m pip install --upgrade pip
       pip install -r requirements.txt
       ```
 

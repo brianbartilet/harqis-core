@@ -6,3 +6,4 @@ venv
 dist
 *config.yaml*
 *.log*
+build
