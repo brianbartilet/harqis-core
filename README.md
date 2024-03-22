@@ -58,7 +58,7 @@ Please refer here to this [project](https://github.com/users/brianbartilet/proje
 To get started with **HARQIS-core**, follow these steps:
 
 **Setup and Installation**:
-   - Runs on Python 3.10 or greater.
+   - Runs on Python 3.12
    - Clone the repository
       ```sh
       git https://github.com/brianbartilet/harqis-core.git
