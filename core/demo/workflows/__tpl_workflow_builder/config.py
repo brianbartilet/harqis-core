@@ -20,6 +20,7 @@ from core.demo.workflows.__tpl_workflow_builder.tasks.send_web_requests import T
 # Set Celery to use the same timezone settings as the Django project.
 SPROUT.conf.enable_utc = USE_TZ
 SPROUT.conf.timezone = TIME_ZONE
+SPROUT.conf.broker_connection_retry_on_startup = True
 
 # Configuration dictionary mapping environment variable values to specific task mappings.
 # Be careful to use duplicate keys in the dictionary, as it will overwrite the previous key.

@@ -104,19 +104,17 @@ ENV_CURRENT_USER_PROFILE = os.environ.get("USERPROFILE", None)
 ENV_ENABLE_PROXY = os.environ.get("ENABLE_PROXY", False)
 
 # Path to the application configuration, default is the current working directory
-ENV_APP_CONFIG = os.environ.get("ENV_PATH_APP_CONFIG", "apps_config.yaml")
+ENV_APP_CONFIG = os.environ.get("PATH_APP_CONFIG", "apps_config.yaml")
 
 # Root directory of the application, default is the root directory of the repository, unless specified
-ENV_ROOT_DIRECTORY = os.environ.get('ENV_ROOT_DIRECTORY', os.path.dirname(os.path.abspath(__file__)))
+ENV_ROOT_DIRECTORY = os.environ.get('ROOT_DIRECTORY', os.path.dirname(os.path.abspath(__file__)))
 
 # Local application data path, default is None
 ENV_LOCAL_APP_DATA = os.environ.get("LOCALAPPDATA", None)
 
-# Tasks mapping for workflows defaults to testing tasks key
-ENV_TASK_APP = os.environ.get("ENV_TASK_APP", 'MAP_TESTING_TASKS')
 
 # Performs dynamic import to connect the sprout task application to any task module
-ENV_WORKFLOW_CONFIG = os.environ.get('ENV_WF_TASK_PATH', 'core.demo.workflows.__tpl_workflow_builder.config')
+ENV_WORKFLOW_CONFIG = os.environ.get('WORKFLOW_CONFIG', None)
 
 ENV_PYTHON_PATH = os.environ.get('PYTHONPATH', os.getcwd())
 

@@ -18,15 +18,15 @@ def get_subdirectories(path, level=1):
     current_level = 0
 
     # Helper function to recursively get subdirectories
-    def _get_subdirs(current_path, current_level, max_level):
-        if current_level < max_level:
+    def _get_subdirectories(current_path, cur_level, max_level):
+        if cur_level < max_level:
             with os.scandir(current_path) as entries:
                 for entry in entries:
                     if entry.is_dir():
                         subdirectories.append(entry.path)
-                        _get_subdirs(entry.path, current_level + 1, max_level)
+                        _get_subdirectories(entry.path, cur_level + 1, max_level)
 
-    _get_subdirs(path, current_level, level)
+    _get_subdirectories(path, current_level, level)
     return subdirectories
 
 
