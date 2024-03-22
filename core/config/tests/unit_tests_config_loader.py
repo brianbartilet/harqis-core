@@ -3,17 +3,22 @@ import unittest
 
 from core.config.loader import ConfigFileLoader, ConfigFile
 
+from core.config.constants.environment import Environment
+from core.config.environment_variables import ENV
+
 
 class UnitTestsConfigLoader(unittest.TestCase):
 
     def setUp(self):
         self.path = os.path.dirname(os.path.abspath(__file__))
 
+    @unittest.skipIf(ENV != Environment.DEV.value, "Skipping tests for non-development environment.")
     def test_without_keywords(self):
         """Test loading configuration without specifying any additional keywords."""
         loader = ConfigFileLoader(ConfigFile.YAML, base_path=self.path)
         self.assertIsInstance(loader.config, dict)
 
+    @unittest.skipIf(ENV != Environment.DEV.value, "Skipping tests for non-development environment.")
     def test_override_path(self):
         """Test overriding the base path for the configuration file."""
         loader = ConfigFileLoader(ConfigFile.YAML, base_path=self.path)
