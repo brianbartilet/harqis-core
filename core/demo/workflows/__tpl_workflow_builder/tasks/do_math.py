@@ -42,12 +42,12 @@ TASKS_DO_MATH = {
     # region Tasks To Test
 
     'run-test-sample-workflow-math': {
-        'task': 'core.demo.workflows.__tpl_workflow_builder.workflows.do_math.add',
+        'task': 'demo.workflows.__tpl_workflow_builder.workflows.do_math.add',
         'schedule': timedelta(seconds=2),
         'args': [r.randint(1, 1000), r.randint(1, 1000)],
     },
     'run-test-sample-workflow-math-cron': {
-        'task': 'core.demo.workflows.__tpl_workflow_builder.workflows.do_math.add',
+        'task': 'demo.workflows.__tpl_workflow_builder.workflows.do_math.add',
         'schedule': crontab(minute='*', hour='*', day_of_week='mon,tue,wed,thu,fri'),
         'args': [r.randint(1, 2), r.randint(50, 100)],
     },

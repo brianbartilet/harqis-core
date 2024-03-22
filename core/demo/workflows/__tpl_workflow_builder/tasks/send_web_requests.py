@@ -36,7 +36,7 @@ TASKS_SEND_WEB_REQUESTS = {
     # region Tasks To Test
 
     'run-test-sample-workflow-web-request': {
-        'task': 'core.demo.workflows.__tpl_workflow_builder.workflows.send_web_requests.send_requests',
+        'task': 'demo.workflows.__tpl_workflow_builder.workflows.send_web_requests.send_requests',
         'schedule': timedelta(seconds=10),
         'args': [],
     },
