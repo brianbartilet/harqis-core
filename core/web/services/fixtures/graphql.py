@@ -1,7 +1,7 @@
 import os
 from core.web.services.core.request_builder.graphql import RequestBuilderGraphQL
 
-from web.services.fixtures.base import IFixtureWebService
+from core.web.services.fixtures.base import IFixtureWebService
 from core.web.services.core.contracts.response import IResponse
 from core.web.services.core.contracts.request import IWebServiceRequest
 from core.web.services.core.clients.graphql import GraphQLClient

@@ -2,7 +2,7 @@ from core.web.services.core.request_builder.rest import RequestBuilderRest
 
 from core.web.services.core.clients.rest import RestClient
 
-from web.services.fixtures.base import IFixtureWebService
+from core.web.services.fixtures.base import IFixtureWebService
 from core.web.services.core.contracts.response import IResponse
 from core.web.services.core.contracts.request import IWebServiceRequest
 
