@@ -75,7 +75,7 @@ To get started with **HARQIS-core**, follow these steps:
       ```
 
 **Configuration**:
-   - A configuration requirement is needed to run the application. Create a `apps_config.yaml` file in the root directory and add the following:
+   - A configuration requirement is needed to run the apps integrated into the framework. Create a `apps_config.yaml` file in the root directory and add the following:
       ```yaml
       CELERY_TASKS:
         application_name: 'workflow-harqis'
@@ -93,6 +93,7 @@ To get started with **HARQIS-core**, follow these steps:
         model: 'your_target_assistant_mode'
         max_tokens: 500
       ```
+   - These services are defined in `demo\docker_compose.yaml`
 
 **Run Unit Tests**:
 - Execute all tests using the following command:
