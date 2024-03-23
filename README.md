@@ -93,7 +93,7 @@ To get started with **HARQIS-core**, follow these steps:
         model: 'your_target_assistant_mode'
         max_tokens: 500
       ```
-   - These services are defined in `demo\docker_compose.yaml`
+   - These services are defined in `core\apps\docker_compose.yaml`
 
 **Run Unit Tests**:
 - Execute all tests using the following command:
