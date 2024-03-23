@@ -7,7 +7,7 @@ class AppConfigWSClient:
     """
     Base configuration object for web services
     """
-    client: str                     # type of service to be used: rest, curl, grpc, graphql
-    parameters: dict                # keyword arguments to pass to required args: base_url
-    headers: Optional[dict] = None  # default headers to initialize the requests *USE CAREFULLY FOR AUTHORIZATION*
-    app_data: Optional[dict] = None # placeholder dictionary to contain other app context information e.g. api keys
+    client: str                      # type of service to be used: rest, curl, grpc, graphql
+    parameters: dict                 # keyword arguments to pass to required args: base_url
+    headers: Optional[dict] = None   # default headers to initialize the requests *USE CAREFULLY FOR AUTHORIZATION*
+    app_data: Optional[dict] = None  # placeholder dictionary to contain other app context information e.g. api keys

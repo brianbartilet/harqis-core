@@ -1,10 +1,10 @@
 from abc import abstractmethod
 from typing import TypeVar, Generic, Type
 
-from .request_builder import IWebRequestBuilder
-from .response import IResponse
-from .request import IWebServiceRequest
-from .client import IWebClient
+from web.services.core.contracts.request_builder import IWebRequestBuilder
+from web.services.core.contracts.response import IResponse
+from web.services.core.contracts.request import IWebServiceRequest
+from web.services.core.contracts.client import IWebClient
 
 from core.web.services.core.constants.service_client_type import WebService
 from core.web.services.core.config.webservice import AppConfigWSClient
