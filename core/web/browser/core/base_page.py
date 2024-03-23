@@ -1,9 +1,7 @@
-from core.web.browser.selenium_driver import *
-from utilities import *
+from web.browser.core.selenium_driver import *
 
 from behave.model import Table
 
-from core.web.services.core.constants.service_client_type import WebService
 from abc import abstractmethod
 
 class BasePage(SeleniumDriver):
@@ -215,22 +213,3 @@ class BasePage(SeleniumDriver):
         self.log.warn(
             "retrieve_data_value_for_validation called get_table_text_indexed_column_value without concrete implementation")
 
-    @abstractmethod
-    def wait_page_to_load(self, *args):
-        super().wait_for_page_to_load(*args)
-
-    @abstractmethod
-    def did_page_load(self, *args):
-        ...
-
-    @abstractmethod
-    def navigate_to_page(self, *args):
-        ...
-
-    @abstractmethod
-    def login(self, *args):
-        ...
-
-    @abstractmethod
-    def logout(self):
-        ...
