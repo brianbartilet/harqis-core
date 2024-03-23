@@ -22,7 +22,7 @@
 - Provide utility decorators to apply testing principles and techniques.
 
 ### GPT Assisted Development
-- **Development Assistant**: Utilizes the *OpenAI API* to generate test code, analyze fixtures, and apply testing techniques.
+- **Development Assistant**: Generates test code, analyzes fixtures, and applies testing techniques.
 - **OpenAI Integration**: Directly integrates with the *OpenAI API* to create scripts and perform other useful tasks.
 
 #### Use Cases
