@@ -40,6 +40,8 @@ class Request(IWebServiceRequest, ABC):
 
         self.__strip_right_url: bool = True
 
+        self.kwargs = kwargs
+
     def get_query_strings(self) -> Dict[str, str]:
         """Gets the query string parameters."""
         return self.query_string

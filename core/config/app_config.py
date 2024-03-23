@@ -48,6 +48,7 @@ class AppConfig(Generic[TCfg]):
             **kwargs: Optional keyword arguments. Can include 'logger' for a custom logger and 'base_path' for a custom configuration file path.
         """
         self.log = kwargs.get('logger', create_logger(self.__class__.__name__))
+        self.kwargs = kwargs
 
         try:
             self.app_config = ConfigFileLoader(**kwargs).config[app.value]

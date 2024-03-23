@@ -43,6 +43,8 @@ class BaseWebClient(IWebClient, ABC):
         self.proxies = {}
         self.response = None
 
+        self.kwargs = kwargs
+
     def set_request_timeout(self, timeout: int) -> None:
         """
         Sets the timeout for the requests.

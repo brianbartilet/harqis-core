@@ -59,6 +59,8 @@ class IFixtureWebService(Generic[TFixture]):
         self._client = WSClientClass.map[config.client](**config.parameters)
         self._request = None
 
+        self.kwargs = kwargs
+
     @abstractmethod
     def get_request_builder(self) -> IWebRequestBuilder:
         """

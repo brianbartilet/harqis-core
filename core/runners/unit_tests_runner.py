@@ -70,6 +70,8 @@ class UnitTestLauncher:
         self.except_folder_names = kwargs.get('except_folder_names', except_folder_names)
         self.multiprocessing = kwargs.get('multiprocessing', False)
 
+        self.kwargs = kwargs
+
     def run_tests(self):
         """
         Searches for test files matching a pattern and runs them.

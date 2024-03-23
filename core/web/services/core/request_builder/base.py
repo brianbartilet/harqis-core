@@ -40,6 +40,8 @@ class RequestBuilder(IWebRequestBuilder):
 
         self.strip_right_url_path = True
 
+        self.kwargs = kwargs
+
     def set_method(self, method: HttpMethod) -> IWebRequestBuilder:
         """
         Sets the HTTP method for the request.
