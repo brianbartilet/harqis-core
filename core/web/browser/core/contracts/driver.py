@@ -12,7 +12,7 @@ class IWebDriver(ABC):
     """
 
     @abstractmethod
-    def get_information(self) -> Dict[str, Any]:
+    def get_info(self) -> Dict[str, Any]:
         """
         Retrieves various pieces of information about the web driver instance.
 

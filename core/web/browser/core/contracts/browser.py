@@ -61,6 +61,27 @@ class IBrowser(ABC):
         ...
 
     @abstractmethod
+    def get_info(self) -> Dict[str, Any]:
+        """
+        Retrieves various pieces of information about the browser.
+
+        Returns:
+            Dict[str, Any]: A dictionary containing key-value pairs of information about
+            the web driver, such as version, capabilities, and other relevant details.
+        """
+        ...
+
+    @abstractmethod
+    def get_version(self) -> str:
+        """
+        Retrieves various browser version.
+
+        Returns:
+            str: Current browser version.
+        """
+        ...
+
+    @abstractmethod
     def find_element(self, locator: Dict[str, str]) -> Optional[TDriver]:
         """
         Finds a single web element in the current page.
