@@ -4,7 +4,7 @@
 
 - **HARQIS** (Heuristic Automation for a Reliable Quality Integration System) is a versatile automation platform designed to facilitate a wide range of automation tasks across various domains.
 - Supports **GPT** integrated functionalities, leverages the **OpenAI API** to assist with code generation and analysis.
-- Provides fixtures, utilities, and templates for implementing automation for various applications and systems. It enables the creation of automated workflows for testing, cross application integration, and more, adapting to both small and large-scale projects with ease.
+- Provides fixtures, utilities, and templates for implementing automation for various applications and systems. It enables the creation of automated workflows for testing, cross-application integration, and more, adapting to both small and large-scale projects with ease.
 
 ## Key Features
 
@@ -12,7 +12,7 @@
 
 - **Generic Automation**: Provides comprehensive support for both general automation tasks and testing.
 - **Ease of Use**: Offers automation fixtures for frontend, backend, embedded systems, and IoT applications.
-- **Adaptability**: Easily adjusts to dynamic environments, automation strategies and evolving requirements.
+- **Adaptability**: Easily adjusts to dynamic environments, automation strategies, and evolving requirements.
 - **Quality Integration System**: Ensures testing standards and optimal performance of integrated components and systems.
 
 #### Use Cases
@@ -28,19 +28,19 @@
 #### Use Cases
 - Automates the generation of test code based on existing fixtures and templates.
 - Offers code analysis and suggestions for testing techniques.
-- Generates test code from analyzing static specifications or schemas (e.g. *OpenAPI*, *GraphQL*, *WSDL*) from available fixtures and templates.
+- Generates test code by analyzing static specifications or schemas (e.g. *OpenAPI*, *GraphQL*, *WSDL*) from available fixtures and templates.
 
 ### Cross Application Integration and Workflow Builder
 - **Create Robots**: Provides RPA-like capabilities to automate any workflow from integrated applications.
 - **Workflow Builder**: Features a workflow builder (akin to *Zapier* or *IFTTT*) for code-based, fully controllable application data and task scheduling.
 
 #### Use Cases
-- Publish workflows tasks as events that can be consumed for execution.
+- Publish workflow tasks as events that can be consumed for execution.
 - Support e2e testing and task automation.
 
 ## Demo Project
 - Please refer here [harqis-demo-generic-framework](https://github.com/brianbartilet/harqis-demo-generic-framework) for an sample application of **HARQIS-core**.
-- The demo project can be used as a template for creating new projects and provide basic operations of fixtures and templates.
+- The demo project can be used as a template for creating new projects and providing basic operations of fixtures and templates.
 - See the [README.md](https://github.com/brianbartilet/harqis-demo-generic-framework/blob/main/README.md)
 
 ## Contact
@@ -63,7 +63,7 @@ To get started with **HARQIS-core**, follow these steps:
       ```sh
       git https://github.com/brianbartilet/harqis-core.git
       ```
-   - Set up and activate virtual environment
+   - Set up and activate the virtual environment
       ```sh
       python -m venv venv
       source venv/bin/activate
@@ -93,20 +93,25 @@ To get started with **HARQIS-core**, follow these steps:
         model: 'your_target_assistant_mode'
         max_tokens: 500
       ```
+
 **Run Unit Tests**:
 - Execute all tests using the following command:
    ```sh
    cd core
    pytest
    ```
+
 **Docker**:
-- Alternatively you may test the package from provided `Dockerfile`, by executing the following commands:
+- Alternatively, you may test the package from the provided `Dockerfile`, by executing the following commands:
    ```sh
    docker build . -t harqis-core
    docker run harqis-core
    ```
-- Execute `docker-compose up` to setup dependencies.
-
+- Enable dependencies from Docker compose
+  ```sh
+  docker-compose up
+  ```
+  
 **Package Management**:
 - To build the package, execute the following command:
    ```sh
