@@ -1,5 +1,5 @@
-from abc import ABC, abstractmethod
-from typing import TypeVar, Any, Iterable
+from abc import abstractmethod, ABC
+from typing import TypeVar, Optional, Dict, Any, Iterable
 
 TBrowser = TypeVar("TBrowser")
 TElement = TypeVar("TElement")
@@ -47,28 +47,28 @@ class IPage(ABC):
         ...
 
     @abstractmethod
-    def find_element(self, locator: Any) -> TElement:
+    def find_element(self, locator: Dict[str, str]) -> Optional[TElement]:
         """
-        Finds an element on the page.
+        Finds a single web element in the current page.
 
         Args:
-            locator: The strategy and locator of the element to find.
+            locator: A dictionary defining how to locate the element (e.g., by id, xpath).
 
         Returns:
-            TElement: An instance of the found element.
+            An instance of the element if found, otherwise None.
         """
         ...
 
     @abstractmethod
-    def find_elements(self, locator: Any) -> Iterable[TElement]:
+    def find_elements(self, locator: Dict[str, str]) -> Optional[Iterable[TElement]]:
         """
-        Finds a collection of elements on the page matching the given locator.
+        Finds multiple web elements in the current page.
 
         Args:
-            locator: The strategy and locator of the elements to find.
+            locator: A dictionary defining how to locate the elements (e.g., by class name, css selector).
 
         Returns:
-            Iterable[TElement]: A collection of instances of the found elements.
+            A list of element instances if found, otherwise an empty list.
         """
         ...
 
@@ -99,6 +99,23 @@ class IPage(ABC):
 
         Args:
             *args: Any parameters needed for the logout operation.
+        """
+        ...
+
+    @abstractmethod
+    def switch_to_default_content(self) -> None:
+        """
+        Switches the context back to the default document (i.e., out of any iframes).
+        """
+        ...
+
+    @abstractmethod
+    def switch_to_frame(self, frame_reference: Any) -> None:
+        """
+        Switches the context to the specified frame.
+
+        Args:
+            frame_reference: The reference to the frame to switch to (e.g., an index, name, or element).
         """
         ...
 

@@ -5,14 +5,13 @@ Example:
     wdf = WebDriverFactory(browser)
     wdf.get_web_driver_instance()
 """
-import sys
+import sys, os, re
 
 from datetime import datetime
 
 from selenium import webdriver
 from selenium.webdriver.remote.webdriver import WebDriver
 
-#from win32api import GetFileVersionInfo, LOWORD, HIWORD
 
 from contextlib import contextmanager
 
@@ -70,7 +69,7 @@ class WebDriverFactory:
 
         download_folder = kwargs.get('download_folder')
         # or set any folder to PATH environment variable
-        base_driver_path = kwargs.get('base_driver_path', os.path.join(ENV_ROOT_DIRECTORY, "Core\web\drivers"))
+        base_driver_path = kwargs.get('base_driver_path', None)
         target_driver_version = kwargs.get('target_driver_version')
         driver_args = kwargs.get('args', [])
 
@@ -105,36 +104,4 @@ class WebDriverFactory:
 
         raise Exception("The browser {} is not a valid option.".format(browser))
 
-    @staticmethod
-    def __get_chrome_instance(chrome_options, chrome_browser_path=None, chrome_version=None):
 
-        if chrome_version is not None:
-            version = '_{0}'.format(chrome_version) if chrome_version is not None else ''
-            exe_path = r'{0}'.format(os.path.join(chrome_browser_path, 'chromedriver' + version + '.exe'))
-
-            server_chrome_version = str(WebDriverFactory.__get_version_number(exe_path)[0])
-            if server_chrome_version == chrome_version:
-                try:
-                    return webdriver.Chrome(chrome_options=chrome_options, executable_path=exe_path)
-                except Exception as ex:
-                    raise Exception("Chrome driver version does not exist: " + server_chrome_version)
-            else:
-                raise Exception("Chrome browser version installed is : " + server_chrome_version
-                                + " but expected is :" + chrome_version)
-        else:
-            return webdriver.Chrome(chrome_options=chrome_options)
-
-    @staticmethod
-    def __get_version_number(filename):
-        try:
-            if sys.platform == 'win32':
-                info = GetFileVersionInfo(filename, "\\")
-                ms = info['FileVersionMS']
-                ls = info['FileVersionLS']
-                version = HIWORD (ms), LOWORD (ms), HIWORD (ls), LOWORD (ls)
-            else:
-                raise NotImplementedError
-
-            return version
-        except Exception as ex:
-            raise Exception("Get Chrome version error: " + ex.args[2])

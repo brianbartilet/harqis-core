@@ -5,23 +5,13 @@ from typing import TypeVar, Optional, Dict, Any, Iterable
 TDriver = TypeVar("TDriver")
 T = TypeVar("T")
 
+
 class IBrowser(ABC):
     """
     Defines an interface for browser-like behavior, intended as a foundation for
     page object models in web automation or testing. It outlines methods for
     managing browser instances, navigating web pages, and interacting with web elements.
     """
-
-    @abstractmethod
-    def get_driver(self) -> TDriver:
-        """
-        Retrieves the driver instance used by the browser.
-
-        Returns:
-            An instance of the driver.
-        """
-        ...
-
     @abstractmethod
     def refresh(self) -> None:
         """
@@ -82,32 +72,6 @@ class IBrowser(ABC):
         ...
 
     @abstractmethod
-    def find_element(self, locator: Dict[str, str]) -> Optional[TDriver]:
-        """
-        Finds a single web element in the current page.
-
-        Args:
-            locator: A dictionary defining how to locate the element (e.g., by id, xpath).
-
-        Returns:
-            An instance of the element if found, otherwise None.
-        """
-        ...
-
-    @abstractmethod
-    def find_elements(self, locator: Dict[str, str]) -> Optional[TDriver]:
-        """
-        Finds multiple web elements in the current page.
-
-        Args:
-            locator: A dictionary defining how to locate the elements (e.g., by class name, css selector).
-
-        Returns:
-            A list of element instances if found, otherwise an empty list.
-        """
-        ...
-
-    @abstractmethod
     def execute_script(self, script: str, *args) -> Any:
         """
         Executes JavaScript in the context of the currently selected frame or window.
@@ -122,18 +86,11 @@ class IBrowser(ABC):
         ...
 
     @abstractmethod
-    def switch_to_frame(self, frame_reference: Any) -> None:
+    def take_screen_shot(self, *args) -> None:
         """
-        Switches the context to the specified frame.
+        Log screenshot of the current page.
 
         Args:
-            frame_reference: The reference to the frame to switch to (e.g., an index, name, or element).
-        """
-        ...
+            *args: Any arguments required by the create screenshot method.
 
-    @abstractmethod
-    def switch_to_default_content(self) -> None:
         """
-        Switches the context back to the default document (i.e., out of any iframes).
-        """
-        ...

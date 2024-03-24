@@ -1,10 +1,11 @@
 from abc import abstractmethod, ABC
 from typing import Union, TypeVar
+
+# add other inherited interfaces here to extend the functionality
 from selenium.webdriver.remote.webelement import WebElement
 
-TElement = TypeVar("TElement")
-
-Element = Union[str, WebElement, TElement]
+T = TypeVar("T")
+Element = Union[str, WebElement, T]
 
 
 class IElement(ABC):

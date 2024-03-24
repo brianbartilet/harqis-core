@@ -1,7 +1,12 @@
 from abc import ABC, abstractmethod
-from typing import TypeVar, Any, Dict
+from typing import TypeVar, Any, Dict, Union
 
-TElement = TypeVar("TElement")
+# add other inherited interfaces here to extend the functionality
+from selenium.webdriver.remote.webdriver import WebDriver
+
+TSelenium = TypeVar("TSelenium", bound=WebDriver)
+T = TypeVar("T")
+TDriver = Union[TSelenium, T]
 
 
 class IWebDriver(ABC):
@@ -10,6 +15,16 @@ class IWebDriver(ABC):
     control and query the state of the web driver instance. This includes obtaining basic
     driver information, managing sessions, and performing actions on the web browser.
     """
+
+    @abstractmethod
+    def get(self) -> TDriver:
+        """
+        Get the underlying WebDriver instance.
+
+        Returns:
+            The web driver instance.
+        """
+        ...
 
     @abstractmethod
     def get_info(self) -> Dict[str, Any]:
