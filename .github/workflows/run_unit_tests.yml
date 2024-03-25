@@ -11,10 +11,19 @@ jobs:
   build-and-test:
     runs-on: ubuntu-latest
     steps:
-    - name: Set up Git repository
+    - name: Set Up Git Repository
       uses: actions/checkout@v2
 
-    - name: Build and run tests
+    - name: Build and Run Tests
       run: docker build . -t harqis-core && docker run -v app_volume:/app/data harqis-core
       env:
         ENV_ROOT_DIRECTORY: /app
+  trigger-demo-project-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Build
+        uses: peter-evans/repository-dispatch@v1
+        with:
+          token: ${{ secrets.HARQIS_TOKEN }}
+          repository: brianbartilet/harqis-demo-generic-framework
+          event-type: trigger-harqis-demo-test
