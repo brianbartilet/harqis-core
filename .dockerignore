@@ -1,9 +1,11 @@
 .github
 *.egg-info
 .pytest_cache
+__pycache__
 .idea
 venv
 dist
 *config.yaml*
 *.log*
 build
+.wdm

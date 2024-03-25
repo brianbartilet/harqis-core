@@ -11,3 +11,4 @@ apps_config.yaml
 *.egg-info/
 dist
 build
+.wdm

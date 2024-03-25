@@ -1,5 +1,7 @@
 from typing import Dict, Any, Generic
 
+import webdriver_manager.core.download_manager
+
 from core.web.browser.core.contracts.driver import IWebDriver, TWebDriver
 
 from webdriver_manager.chrome import ChromeDriverManager

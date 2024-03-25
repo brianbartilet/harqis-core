@@ -15,6 +15,6 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Build and run tests
-      run: docker build . -t harqis-core && docker run harqis-core
+      run: docker build . -t harqis-core && docker run -v app:/app/data harqis-core
       env:
         ENV_ROOT_DIRECTORY: /app
