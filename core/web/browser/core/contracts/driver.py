@@ -5,10 +5,10 @@ from typing import TypeVar, Any, Dict, Union, Generic
 from selenium.webdriver.remote.webdriver import WebDriver
 
 T = TypeVar("T", bound=WebDriver)
-TDriver = Union[T, ]
+TWebDriver = Union[T, ]
 
 
-class IWebDriver(ABC, Generic[TDriver]):
+class IWebDriver(ABC, Generic[TWebDriver]):
     """
     Interface for interacting with a web driver, providing essential functionalities to
     control and query the state of the web driver instance. This includes obtaining basic
@@ -16,8 +16,28 @@ class IWebDriver(ABC, Generic[TDriver]):
     """
 
     def __init__(self, config, **kwargs):
+        self.driver = None
         self.config = config
         self.kwargs = kwargs
+
+    @abstractmethod
+    def get_driver_options(self) -> Any:
+        """
+        Retrieves the driver options for the web driver instance.
+
+        Returns:
+            Any: The driver options object for the web driver.
+        """
+        ...
+
+    @abstractmethod
+    def get_driver_binary(self) -> Any:
+        """
+        Retrieves the driver executable binary for the web driver instance.
+        Returns:
+            Any: The driver executable binary for the web driver.
+        """
+        ...
 
     @abstractmethod
     def get_info(self) -> Dict[str, Any]:
@@ -52,6 +72,16 @@ class IWebDriver(ABC, Generic[TDriver]):
 
         Returns:
             str: The session ID of the current web driver session.
+        """
+        ...
+
+    @abstractmethod
+    def start(self) -> Generic[TWebDriver]:
+        """
+        starts the web driver session, initializing the web driver instance and opening a new window.
+
+        Returns:
+            Any: The web driver instance that was started.
         """
         ...
 

@@ -22,9 +22,6 @@ class BrowserChrome(IBrowser):
     def close(self) -> None:
         self.driver.close()
 
-    def get(self, url: str) -> None:
-        self.driver.get(url)
-
     def get_session(self) -> str:
         return self.driver.session_id
 

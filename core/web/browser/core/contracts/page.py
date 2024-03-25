@@ -74,14 +74,14 @@ class IPage(ABC):
         ...
 
     @abstractmethod
-    def find_element_by_pattern(self, pattern: TWebElement, locator: str, locator_value: Any) -> Any:
+    def find_element_by_pattern(self, pattern: TWebElement, locator: str, value: Any) -> Any:
         """
         Finds a web element using a pattern in the current page.
 
         Args:
             pattern: The pattern to use for finding the element.
             locator: The locator type (e.g., by id, xpath).
-            locator_value: The value of the locator.
+            value: The value of the locator.
 
         Returns:
             The element instance if found, otherwise None.

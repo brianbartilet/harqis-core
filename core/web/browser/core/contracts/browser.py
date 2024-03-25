@@ -1,16 +1,18 @@
 from abc import abstractmethod, ABC
-from typing import Dict, Any, Iterable
+from typing import Dict, Any, Iterable, TypeVar, Generic
 
-from core.web.browser.core.contracts.driver import TDriver
+from core.web.browser.core.contracts.driver import TWebDriver
+
+TBrowser = TypeVar("TBrowser")
 
 
-class IBrowser(ABC):
+class IBrowser(ABC, Generic[TBrowser]):
     """
     Defines an interface for browser-like behavior, intended as a foundation for
     page object models in web automation or testing. It outlines methods for
     managing browser instances, navigating web pages, and interacting with web elements.
     """
-    def __init__(self, driver: TDriver, **kwargs):
+    def __init__(self, driver: TWebDriver, **kwargs):
         """
         Initializes the BaseBrowser with a driver and optional keyword arguments.
 
@@ -32,16 +34,6 @@ class IBrowser(ABC):
     def close(self) -> None:
         """
         Closes the browser and cleans up any resources.
-        """
-        ...
-
-    @abstractmethod
-    def get(self, url: str) -> None:
-        """
-        Navigates the browser to the specified URL.
-
-        Args:
-            url: The URL to navigate to.
         """
         ...
 

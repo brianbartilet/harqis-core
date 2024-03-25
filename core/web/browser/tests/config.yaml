@@ -1,0 +1,33 @@
+driver_selenium_chrome:
+  type: selenium
+  browser: chrome
+  parameters:
+    url: https://the-internet.herokuapp.com/
+    headless: True
+  options:
+    - "start-maximized"
+    - "disable-extensions"
+    - "no-default-browser-check"
+    - "--window-size=1920,1020"
+
+driver_selenium_firefox:
+  type: selenium
+  browser: firefox
+  parameters:
+    url: https://the-internet.herokuapp.com/
+    headless: True
+  options:
+    - "--width=1920"
+    - "--height=1080"
+
+driver_selenium_edge:
+  type: selenium
+  browser: edge
+  parameters:
+    url: https://the-internet.herokuapp.com/
+    headless: True
+  options:
+    - "start-maximized"
+    - "disable-extensions"
+    - "no-default-browser-check"
+    - "--window-size=1920,1020"

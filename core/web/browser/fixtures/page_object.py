@@ -34,6 +34,19 @@ def find_elements(locator: TLocator, value: str) -> [Any]:
     return decorator
 
 
+def find_element_by_pattern(self, pattern: TWebElement, locator: TLocator, value: str) -> Any:
+    def decorator(func):
+        def wrapper(*args) -> []:
+            try:
+                return args[0].driver.find_element_by_pattern(pattern, locator, value)
+            except Exception as e:
+                raise Exception(f"Error {e} finding elements with locator: {locator}={value}")
+
+        return wrapper
+
+    return decorator
+
+
 class BasePageObjectModel(IPage):
 
     def __init__(self, driver: TDriver, **kwargs):
@@ -51,7 +64,7 @@ class BasePageObjectModel(IPage):
     def find_elements(self, locator: TLocator, value: Any) -> Iterable[Any]:
         return self.driver.find_elements(locator, value)
 
-    def find_element_by_pattern(self, pattern: TWebElement, locator: TLocator, locator_value: str) -> Any:
+    def find_element_by_pattern(self, pattern: TWebElement, locator: TLocator, value: str) -> Any:
         raise NotImplementedError
 
     def navigate_to_page(self, url) -> None:

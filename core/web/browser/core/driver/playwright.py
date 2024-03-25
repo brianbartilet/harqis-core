@@ -1,10 +1,18 @@
 from typing import Dict, Any
 
-from core.web.browser.core.contracts.driver import IWebDriver
-from web.browser.core.contracts.driver import TDriver
+from core.web.browser.core.contracts.driver import IWebDriver, TWebDriver
 
 
-class DriverPlaywright(IWebDriver):
+class DriverPlaywright(IWebDriver[TWebDriver]):
+
+    def get_driver_options(self) -> Any:
+        raise NotImplementedError
+
+    def get_driver_binary(self) -> Any:
+        raise NotImplementedError
+
+    def start(self) -> Any:
+        raise NotImplementedError
 
     def get_info(self) -> Dict[str, Any]:
         raise NotImplementedError
@@ -21,4 +29,3 @@ class DriverPlaywright(IWebDriver):
     def quit(self) -> None:
         raise NotImplementedError
 
-    ...

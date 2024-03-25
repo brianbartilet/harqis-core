@@ -22,9 +22,6 @@ class BrowserFirefox(IBrowser):
     def close(self) -> None:
         raise NotImplementedError
 
-    def get(self, url: str) -> None:
-        raise NotImplementedError
-
     def get_session(self) -> Any:
         raise NotImplementedError
 
