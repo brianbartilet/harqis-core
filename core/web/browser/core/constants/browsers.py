@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class BrowserName(Enum):
+class BrowserNames(Enum):
     """
     Enum defining browser names supported for web automation.
 

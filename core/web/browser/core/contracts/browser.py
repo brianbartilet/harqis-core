@@ -1,9 +1,7 @@
 from abc import abstractmethod, ABC
-from typing import TypeVar, Optional, Dict, Any, Iterable
+from typing import Dict, Any, Iterable
 
-
-TDriver = TypeVar("TDriver")
-T = TypeVar("T")
+from core.web.browser.core.contracts.driver import TDriver
 
 
 class IBrowser(ABC):
@@ -12,6 +10,17 @@ class IBrowser(ABC):
     page object models in web automation or testing. It outlines methods for
     managing browser instances, navigating web pages, and interacting with web elements.
     """
+    def __init__(self, driver: TDriver, **kwargs):
+        """
+        Initializes the BaseBrowser with a driver and optional keyword arguments.
+
+        Parameters:
+            driver (TDriver): The web driver instance.
+            **kwargs: Additional keyword arguments for customization.
+        """
+        self.driver = driver
+        self.kwargs = kwargs
+
     @abstractmethod
     def refresh(self) -> None:
         """
@@ -37,7 +46,7 @@ class IBrowser(ABC):
         ...
 
     @abstractmethod
-    def get_session(self) -> T:
+    def get_session(self) -> Any:
         """
         Get session of the browser.
         """

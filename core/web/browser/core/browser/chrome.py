@@ -1,7 +1,9 @@
-from core.web.browser.core.browser.base import BaseBrowser
+from typing import Any, Dict, Iterable
+
+from core.web.browser.core.contracts.browser import IBrowser
 
 
-class BrowserChrome(BaseBrowser):
+class BrowserChrome(IBrowser):
     """
     Represents a Chrome browser instance for web automation.
 
@@ -13,4 +15,32 @@ class BrowserChrome(BaseBrowser):
     Attributes:
         Inherits all attributes from the BaseBrowser class.
     """
-    ...
+
+    def refresh(self) -> None:
+        self.driver.refresh()
+
+    def close(self) -> None:
+        self.driver.close()
+
+    def get(self, url: str) -> None:
+        self.driver.get(url)
+
+    def get_session(self) -> str:
+        return self.driver.session_id
+
+    def get_cookies(self) -> Iterable[Dict[str, Any]]:
+        return self.driver.get_cookies()
+
+    def get_info(self) -> Dict[str, Any]:
+        return self.driver.get_info()
+
+    def get_version(self) -> str:
+        raise NotImplementedError
+
+    def execute_script(self, script: str, *args) -> Any:
+        self.driver.execute_script(script, *args)
+
+    def take_screen_shot(self, *args) -> None:
+        raise NotImplementedError
+
+

@@ -1,8 +1,9 @@
 from abc import abstractmethod, ABC
-from typing import TypeVar, Optional, Dict, Any, Iterable
+from typing import Optional, Dict, Any, Iterable
 
-TBrowser = TypeVar("TBrowser")
-TElement = TypeVar("TElement")
+from core.web.browser.core.contracts.driver import TDriver, IWebDriver
+
+from core.web.browser.core.contracts.element import TWebElement
 
 
 class IPage(ABC):
@@ -12,6 +13,14 @@ class IPage(ABC):
     This interface encapsulates the behavior expected from a web page in a web automation
     framework, including navigation, element interaction, and condition checks for page load.
     """
+    def __init__(self, driver: TDriver, **kwargs):
+        self.driver = driver
+
+        self._browser = None
+        self._config = None
+        self._app_data = kwargs.get("app_data", None)
+
+        self.kwargs = kwargs
 
     @abstractmethod
     def did_page_load(self, *args) -> bool:
@@ -27,16 +36,6 @@ class IPage(ABC):
         ...
 
     @abstractmethod
-    def get_browser(self) -> TBrowser:
-        """
-        Retrieves the browser instance associated with this page.
-
-        Returns:
-            TBrowser: An instance of the browser used to navigate the page.
-        """
-        ...
-
-    @abstractmethod
     def get_page_title(self) -> str:
         """
         Retrieves the title of the current page.
@@ -47,12 +46,13 @@ class IPage(ABC):
         ...
 
     @abstractmethod
-    def find_element(self, locator: Dict[str, str]) -> Optional[TElement]:
+    def find_element(self, locator: str, value: Any) -> Optional[Any]:
         """
         Finds a single web element in the current page.
 
         Args:
-            locator: A dictionary defining how to locate the element (e.g., by id, xpath).
+            locator: locator type (e.g., by id, xpath).
+            value: value of the locator.
 
         Returns:
             An instance of the element if found, otherwise None.
@@ -60,15 +60,31 @@ class IPage(ABC):
         ...
 
     @abstractmethod
-    def find_elements(self, locator: Dict[str, str]) -> Optional[Iterable[TElement]]:
+    def find_elements(self, locator: str, value: Any) -> Optional[Iterable[Any]]:
         """
         Finds multiple web elements in the current page.
 
         Args:
-            locator: A dictionary defining how to locate the elements (e.g., by class name, css selector).
+            locator: locator type (e.g., by id, xpath).
+            value: value of the locator.
 
         Returns:
             A list of element instances if found, otherwise an empty list.
+        """
+        ...
+
+    @abstractmethod
+    def find_element_by_pattern(self, pattern: TWebElement, locator: str, locator_value: Any) -> Any:
+        """
+        Finds a web element using a pattern in the current page.
+
+        Args:
+            pattern: The pattern to use for finding the element.
+            locator: The locator type (e.g., by id, xpath).
+            locator_value: The value of the locator.
+
+        Returns:
+            The element instance if found, otherwise None.
         """
         ...
 
