@@ -6,7 +6,7 @@ from core.web.services.fixtures.base import IFixtureWebService
 from core.web.services.core.contracts.response import IResponse
 from core.web.services.core.contracts.request import IWebServiceRequest
 
-from core.web.services.core.config.webservice import AppConfigWSClient, TWSConfig
+from core.web.services.core.config.webservice import AppConfigWSClient
 
 from typing import TypeVar
 TWebService = TypeVar("TWebService")
@@ -20,7 +20,7 @@ class BaseFixtureServiceRest(IFixtureWebService[TWebService]):
     for making those requests.
     """
 
-    def __init__(self, config: TWSConfig, **kwargs):
+    def __init__(self, config: AppConfigWSClient, **kwargs):
         super(BaseFixtureServiceRest, self).__init__(config=config)
 
     def send_request(self, request: IWebServiceRequest, response_hook=dict, **kwargs) -> IResponse[TWebService]:

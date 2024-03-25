@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Optional, TypeVar, Union
+from typing import Optional
 
 
 @dataclass
@@ -20,7 +20,3 @@ class AppConfigWSClient:
     }
     headers: Optional[dict] = None   # default headers to initialize the requests *USE CAREFULLY FOR AUTHORIZATION*
     app_data: Optional[dict] = None  # placeholder dictionary to contain other app context information e.g. api keys
-
-
-T = TypeVar("T", bound=AppConfigWSClient)
-TWSConfig = Union[T, dict]
