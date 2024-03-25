@@ -11,3 +11,13 @@ __tpl_tests_services_graphql:
     base_url: 'https://graphql.anilist.co/'
     response_encoding: 'utf-8'
     "verify": True
+
+__tpl_features_webdriver:
+  type: selenium
+  browser: firefox
+  parameters:
+    url: https://the-internet.herokuapp.com/
+    headless: True
+  options:
+    - "--width=1920"
+    - "--height=1080"
