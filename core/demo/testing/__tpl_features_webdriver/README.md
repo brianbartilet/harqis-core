@@ -1,3 +1,3 @@
 GH_TOKEN
-let me test a dispatch event
+let me test a dispatch event 2
 ```
