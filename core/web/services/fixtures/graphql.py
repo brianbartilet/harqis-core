@@ -5,7 +5,7 @@ from core.web.services.fixtures.base import IFixtureWebService
 from core.web.services.core.contracts.response import IResponse
 from core.web.services.core.contracts.request import IWebServiceRequest
 from core.web.services.core.clients.graphql import GraphQLClient
-from core.web.services.core.config.webservice import AppConfigWSClient
+from core.web.services.core.config.webservice import TWSConfig
 
 from typing import TypeVar
 
@@ -20,7 +20,7 @@ class BaseFixtureServiceGraphQL(IFixtureWebService[TWebService]):
     for making those requests.
     """
 
-    def __init__(self, config: AppConfigWSClient, gql_file=None, **kwargs):
+    def __init__(self, config: TWSConfig, gql_file=None, **kwargs):
         """
         Initializes the protocol fixture with the given configuration.
 

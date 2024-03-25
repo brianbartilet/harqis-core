@@ -7,7 +7,7 @@ from core.web.services.core.contracts.request import IWebServiceRequest
 from core.web.services.core.contracts.client import IWebClient
 
 from core.web.services.core.constants.service_client_type import WebService
-from core.web.services.core.config.webservice import AppConfigWSClient
+from core.web.services.core.config.webservice import TWSConfig
 from core.web.services.core.clients.rest import RestClient
 from core.web.services.core.clients.graphql import GraphQLClient
 from core.web.services.core.clients.grpc import GrpcClient
@@ -48,7 +48,7 @@ class IFixtureWebService(Generic[TFixture]):
     The fixture uses a generic type T to represent the type of the response data expected from the web service.
     """
 
-    def __init__(self, config: AppConfigWSClient, **kwargs):
+    def __init__(self, config: TWSConfig, **kwargs):
         """
         Initializes the protocol fixture with the given configuration.
 
@@ -90,7 +90,7 @@ class IFixtureWebService(Generic[TFixture]):
         return self._client.execute_request(request, response_hook, **kwargs)
 
     @property
-    def config(self) -> AppConfigWSClient:
+    def config(self) -> TWSConfig:
         """
         Returns the web client component of the protocol fixture.
 
