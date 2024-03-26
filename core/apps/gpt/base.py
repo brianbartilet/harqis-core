@@ -1,5 +1,3 @@
-from openai import OpenAI
-
 from core.web.services.fixtures.rest import BaseFixtureServiceRest
 from core.web.services.core.constants.http_headers import HttpHeaders
 

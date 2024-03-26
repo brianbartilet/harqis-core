@@ -1,10 +1,8 @@
-import os
 from typing import TypeVar, Type, Any, Generic
 from enum import Enum
 
 from core.config.loader import ConfigFileLoader
 from core.utilities.logging.custom_logger import create_logger
-from core.config.env_variables import ENV_ROOT_DIRECTORY
 
 TApp = TypeVar('TApp', bound=Enum)
 """
@@ -45,7 +43,8 @@ class AppConfig(Generic[TCfg]):
         Args:
             app (AppName): The name of the application for which to load the configuration.
             type_hook_config (Type[ConfigClass]): The class to be used for creating the configuration instance.
-            **kwargs: Optional keyword arguments. Can include 'logger' for a custom logger and 'base_path' for a custom configuration file path.
+            **kwargs: Optional keyword arguments. Can include 'logger' for a custom logger and 'base_path' for
+                a custom configuration file path.
         """
         self.log = kwargs.get('logger', create_logger(self.__class__.__name__))
         self.kwargs = kwargs

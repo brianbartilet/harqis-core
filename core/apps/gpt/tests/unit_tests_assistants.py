@@ -14,7 +14,7 @@ from core.apps.gpt.dto.assistants.thread import DtoThread, DtoThreadCreate
 from core.apps.gpt.dto.assistants.message import DtoMessage, DtoMessageCreate
 from core.apps.gpt.dto.assistants.run import DtoRunCreate
 
-from core.apps.apps_config import AppConfigLoader, AppNames
+from core.apps.config import AppConfigLoader, AppNames
 from core.web.services.core.json import JsonObject
 
 from core.utilities.data.qlist import QList

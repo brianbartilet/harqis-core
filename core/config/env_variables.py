@@ -87,7 +87,6 @@ def get_env_variable_value(env):
 
 #  region Default Environment Variables
 
-
 # Environment setting, default is development environment
 ENV = os.environ.get("ENV", Environment.DEV.value)
 
