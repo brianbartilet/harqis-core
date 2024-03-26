@@ -14,10 +14,14 @@ jobs:
     - name: Set Up Git Repository
       uses: actions/checkout@v2
 
-    - name: Build and Run Tests
-      run: docker build . -t harqis-core && docker run -v app_volume:/app/data harqis-core
+    - name: Build Docker
+      run: docker build . -t harqis-core --target base
       env:
         ENV_ROOT_DIRECTORY: /app
+
+    - name: Run Unit Tests
+      run: docker run -v app_volume:/app/data harqis-core
+
   trigger-demo-project-build:
     runs-on: ubuntu-latest
     steps:

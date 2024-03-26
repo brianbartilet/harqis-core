@@ -1,0 +1,81 @@
+openapi: 3.0.3
+info:
+  title: Simple Task API
+  description: A simple API for managing tasks
+  version: "1.0"
+servers:
+  - url: 'http://localhost:3001'
+paths:
+  /tasks:
+    get:
+      summary: List all tasks
+      responses:
+        '200':
+          description: An array of tasks
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Task'
+    post:
+      summary: Create a new task
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewTask'
+      responses:
+        '201':
+          description: Successfully created task
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+  /tasks/{taskId}:
+    get:
+      summary: Get a task by ID
+      parameters:
+        - in: path
+          name: taskId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A single task
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+        '404':
+          description: Task not found
+components:
+  schemas:
+    Task:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "1"
+        title:
+          type: string
+          example: "Buy groceries"
+        description:
+          type: string
+          example: "Milk, Bread, Eggs"
+        completed:
+          type: boolean
+          example: false
+    NewTask:
+      type: object
+      required:
+        - title
+      properties:
+        title:
+          type: string
+          example: "Study for exams"
+        description:
+          type: string
+          example: "Chapter 4,5 and 6 of math book"
