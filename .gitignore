@@ -10,6 +10,7 @@ venv/
 *.dir*
 *.env*
 *.log*
+*.zip*
 *.egg
 *.egg-info/
 

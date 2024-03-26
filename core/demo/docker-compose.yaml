@@ -3,9 +3,9 @@ services:
   prism:
     # this is the stoplight/prism image for mocking an OpenAPI spec
     image: stoplight/prism:4
-    command: 'mock -h 0.0.0.0 ${PRISM_DESTINATION_FILE}'
+    command: 'mock -h 0.0.0.0 /tmp/tasks_api_specs.yaml'
     volumes:
-      - ${PRISM_SOURCE_FILE}:${PRISM_DESTINATION_FILE}:ro
+      - ./gpt/examples/specs/tasks_api_specs.yaml:/tmp/tasks_api_specs.yaml:ro
     ports:
-      # Serve the mocked API locally as available on port 3001
-      - '${HOST_PORT_PRISM}:4010'
+      # Serve the mocked API locally as available on port 4000
+      - '4000:4010'
