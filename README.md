@@ -89,7 +89,7 @@ To get started with **HARQIS-core**, follow these steps:
           timeout: 60
           stream: True
       app_data:
-        api_key: 'your_openai_api_key'
+        api_key: ${OPEN_API_KEY} # add an environment variable to store the API key
         model: 'your_target_assistant_mode'
         max_tokens: 500
       ```
