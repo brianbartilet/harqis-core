@@ -30,7 +30,7 @@ class TestsUnitWebServices(unittest.TestCase):
 
     def test_sample_query(self):
 
-        given_payload = {'id': 1, 'type': "ANIME" }
+        given_payload = {'id': 1, 'type': "ANIME"}
         given_request = self.given_fixture.get_sample_request(given_payload)
 
         when = self.given_fixture.send_request(given_request)
@@ -40,7 +40,7 @@ class TestsUnitWebServices(unittest.TestCase):
         then.assert_that(when.data, then.has_key('Media'))
 
     def test_sample_query_with_type(self):
-        given_payload = {'id': 1, 'type': "ANIME" }
+        given_payload = {'id': 1, 'type': "ANIME"}
         given_request = self.given_fixture.get_sample_request(given_payload)
 
         when = self.given_fixture.send_request(given_request, response_hook=TestDtoQuery)
@@ -56,5 +56,5 @@ class TestsUnitWebServices(unittest.TestCase):
     def test_sample_query_with_invalid_gql(self):
         with self.assertRaises(FileNotFoundError):
             given_fixture = BaseTestFixtureAppQuery(given_config, gql_file='invalid.tpl.gql', base_path=self.path)
-            given_payload = {'invalid_key': 0 }
+            given_payload = {'invalid_key': 0}
             given_fixture.get_sample_request(given_payload)

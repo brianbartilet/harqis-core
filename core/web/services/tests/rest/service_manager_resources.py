@@ -20,12 +20,11 @@ class SimpleTestFixtureResourceOne(BaseFixtureServiceRest):
 class SimpleTestFixtureResourceTwo(SimpleTestFixtureResourceOne):
     def __init__(self, config):
         super(SimpleTestFixtureResourceTwo, self).__init__(config)
-        self.request.add_uri_parameter('posts')
 
 
 class SimpleTestFixtureResourceThree(SimpleTestFixtureResourceOne):
 
     def __init__(self, config):
         super(SimpleTestFixtureResourceThree, self).__init__(config)
-        self.request.add_uri_parameter('posts')
+
 
