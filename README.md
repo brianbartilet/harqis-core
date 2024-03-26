@@ -88,10 +88,10 @@ To get started with **HARQIS-core**, follow these steps:
           verify: False
           timeout: 60
           stream: True
-      app_data:
-        api_key: ${OPEN_API_KEY} # add an environment variable to store the API key
-        model: 'your_target_assistant_mode'
-        max_tokens: 500
+        app_data:
+          api_key: ${OPEN_API_KEY} # add an environment variable to store the API key
+          model: 'your_target_assistant_mode'
+          max_tokens: 500
       ```
    - These services are defined in `core\apps\docker_compose.yaml`
 
