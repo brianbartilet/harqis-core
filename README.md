@@ -75,7 +75,7 @@ To get started with **HARQIS-core**, follow these steps:
       ```
 
 **Configuration**:
-   - A configuration requirement is needed to run the apps integrated into the framework. Create a `apps_config.yaml` file in the root directory and add the following:
+   - A configuration requirement is needed to run the apps integrated into the framework. Replace or update the `apps_config.yaml` file in the root directory and add the following:
       ```yaml
       CELERY_TASKS:
         application_name: 'workflow-harqis'
