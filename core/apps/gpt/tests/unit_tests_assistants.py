@@ -123,5 +123,3 @@ class TestGPTServicesSmoke(unittest.TestCase):
         #  delete the assistant
         when = self.given_service_assistants.delete_assistant(assistant_id=self.when_create_assistant.data.id)
         self.then.assertEqual(when.status_code, HttpStatus.OK)
-
-

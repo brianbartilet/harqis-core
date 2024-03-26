@@ -12,7 +12,6 @@ venv/
 *.log*
 *.egg
 *.egg-info/
-apps_config.yaml
 
 
 

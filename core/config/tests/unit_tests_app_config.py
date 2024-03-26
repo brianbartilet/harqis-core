@@ -41,7 +41,6 @@ class TestAppConfig(unittest.TestCase):
     def setUp(self):
         self.path = os.path.dirname(os.path.abspath(__file__))
 
-    @unittest.skipIf(ENV != Environment.DEV.value, "Skipping tests for non-development environment.")
     def test_app_config_initialization(self):
         """
         Test that AppConfig initializes correctly with valid input.
@@ -49,12 +48,10 @@ class TestAppConfig(unittest.TestCase):
         when_app_config = AppConfig(MockedAppNames.APPLICATION_CONFIG, MockedTypeObject, base_path=self.path)
         self.assertEqual(when_app_config.config.name, 'Cool Application')
 
-    @unittest.skipIf(ENV != Environment.DEV.value, "Skipping tests for non-development environment.")
     def test_app_config_key_error(self):
         """
         Test that AppConfig raises a KeyError when an invalid application name is provided.
         """
-        given_base_path = os.path.join(os.getcwd())
         with self.assertRaises(KeyError):
-            AppConfig(MockedAppNames.INVALID, MockedTypeObject, base_path=given_base_path)
+            AppConfig(MockedAppNames.INVALID, MockedTypeObject, base_path=self.path)
 

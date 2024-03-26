@@ -1,0 +1,16 @@
+CELERY_TASKS:
+  application_name: 'workflow-harqis'
+  broker: 'amqp://guest:guest@localhost:5672/'
+
+HARQIS_GPT:
+  client: 'rest'
+  parameters:
+    base_url: 'https://api.openai.com/v1'
+    response_encoding: 'utf-8'
+    verify: False
+    timeout: 60
+    stream: True
+  app_data:
+    api_key: ${OPENAI_API_KEY}
+    model: 'davinci-002'
+    max_tokens: 500
