@@ -42,7 +42,8 @@ class ServiceFiles(BaseServiceHarqisGPT):
             The created file as a DtoAssistantFile object.
         """
         file_path = os.path.join(base_path, file_name)
-        response = self.native_client.files.create(file=open(file_path, 'rb'), purpose="assistants")
+        with open(file_path, 'rb') as file:
+            response = self.native_client.files.create(file=file, purpose="assistants")
 
         return response
 

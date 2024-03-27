@@ -49,6 +49,13 @@ ENV PYTHONPATH="/app:/app/core:app/core/demo"
 CMD ["pytest"]
 
 
+FROM base as apps
+WORKDIR /app/core/apps
+RUN sh ../demo/scripts/set_env.sh
+ENV WORKFLOW_CONFIG="demo.workflows.__tpl_workflow_builder.config"
+CMD ["pytest"]
+
+
 ARG WORKFLOW_CONFIG="demo.workflows.__tpl_workflow_builder.config"
 FROM base as scheduler
 COPY core/demo/workflows .
