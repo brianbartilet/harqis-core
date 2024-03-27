@@ -1,4 +1,5 @@
 """This module contains utilities for working with JSON, primarily for webservice responses."""
+import os
 import json
 import jsonpickle
 
@@ -35,6 +36,54 @@ def keys_exists(element: dict, *keys) -> Union[None, dict]:
             return None
 
     return _element
+
+
+def convert_to_jsonl(input_file_name: str,
+                     input_base_path=os.getcwd(),
+                     output_base_path=os.getcwd(),
+                     text_key='text'):
+    """
+    Converts a text or JSON file to JSON Lines (JSONL) format.
+
+    Args:
+    - input_file_path: Path to the input file (either .txt or .json).
+    - output_file_path: Path where the output .jsonl file will be saved.
+    - text_key: The key to use for text lines in the output JSON objects (used for .txt files).
+
+    """
+    # Determine the type of the input file based on its extension
+    input_file_path = os.path.join(input_base_path, input_file_name)
+    file_extension = os.path.splitext(input_file_path)[-1].lower()
+
+    output_file_path = os.path.join(output_base_path, f'{input_file_name.split(file_extension)[0]}.jsonl')
+    with open(input_file_path, 'r', encoding='utf-8') as input_file, \
+            open(output_file_path, 'w', encoding='utf-8') as output_file_path:
+
+        if file_extension == '.txt':
+            # Handle text files
+            for line in input_file:
+                line = line.strip()
+                if line:  # Skip empty lines
+                    json_obj = {text_key: line}
+                    output_file_path.write(json.dumps(json_obj) + '\n')
+
+        elif file_extension == '.json':
+            # Handle JSON files containing an array of objects
+            json_array = json.load(input_file)
+            if isinstance(json_array, list):
+                for obj in json_array:
+                    output_file_path.write(json.dumps(obj) + '\n')
+            else:
+                raise ValueError("JSON input file must contain an array of objects.")
+
+        else:
+            for line in input_file:
+                line = line.strip()
+                if line:  # Skip empty lines
+                    json_obj = {'content': line}
+                    output_file_path.write(json.dumps(json_obj) + '\n')
+
+    print(f"File converted to JSONL and saved to {output_file_path}")
 
 
 class JsonObject(Generic[TJsonObject]):
