@@ -17,12 +17,12 @@ class TestDownloadFile(unittest.TestCase):
     @unittest.skipIf(ENV != Environment.DEV.value, "Skipping tests for non-development environment.")
     def test_download_file(self):
         service = ServiceDownloadFile(url=self.get_url)
-        service.download_file(file_name=self.file_name)
+        service.download_file(file_name=self.file_name, path=self.base_path)
 
         file_path = os.path.join(self.base_path, self.file_name)
         self.assertTrue(os.path.exists(file_path))
 
-    def test_download_file_statis(self):
+    def test_download_file_static(self):
         service = ServiceDownloadFile(url=self.get_url)
         response = service.download_file(file_name=self.file_name)
         self.assertEqual(response.status_code, HTTPStatus.OK)

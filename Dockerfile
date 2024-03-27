@@ -36,6 +36,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 # RUN ln -s /usr/bin/chromium-browser /usr/bin/google-chrome
 
 # run the tests
+RUN sh /app/core/demo/scripts/set_env.sh
 ENV GH_TOKEN ${GH_TOKEN}
 ENV ENV_ROOT_DIRECTORY ${ENV_ROOT_DIRECTORY}
 ENV ENV ${ENV}
