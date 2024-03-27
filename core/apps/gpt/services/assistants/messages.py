@@ -1,4 +1,4 @@
-from core.apps.gpt.base import BaseServiceHarqisGPT
+from core.apps.gpt.base_service import BaseServiceHarqisGPT
 from core.apps.gpt.constants.http_headers import HttpHeadersGPT
 from core.apps.gpt.dto.assistants.message import DtoMessage, DtoMessageFile, DtoListMessages, \
     DtoListMessageFiles, DtoMessageCreate
@@ -38,9 +38,9 @@ class ServiceMessages(BaseServiceHarqisGPT):
         """
         request = self.request\
             .set_method(HttpMethod.POST)\
-            .add_uri_parameter(thread_id)\
+            .add_uri_parameter(thread_id) \
+            .add_uri_parameter('messages') \
             .add_json_body(payload) \
-            .add_uri_parameter('messages')\
             .build()
 
         return self.client.execute_request(request, response_hook=DtoMessage)

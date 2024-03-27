@@ -40,12 +40,12 @@ class DtoRunCreate(JsonObject):
     DTO for a Run creation.
     """
     assistant_id: str = None  # The ID of the Assistant associated with this run.
-    model: str = None  # The model used by the run.
-    instructions: str = None  # Instructions for using the run.
-    additional_instructions: str = None  # Additional instructions for using the run.
-    tools: list = None  # A list of tools used by the run.
+    model: Optional[str] = None  # The model used by the run.
+    instructions: Optional[str] = None  # Instructions for using the run.
+    additional_instructions: Optional[str] = None  # Additional instructions for using the run.
+    tools: Optional[list] = None  # A list of tools used by the run.
     metadata: Optional = None  # Optional metadata associated with the run.
-    stream: Optional = None  # The stream associated with the run.
+    stream: Optional[bool] = False  # The stream associated with the run.
 
 
 class DtoThreadRunCreate(DtoRunCreate):

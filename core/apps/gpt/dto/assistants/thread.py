@@ -1,7 +1,7 @@
 from core.apps.gpt.dto.assistants.message import DtoMessage
 from core.web.services.core.json import JsonObject
 
-from typing import Optional
+from typing import Optional, Iterable
 
 
 class DtoThread(JsonObject):
@@ -18,6 +18,6 @@ class DtoThreadCreate(JsonObject):
     """
     DTO for a Thread creation.
     """
-    messages: list[DtoMessage] = None  # A list of messages to be created with the thread.
+    messages: Optional[Iterable[DtoMessage]] = None  # A list of messages to be created with the thread.
     metadata: Optional = None  # Optional metadata associated with the Assistant.
 

@@ -1,4 +1,4 @@
-from core.apps.gpt.base import BaseServiceHarqisGPT
+from core.apps.gpt.base_service import BaseServiceHarqisGPT
 from core.apps.gpt.constants.http_headers import HttpHeadersGPT
 from core.apps.gpt.dto.assistants.thread import DtoThread, DtoThreadCreate
 from core.apps.gpt.dto.assistants.common import DtoResponseStatus

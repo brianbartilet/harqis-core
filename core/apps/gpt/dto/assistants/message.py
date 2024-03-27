@@ -42,7 +42,7 @@ class DtoMessage(JsonObject):
     incomplete_details: DtoDetails = None  # The reason for the status.
     completed_at: int = None  # The timestamp of when the message was completed.
     incomplete_at: int = None  # The timestamp of when the message was marked as incomplete.
-    role: str = 'user'  # The role of the message.
+    role: str = None  # The role of the message.
     content: Any = None  # The content of the message.
     assistant_id: str = None  # The ID of the Assistant associated with this message.
     run_id: str = None  # The ID of the run associated with this message.
@@ -50,7 +50,7 @@ class DtoMessage(JsonObject):
 
 
 class DtoMessageCreate(JsonObject):
-    role: str = 'user'  # The role of the message.
+    role: str = None # The role of the message.
     content: Any = None  # The content of the message.
     file_ids: Optional = []
     metadata: Optional = None  # Optional metadata associated with the message.
