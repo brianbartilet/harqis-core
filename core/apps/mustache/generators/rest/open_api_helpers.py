@@ -58,6 +58,7 @@ def transform_types(openapi_spec_parsed: dict, type_mapping=None):
 
 
 def transform_paths(resource_grouping: dict):
+
     # Extract operations and their details
     operations = []
     for path, methods in resource_grouping.items():
@@ -68,7 +69,8 @@ def transform_paths(resource_grouping: dict):
                 "description": details.get("summary"),
                 "parameters": [],  # Simplified; parameters extraction would be here
                 "hasPayload": "requestBody" in details,
-                "hasResponseHook": False,  # Simplified; set based on your needs
+                "hasResponseHook": True,  # Simplified; set based on your needs
+                "response_hook": 'dict'
             }
             operations.append(operation)
 
