@@ -1,5 +1,4 @@
 from core.web.services.core.constants.http_methods import HttpMethod
-
 from {{base_module_path_services}}.base_service import BaseServiceApp
 
 {{#models}}
@@ -7,55 +6,28 @@ from {{base_module_path_models}}.{{model_name}} import {{model_class_name}}
 {{/models}}
 
 
-class Service{{service_name}}(BaseServiceApp):
+class Service{{resource}}(BaseServiceApp):
 
     def __init__(self, config, **kwargs):
-        super(Service{{service_name}}, self).__init__(config, **kwargs)
+        super(Service{{resource}}, self).__init__(config, **kwargs)
         self.request.add_uri_parameter('{{resource}}')
 
-    {{#get}}
-    def request_get_{{name}}(self, {{args}}):
-        self.request\
-            .set_method(HttpMethod.GET)\
-            .add_uri_parameter('{{endpoint}}')\
-            {{#args}}\
+    {{#operations}}
+    def {{operation_id}}(self{{#parameters}}, {{name}}{{^required}}=None{{/required}}{{/parameters}}{{#hasPayload}}, payload{{/hasPayload}}):
+        """{{description}}"""
+        self.request.set_method(HttpMethod.{{method}})\
+        {{#parameters}}
+            {{#inPath}}
             .add_uri_parameter('{{name}}', {{name}})\
-            {{/args}}
+            {{/inPath}}
+            {{#inQuery}}
+            .add_query_parameter('{{name}}', {{name}})\
+            {{/inQuery}}
+        {{/parameters}}
+        {{#hasPayload}}
+            .add_json_body(payload)\
+        {{/hasPayload}}
 
-        return self.client.execute_request(self.request.build(), response_hook={{response_hook}})
-    {{/get}}
+        return self.client.execute_request(self.request.build(){{#hasResponseHook}}, response_hook={{response_hook}}{{/hasResponseHook}})
 
-    {{#post}}
-    def request_post_{{name}}(self, payload: {{payload}})
-        self.request \
-            .set_method(HttpMethod.POST) \
-            .add_json_body(payload)
-
-        return self.client.execute_request(self.request.build())
-    {{/post}}
-
-    {{#put}}
-    def request_put_{{name}}(self, payload: {{payload}})
-        self.request \
-            .set_method(HttpMethod.PUT) \
-            .add_json_body(payload)
-
-        return self.client.execute_request(self.request.build())
-    {{/put}}
-
-    {{#delete}}
-    def request_delete_{{name}}(self, {{args}})
-        self.request \
-            .set_method(HttpMethod.DELETE)
-
-        return self.client.execute_request(self.request.build())
-    {{/delete}}
-
-    {{#patch}}
-    def request_patch_{{name}}(self, payload: {{payload}})
-        self.request \
-            .set_method(HttpMethod.PATCH) \
-            .add_json_body(payload)
-
-        return self.client.execute_request(self.request.build())
-    {{/patch}}
+    {{/operations}}

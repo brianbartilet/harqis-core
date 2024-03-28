@@ -9,6 +9,7 @@ paths:
   /tasks:
     get:
       summary: List all tasks
+      operationId: listTasks
       responses:
         '200':
           description: An array of tasks
@@ -20,6 +21,7 @@ paths:
                   $ref: '#/components/schemas/Task'
     post:
       summary: Create a new task
+      operationId: createTask
       requestBody:
         required: true
         content:
@@ -36,6 +38,7 @@ paths:
   /tasks/{taskId}:
     get:
       summary: Get a task by ID
+      operationId: getTaskById
       parameters:
         - in: path
           name: taskId
@@ -51,6 +54,35 @@ paths:
                 $ref: '#/components/schemas/Task'
         '404':
           description: Task not found
+  /workflows:
+    get:
+      summary: List all workflows
+      operationId: listWorkflows
+      responses:
+        '200':
+          description: An array of workflows
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Workflow'
+    post:
+      summary: Create a new workflow
+      operationId: createWorkflow
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewWorkflow'
+      responses:
+        '201':
+          description: Successfully created task
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
 components:
   schemas:
     Task:
@@ -79,3 +111,30 @@ components:
         description:
           type: string
           example: "Chapter 4,5 and 6 of math book"
+    Workflow:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "1"
+        title:
+          type: string
+          example: "Cook Adobo"
+        description:
+          type: string
+          example: "All steps to cook adobo"
+        completed:
+          type: boolean
+          example: false
+    NewWorkflow:
+      type: object
+      required:
+        - title
+      properties:
+        title:
+          type: string
+          example: "Complete math homework"
+        description:
+          type: string
+          example: "5, 6, 7 and 8 of math book"
+

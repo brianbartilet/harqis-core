@@ -18,15 +18,36 @@ def update_sys_path(top_level_directory: str):
         sys.path.append(top_level_directory)
 
 
-def get_module_from_file_path(file_path: str):
+import os
+
+
+def get_module_from_file_path(file_path: str, start_folder: str = 'core'):
     """
-    Get the module path from a file path.
+    Get the module path from a file path, starting from a specified folder.
+
     Args:
-        - file_path (str): The path to the file.
+        file_path (str): The path to the file.
+        start_folder (str): The folder from which to start the module path.
+
+    Returns:
+        str: The module path starting from the specified folder.
     """
     normalized_path = os.path.normpath(file_path)
     without_extension = os.path.splitext(normalized_path)[0]
-    module_path = without_extension.replace(os.sep, '.')
+
+    # Find the index of the start folder in the path
+    start_index = without_extension.find(os.sep + start_folder + os.sep)
+
+    # If the start folder is not found, return an empty string or raise an error
+    if start_index == -1:
+        return ""  # or raise ValueError(f"'{start_folder}' not found in '{file_path}'")
+
+    # Trim the path to start from the start folder
+    trimmed_path = without_extension[start_index + 1:]  # +1 to remove leading os.sep
+
+    # Replace os-specific path separators with '.'
+    module_path = trimmed_path.replace(os.sep, '.')
+
     return module_path
 
 

@@ -8,7 +8,7 @@ from requests.structures import CaseInsensitiveDict
 
 from core.web.services.core.contracts.response import IResponse
 from core.web.services.core.json import JsonUtility, JsonObject
-from core.utilities.data.objects import convert_object_keys_to_snake
+from core.utilities.data.strings import convert_object_keys_to_snake
 from core.utilities.logging.custom_logger import create_logger
 
 TResponse = TypeVar("TResponse")

@@ -81,6 +81,15 @@ def convert_object_list(object_collection: List, object_type: Type[TObject]) -> 
     return [object_type(**item.__dict__) for item in object_collection]
 
 
+def remove_special_chars(input_string):
+    """
+    Removes special characters from the input string, retaining only letters and numbers.
 
-class ObjectUtils:
-    ...
+    Args:
+        input_string (str): The string from which to remove special characters.
+
+    Returns:
+        str: A new string with special characters removed.
+    """
+    # This regular expression matches anything that is NOT a letter or number.
+    return re.sub(r'[^a-zA-Z0-9]', '', input_string)

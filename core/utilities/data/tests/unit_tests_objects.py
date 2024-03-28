@@ -1,5 +1,5 @@
 import unittest
-from core.utilities.data.objects import *
+from core.utilities.data.strings import *
 
 
 class UnitTestsObjectUtilities(unittest.TestCase):

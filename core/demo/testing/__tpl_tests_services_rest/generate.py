@@ -10,11 +10,13 @@ from urllib.parse import urlparse
 
 from core.utilities.resources.download_file import ServiceDownloadFile
 from core.utilities.logging.custom_logger import create_logger
-from core.utilities.data.objects import convert_to_snake_case
+from core.utilities.data.strings import convert_to_snake_case, remove_special_chars
+from core.utilities.path import get_module_from_file_path
 
-from core.apps.mustache.helpers import transform_types
+from core.apps.mustache.open_api_helpers import transform_types, transform_paths, transform_models, group_paths_by_resource
 
-from demo.testing.__tpl_tests_services_rest.generators.variables.models import MustacheTemplate
+from demo.testing.__tpl_tests_services_rest.generators.variables.models import MustacheTemplateModel
+from demo.testing.__tpl_tests_services_rest.generators.variables.service import MustacheTemplateService
 
 
 class TestGeneratorServiceRest:
@@ -111,7 +113,7 @@ class TestGeneratorServiceRest:
             properties = transform_types(value['properties'])
             transform_properties = [{"name": p, "type": v['type'], "example": v['example']}
                                     for p, v in properties.items()]
-            prepare = MustacheTemplate(object_name=key, properties=transform_properties)
+            prepare = MustacheTemplateModel(object_name=key, properties=transform_properties)
             self.files[os.path.join(self.directories['models'], f"{convert_to_snake_case(key)}.py")] = (
                 renderer.render_path(template_model, prepare.get_dict()))
 
@@ -153,3 +155,29 @@ def test_runner():
     gen.parse_spec(source)
     gen.write_files()
 
+
+def test_transform_openapi_for_mustache():
+    renderer = pystache.Renderer()
+    gen = TestGeneratorServiceRest(source="tasks_api_specs.yaml")
+    source = gen.load_source()
+
+    paths_by_resource = group_paths_by_resource(source['paths'])
+    base_module_path_models = get_module_from_file_path(gen.directories['models'])
+    base_module_path_services = get_module_from_file_path(gen.directories['services'])
+    for resource in paths_by_resource.keys():
+        models = transform_models(paths_by_resource[resource])
+        operations = transform_paths(paths_by_resource[resource])
+        prepare = MustacheTemplateService(base_module_path_services=base_module_path_services,
+                                          base_module_path_models=base_module_path_models,
+                                          models=models,
+                                          operations=operations,
+                                          resource=remove_special_chars(resource).capitalize())
+
+        template_base = gen.templates['service']
+        key = os.path.join(gen.directories['services'], f"{remove_special_chars(resource)}.py")
+        gen.files[key] = (
+            renderer.render_path(template_base, prepare))
+
+    #  endregion
+
+    gen.write_files()

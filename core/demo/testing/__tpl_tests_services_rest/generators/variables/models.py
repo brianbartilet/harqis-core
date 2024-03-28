@@ -2,7 +2,7 @@ from core.web.services.core.json import JsonObject
 from typing import List, Dict
 
 
-class MustacheTemplate(JsonObject):
+class MustacheTemplateModel(JsonObject):
     """
     Represents a model for a Mustache template.
 
