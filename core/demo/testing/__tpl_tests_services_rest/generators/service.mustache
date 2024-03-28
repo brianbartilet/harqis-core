@@ -1,7 +1,10 @@
 from core.web.services.core.constants.http_methods import HttpMethod
 
-from {{base_module_path}}.services.base_service import BaseServiceApp
-from {{base_module_path}}.dto import *
+from {{base_module_path_services}}.base_service import BaseServiceApp
+
+{{#models}}
+from {{base_module_path_models}}.{{model_name}} import {{model_class_name}}
+{{/models}}
 
 
 class Service{{service_name}}(BaseServiceApp):
@@ -30,3 +33,29 @@ class Service{{service_name}}(BaseServiceApp):
 
         return self.client.execute_request(self.request.build())
     {{/post}}
+
+    {{#put}}
+    def request_put_{{name}}(self, payload: {{payload}})
+        self.request \
+            .set_method(HttpMethod.PUT) \
+            .add_json_body(payload)
+
+        return self.client.execute_request(self.request.build())
+    {{/put}}
+
+    {{#delete}}
+    def request_delete_{{name}}(self, {{args}})
+        self.request \
+            .set_method(HttpMethod.DELETE)
+
+        return self.client.execute_request(self.request.build())
+    {{/delete}}
+
+    {{#patch}}
+    def request_patch_{{name}}(self, payload: {{payload}})
+        self.request \
+            .set_method(HttpMethod.PATCH) \
+            .add_json_body(payload)
+
+        return self.client.execute_request(self.request.build())
+    {{/patch}}

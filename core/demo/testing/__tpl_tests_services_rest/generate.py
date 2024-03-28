@@ -12,7 +12,9 @@ from core.utilities.resources.download_file import ServiceDownloadFile
 from core.utilities.logging.custom_logger import create_logger
 from core.utilities.data.objects import convert_to_snake_case
 
-from demo.testing.__tpl_tests_services_rest.generators.variables.tpl_dto import MustacheTemplate
+from core.apps.mustache.helpers import transform_types
+
+from demo.testing.__tpl_tests_services_rest.generators.variables.models import MustacheTemplate
 
 
 class TestGeneratorServiceRest:
@@ -26,7 +28,7 @@ class TestGeneratorServiceRest:
             'specs': os.path.join(base_path, '.specs'),
             'generators': os.path.join(base_path, 'generators'),
             'generated': os.path.join(base_path, 'generated'),
-            'dto': os.path.join(base_path, 'generated', 'dto'),
+            'models': os.path.join(base_path, 'generated', 'models'),
             'services': os.path.join(base_path, 'generated', 'services'),
             'tests': os.path.join(base_path, 'generated', 'tests'),
             'tests.sanity': os.path.join(base_path, 'generated', 'tests', 'sanity'),
@@ -35,11 +37,11 @@ class TestGeneratorServiceRest:
         }
 
         self.templates: Dict[str, str] = {
-            'base_service': os.path.join(self.directories['generators'], 'tpl_base_service.mustache'),
-            'config': os.path.join(self.directories['generators'], 'tpl_config.mustache'),
-            'dto': os.path.join(self.directories['generators'], 'tpl_dto.mustache'),
-            'service': os.path.join(self.directories['generators'], 'tpl_service.mustache'),
-            'test': os.path.join(self.directories['generators'], 'tpl_test.mustache'),
+            'base_service': os.path.join(self.directories['generators'], 'base_service.mustache'),
+            'config': os.path.join(self.directories['generators'], 'config.mustache'),
+            'models': os.path.join(self.directories['generators'], 'models.mustache'),
+            'service': os.path.join(self.directories['generators'], 'service.mustache'),
+            'test': os.path.join(self.directories['generators'], 'test.mustache'),
         }
 
     def load_source(self) -> dict:
@@ -85,20 +87,39 @@ class TestGeneratorServiceRest:
         """
         renderer = pystache.Renderer()
 
-        #  region Create Models
+        #  region Generate Base Service
 
-        source_dto = source_data['components']['schemas']
-        template_dto = self.templates['dto']
-        for key, value in source_dto.items():
-            properties = value['properties']
+        template_base = self.templates['base_service']
+        self.files[os.path.join(self.directories['services'], "base_service.py")] = (
+            renderer.render_path(template_base, {}))
+
+        #  endregion
+
+        #  region Generate Config
+
+        template_base = self.templates['config']
+        self.files[os.path.join(self.directories['generated'], "config.py")] = (
+            renderer.render_path(template_base, {}))
+
+        #  endregion
+
+        #  region Generate Models
+
+        source_model = source_data['components']['schemas']
+        template_model = self.templates['models']
+        for key, value in source_model.items():
+            properties = transform_types(value['properties'])
             transform_properties = [{"name": p, "type": v['type'], "example": v['example']}
                                     for p, v in properties.items()]
-            transform_key = key
-            prepare = MustacheTemplate(object_name=transform_key, properties=transform_properties)
-            self.files[os.path.join(self.directories['dto'], f"{convert_to_snake_case(key)}.py")] = (
-                renderer.render_path(template_dto, prepare.get_dict()))
+            prepare = MustacheTemplate(object_name=key, properties=transform_properties)
+            self.files[os.path.join(self.directories['models'], f"{convert_to_snake_case(key)}.py")] = (
+                renderer.render_path(template_model, prepare.get_dict()))
 
         # endregion
+
+        #  region Generate Services
+
+        #  endregion
 
     def write_files(self) -> None:
         """
@@ -117,20 +138,18 @@ if __name__ == '__main__':
     parser.add_argument('--spec', type=str, default="open_api.yaml",
                         help='The OpenAPI specifications file can be a YAML, JSON or URL')
     generator = TestGeneratorServiceRest(source=parser.parse_args().spec)
-
     data = generator.load_source()
 
     generator.create_directories()
-
     generator.parse_spec(data)
 
     generator.write_files()
 
 
-def test_run():
-    g = TestGeneratorServiceRest(source="tasks_api_specs.yaml")
-    data = g.load_source()
-    g.create_directories()
-    g.parse_spec(data)
-    g.write_files()
+def test_runner():
+    gen = TestGeneratorServiceRest(source="tasks_api_specs.yaml")
+    source = gen.load_source()
+    gen.create_directories()
+    gen.parse_spec(source)
+    gen.write_files()
 
