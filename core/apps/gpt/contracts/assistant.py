@@ -1,10 +1,10 @@
 from abc import ABC, abstractmethod
-from typing import Any, Dict
+from typing import Any, Dict, Iterable
 
 from core.web.services.core.config.webservice import AppConfigWSClient
 from core.web.services.manager import WebServiceManager
 
-from core.apps.gpt.dto.assistants.thread import DtoThread
+from core.apps.gpt.models.assistants.thread import Thread
 
 
 class IAssistant(ABC):
@@ -12,9 +12,10 @@ class IAssistant(ABC):
         self.config = config
         self.kwargs = kwargs
 
-        self.threads: Dict[str, DtoThread] = {}
+        self.threads: Dict[str, Thread] = {}
         self.runs: Dict[str, Any] = {}
         self.messages: Dict[str, Any] = {}
+        self.files: Dict[str, Any] = {}
 
         self.manager: WebServiceManager
 
@@ -49,13 +50,17 @@ class IAssistant(ABC):
         ...
 
     @abstractmethod
-    def prepare_files(self, files: list[str], **kwargs) -> dict:
+    def prepare_files(self, *args, **kwargs) -> dict:
         ...
 
     @abstractmethod
-    def upload_files(self, files: list[str], **kwargs) -> dict:
+    def upload_files(self, *args, **kwargs) -> Iterable[Any]:
         ...
 
     @abstractmethod
-    def download_files(self, files: list[str], **kwargs) -> dict:
+    def download_files(self, *args, **kwargs) -> dict:
+        ...
+
+    @abstractmethod
+    def wait_for_status(self, **kwargs):
         ...

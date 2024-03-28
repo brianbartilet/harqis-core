@@ -1,0 +1,31 @@
+"""Test cases for {{endpoint}} service"""
+import pytest
+
+{{#modules}}
+from {{base_module_path}}.services.{{module_name}}.{{resource}} import *
+{{/modules}}
+from {{base_module_path}}.config import CONFIG
+from {{base_module_path}}.dto import *
+"""
+Add more imports as needed
+
+"""
+
+@pytest.fixture()
+def given():
+    """
+    Setup fixture for the tests
+
+    """
+    ...
+
+
+{{#tests}}
+def test_{{name}}(given):
+    """
+    {{description}}
+    """
+    raise NotImplementedError("Test not implemented")
+
+
+{{/tests}}

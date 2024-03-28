@@ -1,19 +1,19 @@
 from core.web.services.core.json import JsonObject
-from core.apps.gpt.dto.assistants.common import DtoListResponse
+from core.apps.gpt.models.assistants.common import ListResponse
 from typing import Optional, Any
 
 
-class DtoFileUpload(JsonObject):
+class FileUpload(JsonObject):
     """
-    DTO for uploading a file.
+    Model for uploading a file.
     """
     file: bytes = None
     purpose: str = None
 
 
-class DtoFile(JsonObject):
+class File(JsonObject):
     """
-    DTO for a file object.
+    Model for a file object.
     """
     id: str = None  # The unique identifier for the file.
     bytes: int = None  # Amount of bytes in the file.
@@ -23,7 +23,7 @@ class DtoFile(JsonObject):
     purpose: str = None  # The purpose of the file.
 
 
-class DtoFileStatus(JsonObject):
+class FileStatus(JsonObject):
     id: str = None
     object: str = None
     deleted: bool = None

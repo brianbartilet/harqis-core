@@ -1,9 +1,9 @@
 from core.apps.gpt.base_service import BaseServiceHarqisGPT
 from core.apps.gpt.constants.http_headers import HttpHeadersGPT
-from core.apps.gpt.dto.assistants.message import DtoMessage, DtoMessageFile, DtoListMessages, \
-    DtoListMessageFiles, DtoMessageCreate
+from core.apps.gpt.models.assistants.message import Message, MessageFile, ListMessages, \
+    ListMessageFiles, MessageCreate
 
-from core.apps.gpt.dto.assistants.common import DtoListQuery
+from core.apps.gpt.models.assistants.common import ListQuery
 
 from core.web.services.core.constants.http_methods import HttpMethod
 
@@ -25,7 +25,7 @@ class ServiceMessages(BaseServiceHarqisGPT):
             .add_header(HttpHeadersGPT.OPEN_API_BETA, "assistants=v1")\
             .add_uri_parameter('threads')
 
-    def create_message(self, thread_id: str, payload: DtoMessageCreate):
+    def create_message(self, thread_id: str, payload: MessageCreate):
         """
         Creates a new message.
 
@@ -34,7 +34,7 @@ class ServiceMessages(BaseServiceHarqisGPT):
             payload: Data transfer object containing the message's configuration.
 
         Returns:
-            The created message as a DtoMessage object.
+            The created message as a Message object.
         """
         request = self.request\
             .set_method(HttpMethod.POST)\
@@ -43,9 +43,9 @@ class ServiceMessages(BaseServiceHarqisGPT):
             .add_json_body(payload) \
             .build()
 
-        return self.client.execute_request(request, response_hook=DtoMessage)
+        return self.client.execute_request(request, response_hook=Message)
 
-    def get_messages(self, thread_id: str, query=DtoListQuery()):
+    def get_messages(self, thread_id: str, query=ListQuery()):
         """
         List messages from a thread
 
@@ -54,7 +54,7 @@ class ServiceMessages(BaseServiceHarqisGPT):
             query: query object containing the message's configuration.
 
         Returns:
-            The created message as a DtoMessage object.
+            The created message as a Message object.
         """
         request = self.request\
             .set_method(HttpMethod.GET)\
@@ -63,7 +63,7 @@ class ServiceMessages(BaseServiceHarqisGPT):
             .add_query_strings(**query.get_dict())\
             .build()
 
-        return self.client.execute_request(request, response_hook=DtoListMessages)
+        return self.client.execute_request(request, response_hook=ListMessages)
 
     def get_message(self, thread_id: str, message_id: str):
         """
@@ -74,7 +74,7 @@ class ServiceMessages(BaseServiceHarqisGPT):
             message_id: The ID of the message
 
         Returns:
-            The created message as a DtoMessage object.
+            The created message as a Message object.
         """
         request = self.request\
             .set_method(HttpMethod.GET)\
@@ -83,9 +83,9 @@ class ServiceMessages(BaseServiceHarqisGPT):
             .add_uri_parameter(message_id)\
             .build()
 
-        return self.client.execute_request(request, response_hook=DtoMessage)
+        return self.client.execute_request(request, response_hook=Message)
 
-    def get_message_files(self, thread_id: str, message_id: str, query=DtoListQuery()):
+    def get_message_files(self, thread_id: str, message_id: str, query=ListQuery()):
         """
         List messages from a thread
 
@@ -95,7 +95,7 @@ class ServiceMessages(BaseServiceHarqisGPT):
             query: query object containing the message's configuration.
 
         Returns:
-            The created message as a DtoMessage object.
+            The created message as a Message object.
         """
         request = self.request\
             .set_method(HttpMethod.GET)\
@@ -105,7 +105,7 @@ class ServiceMessages(BaseServiceHarqisGPT):
             .add_query_strings(**query.get_dict())\
             .build()
 
-        return self.client.execute_request(request, response_hook=DtoListMessageFiles)
+        return self.client.execute_request(request, response_hook=ListMessageFiles)
 
     def get_message_file(self, thread_id: str, message_id: str, file_id: str):
         """
@@ -117,7 +117,7 @@ class ServiceMessages(BaseServiceHarqisGPT):
             file_id: The ID of the file
 
         Returns:
-            The created message as a DtoMessage object.
+            The created message as a Message object.
         """
         request = self.request\
             .set_method(HttpMethod.GET)\
@@ -128,9 +128,9 @@ class ServiceMessages(BaseServiceHarqisGPT):
             .add_uri_parameter(file_id) \
             .build()
 
-        return self.client.execute_request(request, response_hook=DtoMessageFile)
+        return self.client.execute_request(request, response_hook=MessageFile)
 
-    def update_message(self, thread_id: str, message_id: str, payload: DtoMessage):
+    def update_message(self, thread_id: str, message_id: str, payload: Message):
         """
         Update message object by ID
 
@@ -141,7 +141,7 @@ class ServiceMessages(BaseServiceHarqisGPT):
                 only uses .metadata property
 
         Returns:
-            The created message as a DtoMessage object.
+            The created message as a Message object.
         """
         request = self.request\
             .set_method(HttpMethod.GET)\
@@ -151,4 +151,4 @@ class ServiceMessages(BaseServiceHarqisGPT):
             .add_json_body(payload) \
             .build()
 
-        return self.client.execute_request(request, response_hook=DtoMessage)
+        return self.client.execute_request(request, response_hook=Message)

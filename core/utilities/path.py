@@ -1,6 +1,71 @@
 import os
+import sys
 import subprocess
+import importlib
 from core.config.env_variables import ENV_PYTHON_PATH, set_env_variable_value, get_env_variable_value
+
+from pathlib import Path
+
+
+def update_sys_path(top_level_directory: str):
+    """
+    Update the sys.path with the top-level directory of the project.
+    Args:
+        - top_level_directory (str): The path to the top-level directory of the project.
+    """
+    # Assuming the current script is running from /home/user/projects/my_project
+    if top_level_directory not in sys.path:
+        sys.path.append(top_level_directory)
+
+
+def get_module_from_file_path(file_path: str):
+    """
+    Get the module path from a file path.
+    Args:
+        - file_path (str): The path to the file.
+    """
+    normalized_path = os.path.normpath(file_path)
+    without_extension = os.path.splitext(normalized_path)[0]
+    module_path = without_extension.replace(os.sep, '.')
+    return module_path
+
+
+def import_from_path(file_path: str):
+    """
+    Import a module from a file path.
+    Args:
+        - file_path (str): The path to the file.
+    Returns:
+        The module object.
+    """
+    module_path = get_module_from_file_path(file_path)
+    module = importlib.import_module(module_path)
+
+    return module
+
+
+def find_files(directory: str, patterns: list[str]):
+    """
+    Generate a list of file paths in the given directory and all its subdirectories
+    that match the given patterns.
+
+    Args:
+    - directory: The root directory to search in.
+    - patterns: A list of patterns to match the file names against.
+
+    Returns:
+    - A list of Paths to the files that match the given patterns.
+    """
+    matching_files = []
+    # Ensure the directory is a Path object
+    root_dir = Path(directory)
+
+    # Iterate over each pattern
+    for pattern in patterns:
+        # Use rglob for recursive globbing
+        matching_files.extend(root_dir.rglob(pattern))
+
+    return matching_files
 
 
 def get_subdirectories(path, level=1):

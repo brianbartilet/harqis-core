@@ -40,7 +40,7 @@ class TestResourceDataLoader(unittest.TestCase):
             def __init__(self):
                 self.value = 100
 
-        dto = MockedClass()
-        loader = ResourceDataLoader(Resource.GQL, self.gql_query, base_path=self.base_path, variables=dto.__dict__)
+        model = MockedClass()
+        loader = ResourceDataLoader(Resource.GQL, self.gql_query, base_path=self.base_path, variables=model.__dict__)
         data = loader.data
         self.assertIn('value', data['variables'])

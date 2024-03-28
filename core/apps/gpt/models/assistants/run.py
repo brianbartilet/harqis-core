@@ -1,18 +1,18 @@
 from core.web.services.core.json import JsonObject
-from core.apps.gpt.dto.assistants.common import DtoError
-from core.apps.gpt.dto.assistants.thread import DtoThreadCreate
+from core.apps.gpt.models.assistants.common import Error
+from core.apps.gpt.models.assistants.thread import ThreadCreate
 
 from typing import Optional
 
 
-class DtoRequiredAction(JsonObject):
+class RequiredAction(JsonObject):
     type: str = None  # The type of the required action.
     submit_tool_outputs: object
 
 
-class DtoRun(JsonObject):
+class Run(JsonObject):
     """
-    DTO for a Run.
+    Model for a Run.
     """
     id: str = None  # The unique identifier for the Assistant.
     object: str = None  # The type of the object, should be "assistant".
@@ -20,8 +20,8 @@ class DtoRun(JsonObject):
     thread_id: str = None  # The ID of the thread associated with this run.
     assistant_id: str = None  # The ID of the Assistant associated with this run.
     status: str = None  # The status of the run.
-    required_action: DtoRequiredAction = None  # The required action for the run.
-    last_error: DtoError = None  # The last error for the run.
+    required_action: RequiredAction = None  # The required action for the run.
+    last_error: Error = None  # The last error for the run.
     expired_at: int = None  # The timestamp of when the run will expire.
     started_at: int = None  # The timestamp of when the run was started.
     cancelled_at: int = None  # The timestamp of when the run was cancelled.
@@ -35,9 +35,9 @@ class DtoRun(JsonObject):
     usage: object = None  # The usage of the run.
 
 
-class DtoRunCreate(JsonObject):
+class RunCreate(JsonObject):
     """
-    DTO for a Run creation.
+    Model for a Run creation.
     """
     assistant_id: str = None  # The ID of the Assistant associated with this run.
     model: Optional[str] = None  # The model used by the run.
@@ -48,28 +48,28 @@ class DtoRunCreate(JsonObject):
     stream: Optional[bool] = False  # The stream associated with the run.
 
 
-class DtoThreadRunCreate(DtoRunCreate):
+class ThreadRunCreate(RunCreate):
     """
-    DTO for a Thread Run creation.
+    Model for a Thread Run creation.
     """
-    thread: DtoThreadCreate = None  # The ID of the thread associated with this run.
+    thread: ThreadCreate = None  # The ID of the thread associated with this run.
 
 
-class DtoRunStep(DtoRun):
+class RunStep(Run):
     """
-    DTO for a Run step detail.
+    Model for a Run step detail.
     """
     step_details: Optional = None  # The details of the step.
 
 
-class DtoToolInput(JsonObject):
+class ToolInput(JsonObject):
     tool_call_id: str = None  # The ID of the tool call associated with this input.
     output: str = None  # The output associated with this input.
 
 
-class DtoSubmitToolOutputs(JsonObject):
+class SubmitToolOutputs(JsonObject):
     """
-    DTO for a Tool Outputs submission.
+    Model for a Tool Outputs submission.
     """
-    tool_outputs: list[DtoToolInput] = None
+    tool_outputs: list[ToolInput] = None
     stream: Optional = None  # The stream associated with the outputs.

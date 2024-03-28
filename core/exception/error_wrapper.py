@@ -11,7 +11,7 @@ import traceback
 from core.utilities.logging.custom_logger import create_logger
 
 
-class BaseExceptionWrapperDto:
+class BaseExceptionWrapper:
     def __init__(self, **kwargs):
         self.title = kwargs.get('title', '')
         self.error_class = kwargs.get('class_error', '')
@@ -48,7 +48,7 @@ class BaseExceptionWrapper(Exception):
 class IgnoreException(BaseExceptionWrapper):
     """ Ignore all encountered exception """
 
-    def __init__(self, message_dto: BaseExceptionWrapperDto):
+    def __init__(self, message_dto: BaseExceptionWrapper):
         message_dto.title = "IGNORED EXCEPTION"
         if not message_dto.text == "":
             message_dto.text = "'" + message_dto.text + "'"
@@ -106,7 +106,7 @@ def handle_exception(exception,
                 """
                 arg_element_key = arg_locator_type = arg_locator = arg_text = ''
 
-                dto = BaseExceptionWrapperDto(
+                dto = BaseExceptionWrapper(
                     class_error=exception.__name__,
                     page=args[0].__class__.__name__,
                     element_key=arg_element_key,

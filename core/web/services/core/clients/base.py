@@ -95,7 +95,7 @@ class BaseWebClient(IWebClient, ABC):
             An instance of IResponse containing the response data.
         """
         session = self.session or requests
-        raw_url = self.__get_raw_url__(r.get_full_url())
+        raw_url = self.__get_raw_url__(r.get_full_url(), strip_right=r.get_url_strip_right())
 
         try:
             self.log.debug(f"\nREQUEST:\n"

@@ -1,11 +1,11 @@
 from core.web.services.core.json import JsonObject
-from core.apps.gpt.dto.assistants.common import DtoListResponse
+from core.apps.gpt.models.assistants.common import ListResponse
 from typing import Optional
 
 
-class DtoAssistant(JsonObject):
+class Assistant(JsonObject):
     """
-    DTO for an Assistant.
+    Model for an Assistant.
     """
     id: str = None  # The unique identifier for the Assistant.
     object: str = None  # The type of the object, should be "assistant".
@@ -19,9 +19,9 @@ class DtoAssistant(JsonObject):
     metadata: Optional = None  # Optional metadata associated with the Assistant.
 
 
-class DtoAssistantFile(JsonObject):
+class AssistantFile(JsonObject):
     """
-    DTO for an Assistant File.
+    Model for an Assistant File.
     """
     id: str = None  # The unique identifier for the Assistant File.
     object: str = None  # The type of the object, should be "assistant_file".
@@ -29,11 +29,11 @@ class DtoAssistantFile(JsonObject):
     assistant_id: str = None  # The ID of the Assistant associated with this file.
 
 
-class DtoListAssistants(DtoListResponse):
+class ListAssistants(ListResponse):
     """
-    DTO for an Assistant Response.
+    Model for an Assistant Response.
     """
-    data: list[DtoAssistant] = None  # A list of Assistant DTOs in the response.
+    data: list[Assistant] = None  # A list of Assistant Models in the response.
 
 
 

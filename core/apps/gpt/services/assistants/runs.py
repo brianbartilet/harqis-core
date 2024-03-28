@@ -1,7 +1,7 @@
 from core.apps.gpt.base_service import BaseServiceHarqisGPT
 from core.apps.gpt.constants.http_headers import HttpHeadersGPT
-from core.apps.gpt.dto.assistants.run import DtoRun, DtoRunCreate, DtoThreadRunCreate, DtoRunStep, DtoSubmitToolOutputs
-from core.apps.gpt.dto.assistants.common import DtoListQuery
+from core.apps.gpt.models.assistants.run import Run, RunCreate, ThreadRunCreate, RunStep, SubmitToolOutputs
+from core.apps.gpt.models.assistants.common import ListQuery
 
 from core.web.services.core.constants.http_methods import HttpMethod
 
@@ -23,7 +23,7 @@ class ServiceRuns(BaseServiceHarqisGPT):
             .add_header(HttpHeadersGPT.OPEN_API_BETA, "assistants=v1")\
             .add_uri_parameter('threads')
 
-    def create_run(self, thread_id: str, payload: DtoRunCreate):
+    def create_run(self, thread_id: str, payload: RunCreate):
         """
         Creates a new run.
 
@@ -32,7 +32,7 @@ class ServiceRuns(BaseServiceHarqisGPT):
             payload: Data transfer object containing the run configuration.
 
         Returns:
-            The created run as a DtoRun object.
+            The created run as a Run object.
         """
         request = self.request\
             .set_method(HttpMethod.POST)\
@@ -41,9 +41,9 @@ class ServiceRuns(BaseServiceHarqisGPT):
             .add_json_body(payload) \
             .build()
 
-        return self.client.execute_request(request, response_hook=DtoRun)
+        return self.client.execute_request(request, response_hook=Run)
 
-    def create_thread_and_run(self, payload: DtoThreadRunCreate):
+    def create_thread_and_run(self, payload: ThreadRunCreate):
         """
         Creates a new thread and runs it.
 
@@ -51,7 +51,7 @@ class ServiceRuns(BaseServiceHarqisGPT):
             payload: Data transfer object containing the run configuration.
 
         Returns:
-            The created run as a DtoRun object.
+            The created run as a Run object.
         """
         request = self.request\
             .set_method(HttpMethod.POST)\
@@ -60,9 +60,9 @@ class ServiceRuns(BaseServiceHarqisGPT):
             .add_json_body(payload) \
             .build()
 
-        return self.client.execute_request(request, response_hook=DtoRun)
+        return self.client.execute_request(request, response_hook=Run)
 
-    def get_runs(self, thread_id: str, query=DtoListQuery()):
+    def get_runs(self, thread_id: str, query=ListQuery()):
         """
         Get runs by thread ID.
 
@@ -71,7 +71,7 @@ class ServiceRuns(BaseServiceHarqisGPT):
             query: query object containing the list configuration.
 
         Returns:
-            The runs as list of DtoRun objects.
+            The runs as list of Run objects.
         """
         request = self.request\
             .set_method(HttpMethod.GET)\
@@ -80,9 +80,9 @@ class ServiceRuns(BaseServiceHarqisGPT):
             .add_json_body(**query.get_dict())\
             .build()
 
-        return self.client.execute_request(request, response_hook=list[DtoRun])
+        return self.client.execute_request(request, response_hook=list[Run])
 
-    def get_run_steps(self, thread_id: str, run_id: str, query=DtoListQuery()):
+    def get_run_steps(self, thread_id: str, run_id: str, query=ListQuery()):
         """
         Get run steps from run.
 
@@ -92,7 +92,7 @@ class ServiceRuns(BaseServiceHarqisGPT):
             query: query object containing the list configuration.
 
         Returns:
-            The steps as list of DtoRun objects
+            The steps as list of Run objects
         """
         request = self.request\
             .set_method(HttpMethod.GET)\
@@ -103,7 +103,7 @@ class ServiceRuns(BaseServiceHarqisGPT):
             .add_json_body(**query.get_dict())\
             .build()
 
-        return self.client.execute_request(request, response_hook=list[DtoRunStep])
+        return self.client.execute_request(request, response_hook=list[RunStep])
 
     def get_run(self, thread_id: str, run_id: str):
         """
@@ -123,7 +123,7 @@ class ServiceRuns(BaseServiceHarqisGPT):
             .add_uri_parameter(run_id) \
             .build()
 
-        return self.client.execute_request(request, response_hook=DtoRun)
+        return self.client.execute_request(request, response_hook=Run)
 
     def get_run_step(self, thread_id: str, run_id: str, step_id: str):
         """
@@ -145,9 +145,9 @@ class ServiceRuns(BaseServiceHarqisGPT):
             .add_uri_parameter(step_id) \
             .build()
 
-        return self.client.execute_request(request, response_hook=DtoRunStep)
+        return self.client.execute_request(request, response_hook=RunStep)
 
-    def update_run(self, thread_id:str, run_id: str, payload: DtoRunCreate):  # use .metadata only
+    def update_run(self, thread_id: str, run_id: str, payload: RunCreate):  # use .metadata only
         """
         Update run object by ID.
 
@@ -167,9 +167,9 @@ class ServiceRuns(BaseServiceHarqisGPT):
             .add_json_body(payload) \
             .build()
 
-        return self.client.execute_request(request, response_hook=DtoRun)
+        return self.client.execute_request(request, response_hook=Run)
 
-    def submit_tool_options(self, thread_id: str, run_id: str, payload: DtoSubmitToolOutputs):
+    def submit_tool_options(self, thread_id: str, run_id: str, payload: SubmitToolOutputs):
         """
         Submit tool options for a run
 
@@ -190,7 +190,7 @@ class ServiceRuns(BaseServiceHarqisGPT):
             .add_json_body(payload) \
             .build()
 
-        return self.client.execute_request(request, response_hook=DtoRun)
+        return self.client.execute_request(request, response_hook=Run)
 
     def cancel_run(self, thread_id: str, run_id: str):
         """
@@ -211,5 +211,4 @@ class ServiceRuns(BaseServiceHarqisGPT):
             .add_uri_parameter('cancel') \
             .build()
 
-        return self.client.execute_request(request, response_hook=DtoRun)
-
+        return self.client.execute_request(request, response_hook=Run)

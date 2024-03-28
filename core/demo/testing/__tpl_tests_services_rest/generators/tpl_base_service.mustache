@@ -1,0 +1,16 @@
+from core.web.services.fixtures.rest import BaseFixtureServiceRest
+
+
+class BaseServiceApp(BaseFixtureServiceRest):
+    """
+    Base service for the application, set default headers here for the requests and define other common methods
+    """
+    def __init__(self, config, **kwargs):
+        """
+        Constructor for the base service
+        Args:
+            config {AppConfigWSClient} - an instance of the configuration object initialized from config.py
+        """
+        super(BaseServiceApp, self).__init__(config=config, **kwargs)
+        self.request\
+            .add_header(HttpHeaders.AUTHORIZATION, f'Bearer {YOUR_API_KEY}')

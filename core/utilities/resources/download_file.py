@@ -1,4 +1,5 @@
 import os
+from core.web.services.core.constants.http_methods import HttpMethod
 from core.web.services.fixtures.rest import BaseFixtureServiceRest
 from core.web.services.core.config.webservice import AppConfigWSClient
 
@@ -19,7 +20,9 @@ class ServiceDownloadFile(BaseFixtureServiceRest):
         super(ServiceDownloadFile, self).__init__(config=config, **kwargs)
 
     def download_file(self, file_name: str, path=os.getcwd(), resource="", ):
-        self.request.add_uri_parameter(resource)
+        self.request.set_method(HttpMethod.GET)\
+            .add_uri_parameter(resource)\
+            .strip_right_url(True)
 
         response = self.client.execute_request(self.request.build())
 

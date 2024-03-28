@@ -1,7 +1,7 @@
 from core.apps.gpt.base_service import BaseServiceHarqisGPT
 from core.apps.gpt.constants.http_headers import HttpHeadersGPT
-from core.apps.gpt.dto.assistants.thread import DtoThread, DtoThreadCreate
-from core.apps.gpt.dto.assistants.common import DtoResponseStatus
+from core.apps.gpt.models.assistants.thread import Thread, ThreadCreate
+from core.apps.gpt.models.assistants.common import ResponseStatus
 
 from core.web.services.core.constants.http_methods import HttpMethod
 
@@ -23,7 +23,7 @@ class ServiceThreads(BaseServiceHarqisGPT):
             .add_header(HttpHeadersGPT.OPEN_API_BETA, "assistants=v1")\
             .add_uri_parameter('threads')
 
-    def create_thread(self, payload: DtoThreadCreate):
+    def create_thread(self, payload: ThreadCreate):
         """
         Creates a new thread.
 
@@ -31,14 +31,14 @@ class ServiceThreads(BaseServiceHarqisGPT):
             payload: Data transfer object containing the thread's configuration.
 
         Returns:
-            The created assistant as a DtoThread object.
+            The created assistant as a Thread object.
         """
         request = self.request\
             .set_method(HttpMethod.POST)\
             .add_json_body(payload) \
             .build()
 
-        return self.client.execute_request(request, response_hook=DtoThread)
+        return self.client.execute_request(request, response_hook=Thread)
 
     def get_thread(self, thread_id: str):
         """
@@ -55,9 +55,9 @@ class ServiceThreads(BaseServiceHarqisGPT):
             .add_uri_parameter(thread_id) \
             .build()
 
-        return self.client.execute_request(request, response_hook=DtoThread)
+        return self.client.execute_request(request, response_hook=Thread)
 
-    def update_thread(self, thread_id: str, payload: DtoThread):
+    def update_thread(self, thread_id: str, payload: Thread):
         """
         Get thread object by ID.
 
@@ -74,7 +74,7 @@ class ServiceThreads(BaseServiceHarqisGPT):
             .add_json_body(payload) \
             .build()
 
-        return self.client.execute_request(request, response_hook=DtoThread)
+        return self.client.execute_request(request, response_hook=Thread)
 
     def delete_thread(self, thread_id: str):
         """
@@ -91,5 +91,5 @@ class ServiceThreads(BaseServiceHarqisGPT):
             .add_uri_parameter(thread_id) \
             .build()
 
-        return self.client.execute_request(request, response_hook=DtoResponseStatus)
+        return self.client.execute_request(request, response_hook=ResponseStatus)
 

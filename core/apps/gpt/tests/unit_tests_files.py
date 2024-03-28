@@ -1,8 +1,12 @@
 import unittest
 import os
+import time
 from core.apps.gpt.services.files import ServiceFiles
 from core.apps.apps_config import AppConfigLoader, AppNames
+from core.utilities.logging.custom_logger import create_logger
+
 from http import HTTPStatus
+from tqdm import tqdm
 
 
 class TestServiceAssistant(unittest.TestCase):
@@ -25,3 +29,12 @@ class TestServiceAssistant(unittest.TestCase):
 
         when_delete = self.given_service.delete_file(when_upload_file.id)
         self.then.assertEqual(when_delete.status_code, HTTPStatus.OK)
+
+    def test_progress_bars(self):
+        logging = create_logger("Test Progress Bars")
+        # Sample loop with tqdm and logging
+        for i in tqdm(range(10), desc="Processing"):
+            # Simulate work
+            time.sleep(0.01)
+            # Log progress
+            logging.debug(f"Step {i + 1}/10 completed.")

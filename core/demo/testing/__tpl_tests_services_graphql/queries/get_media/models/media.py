@@ -1,13 +1,13 @@
 from core.web.services.core.json import JsonObject
 
 
-class DtoTitle(JsonObject):
+class Title(JsonObject):
     romaji: str = None
     english: str = None
     native: str = None
 
 
-class DtoMedia(JsonObject):
+class Media(JsonObject):
     id: int = None
-    title: DtoTitle = None
+    title: Title = None
 

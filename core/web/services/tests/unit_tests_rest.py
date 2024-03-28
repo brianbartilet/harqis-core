@@ -3,7 +3,7 @@ import unittest
 from http import HTTPStatus
 
 from core.web.services.tests.rest.child_resource \
-    import ChildTestFixtureResource, DtoUserTest, DtoUserTestCamel, post_payload, response_check_get
+    import ChildTestFixtureResource, UserTest, UserTestCamel, post_payload, response_check_get
 
 
 class TestsUnitWebServices(unittest.TestCase):
@@ -19,10 +19,10 @@ class TestsUnitWebServices(unittest.TestCase):
 
     def test_run_unit_tests_get_typed(self):
         given_request = self.given.request_get()
-        when = self.given.send_request(given_request, response_hook=DtoUserTest)
+        when = self.given.send_request(given_request, response_hook=UserTest)
         then = self.given.verify.common
         then.assert_that(when.status_code, then.equal_to(HTTPStatus.OK))
-        then.assert_that(isinstance(when.data, DtoUserTest), True)
+        then.assert_that(isinstance(when.data, UserTest), True)
 
     def test_run_unit_tests_get_response(self):
         when = self.given.get_request_no_hook()
@@ -34,7 +34,7 @@ class TestsUnitWebServices(unittest.TestCase):
         when = self.given.get_request_with_hook()
         then = self.given.verify.common
         then.assert_that(when.status_code, then.equal_to(HTTPStatus.OK))
-        then.assert_that(isinstance(when.data, DtoUserTest), True)
+        then.assert_that(isinstance(when.data, UserTest), True)
 
     def test_run_unit_tests_post(self):
         given_request = self.given.request_post()
@@ -50,7 +50,7 @@ class TestsUnitWebServices(unittest.TestCase):
         then.assert_that(when.data, then.has_entries(post_payload))
 
     def test_run_unit_tests_post_with_object(self):
-        given_payload = DtoUserTest(**post_payload)
+        given_payload = UserTest(**post_payload)
 
         given_request = self.given.request_post_with_json_object(given_payload)
         when = self.given.send_request(given_request)
@@ -58,7 +58,7 @@ class TestsUnitWebServices(unittest.TestCase):
         then.assert_that(when.status_code, then.equal_to(HTTPStatus.CREATED))
 
     def test_run_unit_tests_post_with_object_camel(self):
-        given_payload = DtoUserTestCamel(**post_payload)
+        given_payload = UserTestCamel(**post_payload)
 
         given_request = self.given.request_post_with_json_object(given_payload)
         when = self.given.send_request(given_request)

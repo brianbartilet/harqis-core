@@ -4,8 +4,8 @@ from http import HTTPStatus
 
 from demo.testing.__tpl_tests_services_rest.services.posts.post import ServiceRestExamplePost
 from demo.testing.__tpl_tests_services_rest.config import CONFIG
-from demo.testing.__tpl_tests_services_rest.dto.user import DtoUser
-from demo.testing.__tpl_tests_services_rest.dto.payload import DtoPostPayload
+from demo.testing.__tpl_tests_services_rest.models.user import User
+from demo.testing.__tpl_tests_services_rest.models.payload import PostPayload
 
 
 @pytest.fixture()
@@ -25,12 +25,12 @@ def test_run_unit_tests_get(given):
     when = given.request_get()
     then = given.verify.common
     then.assert_that(when.status_code, then.equal_to(HTTPStatus.OK))
-    then.assert_that(isinstance(when.data, DtoUser), True)
+    then.assert_that(isinstance(when.data, User), True)
 
 
 def test_run_unit_tests_post(given):
     given, given_payload = given
-    given_payload_ = DtoPostPayload(**given_payload)
+    given_payload_ = PostPayload(**given_payload)
     when = given.request_post(given_payload_)
     then = given.verify.common
     then.assert_that(when.status_code, then.equal_to(HTTPStatus.CREATED))

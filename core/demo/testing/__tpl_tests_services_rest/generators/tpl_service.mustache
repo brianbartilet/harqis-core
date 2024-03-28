@@ -1,0 +1,32 @@
+from core.web.services.core.constants.http_methods import HttpMethod
+
+from {{base_module_path}}.services.base_service import BaseServiceApp
+from {{base_module_path}}.dto import *
+
+
+class Service{{service_name}}(BaseServiceApp):
+
+    def __init__(self, config, **kwargs):
+        super(Service{{service_name}}, self).__init__(config, **kwargs)
+        self.request.add_uri_parameter('{{resource}}')
+
+    {{#get}}
+    def request_get_{{name}}(self, {{args}}):
+        self.request\
+            .set_method(HttpMethod.GET)\
+            .add_uri_parameter('{{endpoint}}')\
+            {{#args}}\
+            .add_uri_parameter('{{name}}', {{name}})\
+            {{/args}}
+
+        return self.client.execute_request(self.request.build(), response_hook={{response_hook}})
+    {{/get}}
+
+    {{#post}}
+    def request_post_{{name}}(self, payload: {{payload}})
+        self.request \
+            .set_method(HttpMethod.POST) \
+            .add_json_body(payload)
+
+        return self.client.execute_request(self.request.build())
+    {{/post}}

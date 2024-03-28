@@ -17,14 +17,14 @@ post_payload = {
 }
 
 
-class DtoUserTest(JsonObject):
+class UserTest(JsonObject):
     user_id: int = None
     id: int = None
     title: str = None
     body: str = None
 
 
-class DtoUserTestCamel(JsonObject):
+class UserTestCamel(JsonObject):
     userId: int = None
     title: str = None
     body: str = None
@@ -75,4 +75,4 @@ class ChildTestFixtureResource(BaseTestFixtureService):
             .set_method(HttpMethod.GET)\
             .add_uri_parameter('1')
 
-        return self.client.execute_request(self.request.build(), response_hook=DtoUserTest)
+        return self.client.execute_request(self.request.build(), response_hook=UserTest)

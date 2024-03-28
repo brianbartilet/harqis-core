@@ -1,12 +1,12 @@
-from core.apps.gpt.dto.assistants.message import DtoMessage
+from core.apps.gpt.models.assistants.message import Message
 from core.web.services.core.json import JsonObject
 
 from typing import Optional, Iterable
 
 
-class DtoThread(JsonObject):
+class Thread(JsonObject):
     """
-    DTO for a Thread.
+    Model for a Thread.
     """
     id: str = None  # The unique identifier for the Assistant.
     object: str = 'assistant'  # The type of the object, should be "assistant".
@@ -14,10 +14,10 @@ class DtoThread(JsonObject):
     metadata: Optional = None  # Optional metadata associated with the Assistant.
 
 
-class DtoThreadCreate(JsonObject):
+class ThreadCreate(JsonObject):
     """
-    DTO for a Thread creation.
+    Model for a Thread creation.
     """
-    messages: Optional[Iterable[DtoMessage]] = None  # A list of messages to be created with the thread.
+    messages: Optional[Iterable[Message]] = None  # A list of messages to be created with the thread.
     metadata: Optional = None  # Optional metadata associated with the Assistant.
 

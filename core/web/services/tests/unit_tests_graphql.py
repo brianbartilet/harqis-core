@@ -18,7 +18,7 @@ given_config = AppConfigWSClient(
 )
 
 
-class TestDtoQuery(JsonObject):
+class TestQuery(JsonObject):
     id: int = None
     type: str = None
 
@@ -43,14 +43,14 @@ class TestsUnitWebServices(unittest.TestCase):
         given_payload = {'id': 1, 'type': "ANIME"}
         given_request = self.given_fixture.get_sample_request(given_payload)
 
-        when = self.given_fixture.send_request(given_request, response_hook=TestDtoQuery)
+        when = self.given_fixture.send_request(given_request, response_hook=TestQuery)
 
         then = self.given_fixture.verify.common
         then.assert_that(when.status_code, then.equal_to(HTTPStatus.OK))
         then.assert_that(when.data, then.has_property('Media'))
 
         #  test chaining
-        when = self.given_fixture.send_request(given_request, response_hook=TestDtoQuery)
+        when = self.given_fixture.send_request(given_request, response_hook=TestQuery)
         then.assert_that(when.status_code, then.equal_to(HTTPStatus.OK))
 
     def test_sample_query_with_invalid_gql(self):

@@ -1,7 +1,7 @@
 from core.apps.gpt.base_service import BaseServiceHarqisGPT
 from core.apps.gpt.constants.http_headers import HttpHeadersGPT
-from core.apps.gpt.dto.assistants.assistant import DtoAssistant, DtoAssistantFile, DtoListAssistants
-from core.apps.gpt.dto.assistants.common import DtoListQuery, DtoResponseStatus
+from core.apps.gpt.models.assistants.assistant import Assistant, AssistantFile, ListAssistants
+from core.apps.gpt.models.assistants.common import ListQuery, ResponseStatus
 
 from core.web.services.core.json import JsonObject
 from core.web.services.core.constants.http_methods import HttpMethod
@@ -25,7 +25,7 @@ class ServiceAssistants(BaseServiceHarqisGPT):
             .add_header(HttpHeadersGPT.OPEN_API_BETA, "assistants=v1")\
             .add_uri_parameter('assistants')
 
-    def create_assistant(self, payload: DtoAssistant):
+    def create_assistant(self, payload: Assistant):
         """
         Creates a new assistant.
 
@@ -33,13 +33,13 @@ class ServiceAssistants(BaseServiceHarqisGPT):
             payload: Data transfer object containing the assistant's configuration.
 
         Returns:
-            The created assistant as a DtoAssistant object.
+            The created assistant as a Assistant object.
         """
         self.request\
             .set_method(HttpMethod.POST)\
             .add_json_body(payload)
 
-        return self.client.execute_request(self.request.build(), response_hook=DtoAssistant)
+        return self.client.execute_request(self.request.build(), response_hook=Assistant)
 
     def create_assistant_file(self, assistant_id: str, file_id: str):
         """
@@ -50,7 +50,7 @@ class ServiceAssistants(BaseServiceHarqisGPT):
             file_id: file_id of the file to be created.
 
         Returns:
-            The created file as a DtoAssistantFile object.
+            The created file as a AssistantFile object.
         """
         self.request \
             .set_method(HttpMethod.POST) \
@@ -58,9 +58,9 @@ class ServiceAssistants(BaseServiceHarqisGPT):
             .add_uri_parameter('files') \
             .add_json_body(JsonObject(file_id=file_id)) \
 
-        return self.client.execute_request(self.request.build(), response_hook=DtoAssistantFile)
+        return self.client.execute_request(self.request.build(), response_hook=AssistantFile)
 
-    def get_assistants(self, query=DtoListQuery()):
+    def get_assistants(self, query=ListQuery()):
         """
         Retrieves a list of assistants based on the provided query parameters.
 
@@ -74,9 +74,9 @@ class ServiceAssistants(BaseServiceHarqisGPT):
             .set_method(HttpMethod.GET)\
             .add_query_strings(**query.get_dict())
 
-        return self.client.execute_request(self.request.build(), response_hook=DtoListAssistants)
+        return self.client.execute_request(self.request.build(), response_hook=ListAssistants)
 
-    def get_assistant_files(self, assistant_id: str, query: DtoListQuery = None):
+    def get_assistant_files(self, assistant_id: str, query: ListQuery = None):
         """
         Retrieves a list of files for the specified assistant.
 
@@ -93,7 +93,7 @@ class ServiceAssistants(BaseServiceHarqisGPT):
             .add_uri_parameter('files') \
             .add_json_body(query)
 
-        return self.client.execute_request(self.request.build(), response_hook=DtoAssistantFile)
+        return self.client.execute_request(self.request.build(), response_hook=AssistantFile)
 
     def get_assistant(self, assistant_id: str):
         """
@@ -103,14 +103,14 @@ class ServiceAssistants(BaseServiceHarqisGPT):
             assistant_id: The ID of the assistant.
 
         Returns:
-            The retrieved assistant as a DtoAssistant object.
+            The retrieved assistant as a Assistant object.
         """
 
         self.request\
             .set_method(HttpMethod.GET)\
             .add_uri_parameter(assistant_id)
 
-        return self.client.execute_request(self.request.build(), response_hook=DtoAssistant)
+        return self.client.execute_request(self.request.build(), response_hook=Assistant)
 
     def get_assistant_file(self, assistant_id: str, assistant_file_id: str):
         """
@@ -121,7 +121,7 @@ class ServiceAssistants(BaseServiceHarqisGPT):
             assistant_file_id: The ID of the file.
 
         Returns:
-            The retrieved file as a DtoAssistantFile object.
+            The retrieved file as a AssistantFile object.
         """
         self.request\
             .set_method(HttpMethod.GET)\
@@ -129,9 +129,9 @@ class ServiceAssistants(BaseServiceHarqisGPT):
             .add_uri_parameter('files')\
             .add_uri_parameter(assistant_file_id)
 
-        return self.client.execute_request(self.request.build(), response_hook=DtoAssistantFile)
+        return self.client.execute_request(self.request.build(), response_hook=AssistantFile)
 
-    def update_assistant(self, assistant_id: str, payload: DtoAssistant):
+    def update_assistant(self, assistant_id: str, payload: Assistant):
         """
         Updates the specified assistant with the given payload.
 
@@ -140,14 +140,14 @@ class ServiceAssistants(BaseServiceHarqisGPT):
             payload: Data transfer object containing the updated configuration.
 
         Returns:
-            The updated assistant as a DtoAssistant object.
+            The updated assistant as a Assistant object.
         """
         self.request\
             .set_method(HttpMethod.POST)\
             .add_uri_parameter(assistant_id)\
             .add_json_body(payload)\
 
-        return self.client.execute_request(self.request.build(), response_hook=DtoAssistant)
+        return self.client.execute_request(self.request.build(), response_hook=Assistant)
 
     def delete_assistant(self, assistant_id: str):
         """
@@ -163,7 +163,7 @@ class ServiceAssistants(BaseServiceHarqisGPT):
             .set_method(HttpMethod.DELETE)\
             .add_uri_parameter(assistant_id)
 
-        return self.client.execute_request(self.request.build(), response_hook=DtoResponseStatus)
+        return self.client.execute_request(self.request.build(), response_hook=ResponseStatus)
 
     def delete_assistant_file(self, assistant_id: str, assistant_file_id: str):
         """
@@ -182,4 +182,4 @@ class ServiceAssistants(BaseServiceHarqisGPT):
             .add_uri_parameter('files')\
             .add_uri_parameter(assistant_file_id)
 
-        return self.client.execute_request(self.request.build(), response_hook=DtoResponseStatus)
+        return self.client.execute_request(self.request.build(), response_hook=ResponseStatus)

@@ -1,9 +1,10 @@
 import os
+from tqdm import tqdm
+
 from core.apps.gpt.base_service import BaseServiceHarqisGPT
 
 from core.web.services.core.constants.http_methods import HttpMethod
-
-from core.apps.gpt.dto.file import DtoFile, DtoFileStatus
+from core.apps.gpt.models.file import File, FileStatus
 
 
 class ServiceFiles(BaseServiceHarqisGPT):
@@ -39,7 +40,7 @@ class ServiceFiles(BaseServiceHarqisGPT):
             file_name: the file to be uploaded
             base_path: Root path to of the file
         Returns:
-            The created file as a DtoAssistantFile object.
+            The created file as a AssistantFile object.
         """
         file_path = os.path.join(base_path, file_name)
         with open(file_path, 'rb') as file:
@@ -55,11 +56,11 @@ class ServiceFiles(BaseServiceHarqisGPT):
             file_names: the list of file paths
             base_path: Root path to of the file
         Returns:
-            The created file as a DtoAssistantFile object.
+            The created file as a AssistantFile object.
         """
         uploaded_files = []
 
-        for file_name in file_names:
+        for file_name in tqdm(file_names, desc="Uploading Files..."):
             uploaded_files.append(self.upload_file(file_name, base_path))
 
         return uploaded_files
@@ -79,7 +80,7 @@ class ServiceFiles(BaseServiceHarqisGPT):
             .add_uri_parameter(file_id) \
             .build()
 
-        return self.client.execute_request(request, response_hook=DtoFile)
+        return self.client.execute_request(request, response_hook=File)
 
     def get_file_content(self, file_id: str, file_name: str = None, base_path: str = os.getcwd()):
         """
@@ -122,6 +123,6 @@ class ServiceFiles(BaseServiceHarqisGPT):
             .add_uri_parameter(file_id) \
             .build()
 
-        return self.client.execute_request(request, response_hook=DtoFileStatus)
+        return self.client.execute_request(request, response_hook=FileStatus)
 
 

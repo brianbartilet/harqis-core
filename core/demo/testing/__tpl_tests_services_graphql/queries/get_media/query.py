@@ -1,6 +1,6 @@
 import os
 from core.web.services.fixtures.graphql import BaseFixtureServiceGraphQL
-from demo.testing.__tpl_tests_services_graphql.queries.get_media.dto.media import DtoMedia
+from demo.testing.__tpl_tests_services_graphql.queries.get_media.models.media import Media
 
 
 class ServiceQueryGetMedia(BaseFixtureServiceGraphQL):
@@ -15,7 +15,7 @@ class ServiceQueryGetMedia(BaseFixtureServiceGraphQL):
 
     def get_query_media_with_test_response_hook(self, sample_variables: dict):
         self.request.set_variables(sample_variables)
-        return self.client.execute_request(self.request.build(), response_hook=DtoMedia)
+        return self.client.execute_request(self.request.build(), response_hook=Media)
 
 
 
