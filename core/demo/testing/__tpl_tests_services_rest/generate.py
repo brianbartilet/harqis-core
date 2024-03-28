@@ -1,137 +1,7 @@
 import argparse
-import os
-import yaml
-import json
-import validators
-import pystache
-
-from typing import Dict
-from urllib.parse import urlparse
-
-from core.utilities.resources.download_file import ServiceDownloadFile
-from core.utilities.logging.custom_logger import create_logger
-from core.utilities.data.strings import convert_to_snake_case, remove_special_chars
-from core.utilities.path import get_module_from_file_path
-
-from core.apps.mustache.open_api_helpers import transform_types, transform_paths, transform_models, group_paths_by_resource
-
-from demo.testing.__tpl_tests_services_rest.generators.variables.models import MustacheTemplateModel
-from demo.testing.__tpl_tests_services_rest.generators.variables.service import MustacheTemplateService
-
-
-class TestGeneratorServiceRest:
-
-    def __init__(self, source: str, base_path: str = os.getcwd()):
-        self.log = create_logger(self.__class__.__name__)
-        self.source: str = source
-        self.file_name: str = ''
-        self.files: Dict[str, str] = {}  # key: file_path, value: content
-        self.directories: Dict[str, str] = {
-            'specs': os.path.join(base_path, '.specs'),
-            'generators': os.path.join(base_path, 'generators'),
-            'generated': os.path.join(base_path, 'generated'),
-            'models': os.path.join(base_path, 'generated', 'models'),
-            'services': os.path.join(base_path, 'generated', 'services'),
-            'tests': os.path.join(base_path, 'generated', 'tests'),
-            'tests.sanity': os.path.join(base_path, 'generated', 'tests', 'sanity'),
-            'tests.integration': os.path.join(base_path, 'generated', 'tests', 'integration'),
-            'tests.negative': os.path.join(base_path, 'generated', 'tests', 'negative'),
-        }
-
-        self.templates: Dict[str, str] = {
-            'base_service': os.path.join(self.directories['generators'], 'base_service.mustache'),
-            'config': os.path.join(self.directories['generators'], 'config.mustache'),
-            'models': os.path.join(self.directories['generators'], 'models.mustache'),
-            'service': os.path.join(self.directories['generators'], 'service.mustache'),
-            'test': os.path.join(self.directories['generators'], 'test.mustache'),
-        }
-
-    def load_source(self) -> dict:
-        """
-        Load a OpenAPI source to a JSON object
-        Args:
-            source {str} - The name of the file
-            base_path {str} - The base path of the file
-        """
-        base_path = self.directories['specs']
-
-        if validators.url(self.source):
-            downloader = ServiceDownloadFile(url=self.source)
-            url_path = urlparse(self.source).path
-            self.source = os.path.basename(url_path)
-            downloader.download_file(file_name=self.file_name, path=base_path)
-
-        file_path = os.path.join(base_path, self.source)
-        if not os.path.exists(file_path):
-            raise FileNotFoundError(f"File not found: {file_path}")
-        with open(file_path, 'r') as file:
-
-            if self.source.endswith('.yaml'):
-                return yaml.load(file, Loader=yaml.FullLoader)
-            if self.source.endswith('.json'):
-                return json.load(file)
-            else:
-                raise Exception("Unsupported file format")
-
-    def create_directories(self) -> None:
-        """
-        Create the directories from the directories dictionary
-        """
-        for directory in self.directories.values():
-            if not os.path.exists(directory):
-                os.makedirs(directory)
-
-    def parse_spec(self, source_data: dict) -> None:
-        """
-        Parse the OpenAPI spec
-        Args:
-            data {dict} - The OpenAPI spec
-        """
-        renderer = pystache.Renderer()
-
-        #  region Generate Base Service
-
-        template_base = self.templates['base_service']
-        self.files[os.path.join(self.directories['services'], "base_service.py")] = (
-            renderer.render_path(template_base, {}))
-
-        #  endregion
-
-        #  region Generate Config
-
-        template_base = self.templates['config']
-        self.files[os.path.join(self.directories['generated'], "config.py")] = (
-            renderer.render_path(template_base, {}))
-
-        #  endregion
-
-        #  region Generate Models
-
-        source_model = source_data['components']['schemas']
-        template_model = self.templates['models']
-        for key, value in source_model.items():
-            properties = transform_types(value['properties'])
-            transform_properties = [{"name": p, "type": v['type'], "example": v['example']}
-                                    for p, v in properties.items()]
-            prepare = MustacheTemplateModel(object_name=key, properties=transform_properties)
-            self.files[os.path.join(self.directories['models'], f"{convert_to_snake_case(key)}.py")] = (
-                renderer.render_path(template_model, prepare.get_dict()))
-
-        # endregion
-
-        #  region Generate Services
-
-        #  endregion
-
-    def write_files(self) -> None:
-        """
-        Write the files
-        Args:
-            data {dict} - The OpenAPI spec
-        """
-        for key in self.files.keys():
-            with open(key, 'w') as file:
-                file.write(self.files[key])
+import unittest
+from core.config.env_variables import Environment, ENV
+from core.apps.mustache.generators.rest.generate import TestGeneratorServiceRest
 
 
 if __name__ == '__main__':
@@ -139,6 +9,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Converts OpenAPI specs to test cases')
     parser.add_argument('--spec', type=str, default="open_api.yaml",
                         help='The OpenAPI specifications file can be a YAML, JSON or URL')
+
     generator = TestGeneratorServiceRest(source=parser.parse_args().spec)
     data = generator.load_source()
 
@@ -148,36 +19,25 @@ if __name__ == '__main__':
     generator.write_files()
 
 
+@unittest.skipIf(ENV != Environment.DEV.value, "Skipping tests for non-development environment.")
 def test_runner():
-    gen = TestGeneratorServiceRest(source="tasks_api_specs.yaml")
+    spec = "tasks_api_specs.yaml"
+    gen = TestGeneratorServiceRest(source=spec)
+
     source = gen.load_source()
     gen.create_directories()
     gen.parse_spec(source)
     gen.write_files()
 
 
-def test_transform_openapi_for_mustache():
-    renderer = pystache.Renderer()
-    gen = TestGeneratorServiceRest(source="tasks_api_specs.yaml")
+@unittest.skipIf(ENV != Environment.DEV.value, "Skipping tests for non-development environment.")
+def test_runner_url():
+    url = "https://raw.githubusercontent.com/OAI/OpenAPI-Specification/main/examples/v3.0/petstore-expanded.yaml"
+    gen = TestGeneratorServiceRest(source=url)
+
     source = gen.load_source()
-
-    paths_by_resource = group_paths_by_resource(source['paths'])
-    base_module_path_models = get_module_from_file_path(gen.directories['models'])
-    base_module_path_services = get_module_from_file_path(gen.directories['services'])
-    for resource in paths_by_resource.keys():
-        models = transform_models(paths_by_resource[resource])
-        operations = transform_paths(paths_by_resource[resource])
-        prepare = MustacheTemplateService(base_module_path_services=base_module_path_services,
-                                          base_module_path_models=base_module_path_models,
-                                          models=models,
-                                          operations=operations,
-                                          resource=remove_special_chars(resource).capitalize())
-
-        template_base = gen.templates['service']
-        key = os.path.join(gen.directories['services'], f"{remove_special_chars(resource)}.py")
-        gen.files[key] = (
-            renderer.render_path(template_base, prepare))
-
-    #  endregion
-
+    gen.create_directories()
+    gen.parse_spec(source)
     gen.write_files()
+
+
