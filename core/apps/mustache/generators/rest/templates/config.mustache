@@ -3,7 +3,8 @@ from core.config.loader import ConfigFileLoader
 from core.web.services.core.config.webservice import AppConfigWSClient
 
 # Update depending on the path and name of the config file
-load_config = ConfigFileLoader(file_name='__tpl_config.yaml').config
+base_path = os.path.dirname(os.path.abspath(__file__))
+load_config = ConfigFileLoader(file_name='config.yaml', base_path=base_path).config
 
 APP_NAME = os.path.basename(os.path.dirname(os.path.abspath(__file__)))
 CONFIG = AppConfigWSClient(**load_config[APP_NAME])

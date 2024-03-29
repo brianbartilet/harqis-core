@@ -20,6 +20,7 @@ def given():
     return given, given_payload
 
 
+@pytest.mark.sanity
 def test_run_unit_tests_get(given):
     given, given_payload = given
     when = given.request_get()
@@ -28,6 +29,7 @@ def test_run_unit_tests_get(given):
     then.assert_that(isinstance(when.data, User), True)
 
 
+@pytest.mark.sanity
 def test_run_unit_tests_post(given):
     given, given_payload = given
     given_payload_ = PostPayload(**given_payload)
@@ -37,6 +39,7 @@ def test_run_unit_tests_post(given):
     then.assert_that(when.data, then.has_entries())
 
 
+@pytest.mark.sanity
 def test_run_unit_tests_delete(given):
     given, given_payload = given
     given_request = given.request_delete()

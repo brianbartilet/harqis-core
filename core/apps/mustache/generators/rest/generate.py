@@ -19,6 +19,7 @@ from apps.mustache.generators.rest.open_api_helpers import transform_types, tran
 from core.apps.mustache.generators.rest.templates import GENERATOR_PATH_REST
 from core.apps.mustache.generators.rest.variables.models import MustacheTemplateModel
 from core.apps.mustache.generators.rest.variables.service import MustacheTemplateService
+from core.apps.mustache.generators.rest.variables.config_yaml import MustacheTemplateConfigYaml
 
 
 class TestGeneratorServiceRest(IGenerator):
@@ -47,7 +48,7 @@ class TestGeneratorServiceRest(IGenerator):
     def initialize_templates(self):
         """Sets up template file paths."""
         self.templates = {name: os.path.join(GENERATOR_PATH_REST, f"{name}.mustache")
-                          for name in ['base_service', 'config', 'models', 'service', 'test']}
+                          for name in ['base_service', 'config', 'config_yaml', 'models', 'service', 'test']}
 
     def load_source(self) -> dict:
         """
@@ -98,6 +99,13 @@ class TestGeneratorServiceRest(IGenerator):
         template_base = self.templates['config']
         self.files[os.path.join(self.directories['generated'], "config.py")] = (
             renderer.render_path(template_base, {}))
+
+        template_base_yaml = self.templates['config_yaml']
+        prepare = MustacheTemplateConfigYaml(application_name="generated",
+                                             base_url=source_data['servers'][0]['url'],
+                                             response_encoding="utf-8")
+        self.files[os.path.join(self.directories['generated'], "config.yaml")] = (
+            renderer.render_path(template_base_yaml, prepare.get_dict()))
 
         #  endregion
 
