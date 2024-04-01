@@ -13,13 +13,14 @@ from core.utilities.data.strings import convert_to_snake_case, remove_special_ch
 from core.utilities.path import get_module_from_file_path
 
 from core.apps.mustache.contracts.generator import IGenerator
-from apps.mustache.generators.rest.open_api_helpers import transform_types, transform_paths, transform_models, \
-    group_paths_by_resource
+from apps.mustache.generators.rest.transform_helper import transform_types, transform_paths, transform_models, \
+    group_paths_by_resource, transform_tests_sanity, transform_tests_integration, transform_tests_negative
 
 from core.apps.mustache.generators.rest.templates import GENERATOR_PATH_REST
 from core.apps.mustache.generators.rest.variables.models import MustacheTemplateModel
 from core.apps.mustache.generators.rest.variables.service import MustacheTemplateService
 from core.apps.mustache.generators.rest.variables.config_yaml import MustacheTemplateConfigYaml
+from core.apps.mustache.generators.rest.variables.test import MustacheTemplateTest
 
 
 class TestGeneratorServiceRest(IGenerator):
@@ -36,11 +37,11 @@ class TestGeneratorServiceRest(IGenerator):
 
     def initialize_directories(self, base_path: str):
         """Sets up directories based on the base path."""
+        self.directories['base'] = base_path
         self.directories['specs'] = os.path.join(base_path, 'specs')
         self.directories['generated'] = os.path.join(base_path, 'generated')
 
-        gen_dirs = ['models', 'services', 'tests',
-                    'tests.sanity', 'tests.integration', 'tests.negative']
+        gen_dirs = ['models', 'services', 'tests', ]
 
         self.directories = {**self.directories,
                             **{d: os.path.join(self.directories['generated'], *d.split('.')) for d in gen_dirs}}
@@ -86,6 +87,10 @@ class TestGeneratorServiceRest(IGenerator):
         """
         renderer = pystache.Renderer()
 
+        #  region Convert types to Python types
+        source_data = transform_types(source_data)
+        #  endregion
+
         #  region Generate Base Service
 
         template_base = self.templates['base_service']
@@ -117,7 +122,7 @@ class TestGeneratorServiceRest(IGenerator):
             if 'allOf' in value.keys():
                 continue
             else:
-                properties = transform_types(value['properties'])
+                properties = value['properties']
                 transform_properties = [
                     {"name": p, "type": v['type'],
                      **({"example": v['example']} if "example" in v else {'example': None})}
@@ -130,20 +135,50 @@ class TestGeneratorServiceRest(IGenerator):
         # endregion
 
         #  region Generate Services
+
         paths_by_resource = group_paths_by_resource(source_data['paths'])
         base_module_path_models = get_module_from_file_path(self.directories['models'])
-        base_module_path_services = get_module_from_file_path(self.directories['generated'])
+        base_module_path_generated = get_module_from_file_path(self.directories['generated'])
         for resource in paths_by_resource.keys():
             models = transform_models(paths_by_resource[resource])
             operations = transform_paths(paths_by_resource[resource])
-            prepare = MustacheTemplateService(base_module_path_services=base_module_path_services,
+
+            prepare = MustacheTemplateService(base_module_path_services=base_module_path_generated,
                                               base_module_path_models=base_module_path_models,
                                               models=models,
                                               operations=operations,
-                                              resource=remove_special_chars(resource).capitalize())
+                                              resource=remove_special_chars(resource).capitalize(),
+                                              uri=resource.strip('/'))
 
             template_base = self.templates['service']
             key = os.path.join(self.directories['services'], f"{remove_special_chars(resource)}.py")
+            self.files[key] = (
+                renderer.render_path(template_base, prepare))
+
+        #  endregion
+
+        #  region Generate Tests
+        base_module_path_generated = get_module_from_file_path(self.directories['generated'])
+        base_module_path_services = get_module_from_file_path(self.directories['services'])
+        for resource in paths_by_resource.keys():
+            modules = [{'resource': resource.strip('/'), 'resource_camel': resource.strip('/').capitalize()}
+                       for resource in paths_by_resource.keys()]
+            operations = transform_paths(paths_by_resource[resource])
+            models = transform_models(paths_by_resource[resource])
+            prepare = MustacheTemplateTest(resource=resource.strip('/'),
+                                           resource_camel=resource.strip('/').capitalize(),
+                                           base_module_path_generated=base_module_path_generated,
+                                           base_module_path_services=base_module_path_services,
+                                           base_module_path_models=base_module_path_models,
+                                           modules=modules,
+                                           models=models,
+                                           tests_sanity=transform_tests_sanity(operations),
+                                           tests_integration=transform_tests_integration(operations),
+                                           tests_negative=transform_tests_negative(operations)
+                                           )
+
+            template_base = self.templates['test']
+            key = os.path.join(self.directories['tests'], f"{remove_special_chars(resource)}.py")
             self.files[key] = (
                 renderer.render_path(template_base, prepare))
 

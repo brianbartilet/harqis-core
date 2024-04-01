@@ -2,9 +2,9 @@ openapi: 3.0.3
 info:
   title: Simple Task API
   description: A simple API for managing tasks
-  version: "1.0"
+  version: "0.1"
 servers:
-  - url: 'http://localhost:3001'
+  - url: 'http://localhost:4000'
 paths:
   /tasks:
     get:
@@ -45,6 +45,13 @@ paths:
           required: true
           schema:
             type: string
+            example: "1"
+        - in: query
+          name: results
+          required: true
+          schema:
+            type: number
+            example: 10
       responses:
         '200':
           description: A single task

@@ -5,7 +5,7 @@ services:
     image: stoplight/prism:4
     command: 'mock -h 0.0.0.0 /tmp/tasks_api_specs.yaml'
     volumes:
-      - ./testing/__tpl_tests_services_rest/.specs/tasks_api_specs.yaml:/tmp/tasks_api_specs.yaml:ro
+      - ./testing/__tpl_tests_services_rest/specs/tasks_api_specs.yaml:/tmp/tasks_api_specs.yaml:ro
     ports:
       # Serve the mocked API locally as available on port 4000
       - '4000:4010'

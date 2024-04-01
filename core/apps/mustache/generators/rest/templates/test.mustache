@@ -1,31 +1,98 @@
-"""Test cases for {{endpoint}} service"""
+"""Test cases for '{{resource}}' service"""
 import pytest
 
 {{#modules}}
-from {{base_module_path}}.services.{{module_name}}.{{resource}} import *
+from {{base_module_path_services}}.{{resource}} import Service{{resource_camel}}
 {{/modules}}
-from {{base_module_path}}.config import CONFIG
-from {{base_module_path}}.dto import *
+
+from {{base_module_path_generated}}.config import CONFIG
+
+{{#models}}
+from {{base_module_path_models}}.{{model_name}} import {{model_class_name}}
+{{/models}}
+
 """
 Add more imports as needed
 
 """
 
+
 @pytest.fixture()
-def given():
+def setup_service_{{resource}}():
     """
     Setup fixture for the tests
 
     """
+    given = Service{{resource_camel}}(CONFIG)
+    when = None
+    then = given.verify.common
+
+    return given, when, then
 
 
+#  region Sanity Tests
 
-{{#tests}}
-def test_{{name}}(given):
+{{#tests_sanity}}
+@pytest.mark.sanity
+def test_{{name}}(setup_service_{{resource}}):
     """
     {{description}}
     """
-    raise NotImplementedError("Test not implemented")
+    given, when, then = setup_service_{{resource}}
+    {{#not_implemented}}raise NotImplementedError("Test not yet implemented."){{/not_implemented}}
+    {{#given}}
+    {{/given}}
+    {{#when}}
+    {{#has_payload}}
+    payload_{{payload.name}} = {{{payload.object}}}()
+    {{/has_payload}}
+    when = given.{{name}}({{#has_payload}}payload=payload_{{payload.name}}{{/has_payload}}{{#args}}{{name}}={{{schema.example}}}{{#not_last}}, {{/not_last}}{{/args}})
+    {{/when}}
+    {{#then}}
+    then.assert_that(when.status_code, then.equal_to({{status}}))
+    {{/then}}
 
 
-{{/tests}}
+{{/tests_sanity}}
+#  endregion
+
+#  region Negative Tests
+
+{{#tests_negative}}
+@pytest.mark.negative
+def test_{{name}}(given_service_{{resource}}):
+    """
+    {{description}}
+    """
+    {{#not_implemented}}raise NotImplementedError("Test not yet implemented."){{/not_implemented}}
+    {{#given}}
+    {{/given}}
+    {{#when}}
+    {{/when}}
+    {{#then}}
+    {{/then}}
+
+
+{{/tests_negative}}
+#  endregion
+
+#  region Integration Tests
+
+{{#tests_integration}}
+@pytest.mark.integration
+def test_{{name}}(given_service_{{resource}}, ):
+    """
+    {{description}}
+    """
+    {{#not_implemented}}raise NotImplementedError("Test not yet implemented."){{/not_implemented}}
+    {{#given}}
+    {{/given}}
+    {{#when}}
+    {{/when}}
+    {{#then}}
+    {{/then}}
+
+
+{{/tests_integration}}
+#  endregion
+

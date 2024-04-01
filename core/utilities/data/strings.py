@@ -67,6 +67,21 @@ def convert_object_keys_to_snake(object_item: TObject) -> TObject:
         return convert_dict_keys_to_snake(object_item)
 
 
+def convert_dict_values_to_snake(data: dict) -> TObject:
+    """
+    Convert the values of a dictionary representing an object's attributes to snake_case.
+    Args:
+        data: The dictionary whose attributes need to be converted.
+    """
+    for key in data.keys():
+        try:
+            data[key] = convert_to_snake_case(data[key])
+        except TypeError:
+            data[key] = data[key]
+
+    return data
+
+
 def convert_object_list(object_collection: List, object_type: Type[TObject]) -> List[TObject]:
     """
     Convert a list of objects to a new list of objects of a specific type.

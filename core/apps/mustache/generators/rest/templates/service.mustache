@@ -10,19 +10,22 @@ class Service{{resource}}(BaseServiceApp):
 
     def __init__(self, config, **kwargs):
         super(Service{{resource}}, self).__init__(config, **kwargs)
-        self.request.add_uri_parameter('{{resource}}')
+        self.request.add_uri_parameter('{{uri}}')
 
     {{#operations}}
-    def {{operation_id}}(self{{#parameters}}, {{name}}{{^required}}=None{{/required}}{{/parameters}}{{#hasPayload}}, payload{{/hasPayload}}):
+    def {{operation_id}}(self{{#parameters}}, {{name}}: {{schema.type}}{{^required}}=None{{/required}}{{/parameters}}{{#hasPayload}}, payload: {{payloadSchema}}{{/hasPayload}}):
         """{{description}}"""
         self.request.set_method(HttpMethod.{{method}})\
         {{#parameters}}
             {{#inPath}}
-            .add_uri_parameter('{{name}}', {{name}})\
+            .add_uri_parameter({{name}})\
             {{/inPath}}
             {{#inQuery}}
-            .add_query_parameter('{{name}}', {{name}})\
+            .add_query_string('{{name}}', {{name}})\
             {{/inQuery}}
+            {{#inQueryObject}}
+            .add_query_object({{name}})\
+            {{/inQueryObject}}
         {{/parameters}}
         {{#hasPayload}}
             .add_json_body(payload)\

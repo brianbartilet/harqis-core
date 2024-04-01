@@ -2,6 +2,9 @@ from core.web.services.core.json import JsonObject
 
 
 class {{object_name}}(JsonObject):
+    """
+    Model for {{object_name}}
+    """
     {{#properties}}
     {{name}}: {{type}} = {{{example}}}
     {{/properties}}
