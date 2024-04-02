@@ -1,18 +1,18 @@
 from core.web.services.core.constants.http_methods import HttpMethod
-from {{base_module_path_services}}.base_service import BaseServiceApp
+from {{imports.path}}.base_service import BaseServiceApp
 
-{{#models}}
-from {{base_module_path_models}}.{{model_name}} import {{model_class_name}}
-{{/models}}
+{{#imports.models.items}}
+from {{imports.models.path}}.{{name}} import {{class_name}}
+{{/imports.models.items}}
 
 
-class Service{{resource}}(BaseServiceApp):
+class Service{{classes.name}}(BaseServiceApp):
 
     def __init__(self, config, **kwargs):
-        super(Service{{resource}}, self).__init__(config, **kwargs)
-        self.request.add_uri_parameter('{{uri}}')
+        super(Service{{classes.name}}, self).__init__(config, **kwargs)
+        self.request.add_uri_parameter('{{classes.uri}}')
 
-    {{#operations}}
+    {{#classes.functions}}
     def {{operation_id}}(self{{#parameters}}, {{name}}: {{schema.type}}{{^required}}=None{{/required}}{{/parameters}}{{#hasPayload}}, payload: {{payloadSchema}}{{/hasPayload}}):
         """{{description}}"""
         self.request.set_method(HttpMethod.{{method}})\
@@ -33,4 +33,4 @@ class Service{{resource}}(BaseServiceApp):
 
         return self.client.execute_request(self.request.build(){{#hasResponseHook}}, response_hook={{response_hook}}{{/hasResponseHook}})
 
-    {{/operations}}
+    {{/classes.functions}}

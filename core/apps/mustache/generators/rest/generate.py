@@ -13,14 +13,13 @@ from core.utilities.data.strings import convert_to_snake_case, remove_special_ch
 from core.utilities.path import get_module_from_file_path
 
 from core.apps.mustache.contracts.generator import IGenerator
-from apps.mustache.generators.rest.transform_helper import transform_types, transform_paths, transform_models, \
-    group_paths_by_resource, transform_tests_sanity, transform_tests_integration, transform_tests_negative
-
+from core.apps.mustache.generators.rest.transform_helper import transform_types, transform_paths, transform_models, \
+    group_paths_by_resource, transform_tests
 from core.apps.mustache.generators.rest.templates import GENERATOR_PATH_REST
-from core.apps.mustache.generators.rest.variables.models import MustacheTemplateModel
-from core.apps.mustache.generators.rest.variables.service import MustacheTemplateService
-from core.apps.mustache.generators.rest.variables.config_yaml import MustacheTemplateConfigYaml
-from core.apps.mustache.generators.rest.variables.test import MustacheTemplateTest
+from core.apps.mustache.generators.rest.models.models import MustacheTemplateModel
+from core.apps.mustache.generators.rest.models.service import MustacheTemplateService
+from core.apps.mustache.generators.rest.models.config_yaml import MustacheTemplateConfigYaml
+from core.apps.mustache.generators.rest.models.test import MustacheTemplatePyTest
 
 
 class TestGeneratorServiceRest(IGenerator):
@@ -106,9 +105,14 @@ class TestGeneratorServiceRest(IGenerator):
             renderer.render_path(template_base, {}))
 
         template_base_yaml = self.templates['config_yaml']
-        prepare = MustacheTemplateConfigYaml(application_name="generated",
-                                             base_url=source_data['servers'][0]['url'],
-                                             response_encoding="utf-8")
+
+        data: MustacheTemplateConfigYaml.data = {
+            'application_name': "generated",
+            'base_url': source_data['servers'][0]['url'],
+            'response_encoding': "utf-8",
+        }
+
+        prepare = MustacheTemplateConfigYaml(data=data)
         self.files[os.path.join(self.directories['generated'], "config.yaml")] = (
             renderer.render_path(template_base_yaml, prepare.get_dict()))
 
@@ -121,16 +125,19 @@ class TestGeneratorServiceRest(IGenerator):
         for key, value in source_model.items():
             if 'allOf' in value.keys():
                 continue
-            else:
-                properties = value['properties']
-                transform_properties = [
-                    {"name": p, "type": v['type'],
-                     **({"example": v['example']} if "example" in v else {'example': None})}
-                    for p, v in properties.items()
-                ]
-                prepare = MustacheTemplateModel(object_name=key, properties=transform_properties)
-                self.files[os.path.join(self.directories['models'], f"{convert_to_snake_case(key)}.py")] = (
-                    renderer.render_path(template_model, prepare.get_dict()))
+            properties = value['properties']
+            transform_properties = [{"name": p, "type": v['type'],
+                                     **({"example": v['example']} if "example" in v else {'example': None})}
+                                    for p, v in properties.items()]
+
+            classes: MustacheTemplateModel.classes = {
+                'name': key,
+                'properties': transform_properties
+            }
+
+            prepare = MustacheTemplateModel(classes=classes)
+            self.files[os.path.join(self.directories['models'], f"{convert_to_snake_case(key)}.py")] = (
+                renderer.render_path(template_model, prepare.get_dict()))
 
         # endregion
 
@@ -139,16 +146,27 @@ class TestGeneratorServiceRest(IGenerator):
         paths_by_resource = group_paths_by_resource(source_data['paths'])
         base_module_path_models = get_module_from_file_path(self.directories['models'])
         base_module_path_generated = get_module_from_file_path(self.directories['generated'])
+
         for resource in paths_by_resource.keys():
             models = transform_models(paths_by_resource[resource])
-            operations = transform_paths(paths_by_resource[resource])
+            functions = transform_paths(paths_by_resource[resource])
 
-            prepare = MustacheTemplateService(base_module_path_services=base_module_path_generated,
-                                              base_module_path_models=base_module_path_models,
-                                              models=models,
-                                              operations=operations,
-                                              resource=remove_special_chars(resource).capitalize(),
-                                              uri=resource.strip('/'))
+            imports: MustacheTemplateService.imports = {
+                'path': base_module_path_generated,
+                'models': {
+                    'path': base_module_path_models,
+                    'items': models
+                }
+            }
+            classes: MustacheTemplateService.classes = {
+                'name': remove_special_chars(resource).capitalize(),
+                'uri': resource.strip('/'),
+                'functions': functions,
+            }
+
+            openapi: MustacheTemplateService.openapi = source_data
+
+            prepare = MustacheTemplateService(imports=imports, classes=classes, openapi=openapi)
 
             template_base = self.templates['service']
             key = os.path.join(self.directories['services'], f"{remove_special_chars(resource)}.py")
@@ -160,22 +178,39 @@ class TestGeneratorServiceRest(IGenerator):
         #  region Generate Tests
         base_module_path_generated = get_module_from_file_path(self.directories['generated'])
         base_module_path_services = get_module_from_file_path(self.directories['services'])
+
         for resource in paths_by_resource.keys():
-            modules = [{'resource': resource.strip('/'), 'resource_camel': resource.strip('/').capitalize()}
-                       for resource in paths_by_resource.keys()]
-            operations = transform_paths(paths_by_resource[resource])
             models = transform_models(paths_by_resource[resource])
-            prepare = MustacheTemplateTest(resource=resource.strip('/'),
-                                           resource_camel=resource.strip('/').capitalize(),
-                                           base_module_path_generated=base_module_path_generated,
-                                           base_module_path_services=base_module_path_services,
-                                           base_module_path_models=base_module_path_models,
-                                           modules=modules,
-                                           models=models,
-                                           tests_sanity=transform_tests_sanity(operations),
-                                           tests_integration=transform_tests_integration(operations),
-                                           tests_negative=transform_tests_negative(operations)
-                                           )
+            operations = transform_paths(paths_by_resource[resource])
+            services = [{'name': resource.strip('/'), 'class_name': resource.strip('/').capitalize()}
+                        for resource in paths_by_resource.keys()]
+
+            docs: MustacheTemplatePyTest.docs = {
+                'description': resource.strip('/'),
+            }
+            imports: MustacheTemplatePyTest.imports = {
+                'path': base_module_path_generated,
+                'services': {
+                    'path': base_module_path_services,
+                    'items': services
+                },
+                'models': {
+                    'path': base_module_path_models,
+                    'items': models
+                },
+            }
+            tests: MustacheTemplatePyTest.tests = {
+                'items': transform_tests(resource.strip('/'), operations)
+            }
+            functions: MustacheTemplatePyTest.functions = {
+                'setup': {
+                    'service_name': resource.strip('/'),
+                    'service_class_name': resource.strip('/').capitalize()
+                }
+            }
+
+            prepare = MustacheTemplatePyTest(docs=docs, imports=imports, services=services,
+                                             tests=tests, functions=functions,)
 
             template_base = self.templates['test']
             key = os.path.join(self.directories['tests'], f"{remove_special_chars(resource)}.py")

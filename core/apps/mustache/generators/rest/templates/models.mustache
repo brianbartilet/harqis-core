@@ -1,10 +1,10 @@
 from core.web.services.core.json import JsonObject
 
 
-class {{object_name}}(JsonObject):
+class {{classes.name}}(JsonObject):
     """
-    Model for {{object_name}}
+    Model for {{classes.name}}
     """
-    {{#properties}}
+    {{#classes.properties}}
     {{name}}: {{type}} = {{{example}}}
-    {{/properties}}
+    {{/classes.properties}}

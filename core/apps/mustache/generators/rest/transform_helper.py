@@ -1,5 +1,7 @@
 from core.utilities.data.strings import convert_to_snake_case, convert_dict_values_to_snake
 from core.utilities.data.qlist import QList
+from core.apps.mustache.generators.rest.models.test import MustacheTemplateTestCase, MustacheTemplateTestStep
+
 
 from http import HTTPStatus
 
@@ -130,7 +132,7 @@ def transform_models(openapi_spec: dict):
         [{'model_name': 'my_model', 'model_class_name': 'MyModel'}]
     """
     schemas = find_refs_in_dict(openapi_spec)
-    models = [{"model_name": convert_to_snake_case(name), "model_class_name": name} for name in schemas]
+    models = [{"name": convert_to_snake_case(name), "class_name": name} for name in schemas]
 
     return models
 
@@ -254,39 +256,53 @@ def transform_paths(resource: dict):
     return operations
 
 
-def transform_tests_sanity(operations: list):
+def transform_tests(resource, operations: list, test_suite_name: str = 'sanity', tags: list = None):
+    tests = []
+
     for operation in operations:
-        operation['name'] = operation['operation_id']
+        when = []
+        then = []
+
+        when_step_data: MustacheTemplateTestStep.data = {}
 
         if operation['method'] in ['GET', 'DELETE']:
-            operation['when'] = {
-                'name':  operation['operation_id'],
-                'args': operation['parameters']
+            when_step_data = {
+                'name': operation['operation_id'],
             }
         if operation['method'] in ['POST', 'PUT', 'PATCH']:
-            operation['when'] = {
+            when_step_data = {
                 'name': operation['operation_id'],
                 'has_payload': operation['hasPayload'],
                 'payload': {
                     'name': operation['operation_id'],
-                    'object': operation['payloadSchema']
-
+                    'class_name': operation['payloadSchema']
                 }
             }
 
-        operation['then'] = {
-            'status': QList(operation['responses'].keys()).first(),
+        step_when = MustacheTemplateTestStep(data=when_step_data, args=operation['parameters'])
+        when.append(step_when.get_dict())
+
+        then_step_data: MustacheTemplateTestStep.data = {
+            'http_status': QList(operation['responses'].keys()).first()
         }
-    return operations
+        step_then = MustacheTemplateTestStep(data=then_step_data)
+        then.append(step_then.get_dict())
 
+        data: MustacheTemplateTestCase.data = {
+            'service_name': resource,
+        }
+        test = MustacheTemplateTestCase(
+            name=operation['operation_id'],
+            description=operation['description'],
+            test_suite_name=test_suite_name,
+            tags=tags,
+            given=[],
+            when=when,
+            then=then,
+            status=None,
+            data=data
 
-def transform_tests_integration(operations: list):
-    #for operation in operations:
-    #    operation['not_implemented'] = True
-    ...
+        )
+        tests.append(test.get_dict())
 
-
-def transform_tests_negative(operations: list):
-    #for operation in operations:
-    #    operation['not_implemented'] = True
-    ...
+    return tests

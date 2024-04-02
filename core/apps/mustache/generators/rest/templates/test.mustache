@@ -1,15 +1,14 @@
-"""Test cases for '{{resource}}' service"""
+"""Test cases for '{{docs.description}}' service"""
 import pytest
+from {{imports.path}}.config import CONFIG
 
-{{#modules}}
-from {{base_module_path_services}}.{{resource}} import Service{{resource_camel}}
-{{/modules}}
+{{#imports.services.items}}
+from {{imports.services.path}}.{{name}} import Service{{class_name}}
+{{/imports.services.items}}
 
-from {{base_module_path_generated}}.config import CONFIG
-
-{{#models}}
-from {{base_module_path_models}}.{{model_name}} import {{model_class_name}}
-{{/models}}
+{{#imports.models.items}}
+from {{imports.models.path}}.{{name}} import {{class_name}}
+{{/imports.models.items}}
 
 """
 Add more imports as needed
@@ -18,12 +17,12 @@ Add more imports as needed
 
 
 @pytest.fixture()
-def setup_service_{{resource}}():
+def setup_service_{{functions.setup.service_name}}():
     """
     Setup fixture for the tests
 
     """
-    given = Service{{resource_camel}}(CONFIG)
+    given = Service{{functions.setup.service_class_name}}(CONFIG)
     when = None
     then = given.verify.common
 
@@ -32,67 +31,27 @@ def setup_service_{{resource}}():
 
 #  region Sanity Tests
 
-{{#tests_sanity}}
-@pytest.mark.sanity
-def test_{{name}}(setup_service_{{resource}}):
+{{#tests.items}}
+@pytest.mark.{{test_suite_name}}
+def test_{{name}}(setup_service_{{data.service_name}}):
     """
     {{description}}
     """
-    given, when, then = setup_service_{{resource}}
+    given, when, then = setup_service_{{data.service_name}}
     {{#not_implemented}}raise NotImplementedError("Test not yet implemented."){{/not_implemented}}
     {{#given}}
     {{/given}}
     {{#when}}
-    {{#has_payload}}
-    payload_{{payload.name}} = {{{payload.object}}}()
-    {{/has_payload}}
-    when = given.{{name}}({{#has_payload}}payload=payload_{{payload.name}}{{/has_payload}}{{#args}}{{name}}={{{schema.example}}}{{#not_last}}, {{/not_last}}{{/args}})
+    {{#data.has_payload}}
+    payload_{{data.payload.name}} = {{{data.payload.class_name}}}()
+    {{/data.has_payload}}
+    when = given.{{name}}({{#data.has_payload}}payload=payload_{{data.payload.name}}{{/data.has_payload}}{{#args}}{{name}}={{{schema.example}}}{{#not_last}}, {{/not_last}}{{/args}})
     {{/when}}
     {{#then}}
-    then.assert_that(when.status_code, then.equal_to({{status}}))
+    then.common.assert_that(when.status_code, then.equal_to({{data.http_status}}))
     {{/then}}
 
 
-{{/tests_sanity}}
-#  endregion
-
-#  region Negative Tests
-
-{{#tests_negative}}
-@pytest.mark.negative
-def test_{{name}}(given_service_{{resource}}):
-    """
-    {{description}}
-    """
-    {{#not_implemented}}raise NotImplementedError("Test not yet implemented."){{/not_implemented}}
-    {{#given}}
-    {{/given}}
-    {{#when}}
-    {{/when}}
-    {{#then}}
-    {{/then}}
-
-
-{{/tests_negative}}
-#  endregion
-
-#  region Integration Tests
-
-{{#tests_integration}}
-@pytest.mark.integration
-def test_{{name}}(given_service_{{resource}}, ):
-    """
-    {{description}}
-    """
-    {{#not_implemented}}raise NotImplementedError("Test not yet implemented."){{/not_implemented}}
-    {{#given}}
-    {{/given}}
-    {{#when}}
-    {{/when}}
-    {{#then}}
-    {{/then}}
-
-
-{{/tests_integration}}
+{{/tests.items}}
 #  endregion
 
