@@ -28,9 +28,12 @@ class TestGeneratorServiceRest(IGenerator):
         super().__init__(source=source, base_path=base_path)
 
         self.log = create_logger(self.__class__.__name__)
+
         self.source: str = source
+
         self.file_name: str = ''
         self.files: Dict[str, str] = {}  # key: file_path, value: content
+
         self.initialize_directories(base_path)
         self.initialize_templates()
 
@@ -216,6 +219,7 @@ class TestGeneratorServiceRest(IGenerator):
             key = os.path.join(self.directories['tests'], f"{remove_special_chars(resource)}.py")
             self.files[key] = (
                 renderer.render_path(template_base, prepare))
+            self.tests = self.tests + tests['items']
 
         #  endregion
 
@@ -224,3 +228,4 @@ class TestGeneratorServiceRest(IGenerator):
 
     def write_files(self) -> None:
         super().write_files(except_keys=['specs', ])
+

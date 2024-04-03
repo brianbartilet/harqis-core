@@ -1,5 +1,7 @@
 import time
+import glob
 
+from tqdm import tqdm
 from typing import Iterable
 from core.web.services.manager import WebServiceManager
 
@@ -76,9 +78,10 @@ class BaseAssistant(IAssistant):
         for message in messages:
             response = self.manager.get(ServiceMessages).create_message(use_thread_id, message)
             self.manager.responses[f'{response.data.id}'] = response.data
+            self.messages[f'{response.data.id}'] = response.data
 
-    def run_thread(self, thread_id: str = None, run: RunCreate = None):
-        use_run = run if run is not None else RunCreate(assistant_id=self._assistant.id)
+    def run_thread(self, thread_id: str = None, run: RunCreate = None, **kwargs):
+        use_run = run if run is not None else RunCreate(assistant_id=self._assistant.id, **kwargs)
         thread = next(iter(self.threads.values()))
         use_thread_id = thread_id if thread_id is not None else thread.id
 
@@ -89,10 +92,10 @@ class BaseAssistant(IAssistant):
         if multiprocess:
             tasks = [(run.thread_id, run.id) for run in self.runs.values()]
             mp_client = MultiProcessingClient(tasks)
-            mp_client.execute_tasks(self.wait_for_status, )
+            mp_client.execute_tasks(self.wait_for_run_to_complete, )
         else:
             for run in self.runs.values():
-                self.wait_for_status(run.thread_id, run.id)
+                self.wait_for_run_to_complete(run.thread_id, run.id)
 
     def get_messages(self, thread_id: str = None):
         thread = next(iter(self.threads.values()))
@@ -102,8 +105,11 @@ class BaseAssistant(IAssistant):
 
         return response.data
 
-    def get_replies(self, thread_id: str = None):
+    def get_replies(self, thread_id: str = None, retrieve_all=False):
         messages = self.get_messages(thread_id)
+
+        if retrieve_all:
+            return messages.data
 
         return QList(messages.data).where(lambda x: x.role == 'assistant')
 
@@ -112,23 +118,39 @@ class BaseAssistant(IAssistant):
 
     def upload_files(self, base_directory: str, file_patterns: list = None, **kwargs):
         file_patterns = file_patterns if file_patterns is not None else ['*.py', '*.json', '*.yaml']
+        matching_files = []
 
-        files = self.manager.get(ServiceFiles).upload_files(file_names=[], base_path=base_directory)
+        # Iterate over the patterns, using glob.glob to find matching files
+        for pattern in file_patterns:
+            matching_files.extend(glob.glob(pattern))
+
+        files = self.manager.get(ServiceFiles).upload_files(file_names=matching_files, base_path=base_directory)
         self.files = {file.id: file for file in files}
+
         return files
 
-    def download_files(self, files: list[str], **kwargs) -> dict:
-        pass
+    def download_file(self, file_id, file_name, **kwargs):
+        return self.manager.get(ServiceFiles).get_file_content(file_id, file_name=file_name)
 
-    def wait_for_status(self, thread_id: str, run_id: str, wait_secs=1, retries=60 * 2):
-        r = self.manager.get(ServiceRuns).get_run(thread_id, run_id)
-        time_out = 0
-        while r.data.status in [RunStatus.QUEUED.value, RunStatus.IN_PROGRESS.value, RunStatus.CANCELLING.value]:
-            time.sleep(wait_secs)
+    def download_files(self, file_ids: list[str], **kwargs) -> None:
+        for file_id in file_ids:
+            self.download_file(file_id, f'{file_id}.txt')
+
+    def wait_for_run_to_complete(self, thread_id: str, run_id: str, wait_secs=10, retries=60 * 5):
+        with tqdm(total=retries, desc='Waiting for GPT runs to complete') as pbar:
             r = self.manager.get(ServiceRuns).get_run(thread_id, run_id)
-            time_out += 1
-            if time_out > retries:
-                self.log.warn(f'Timeout waiting for run {run_id} to complete')
+            time_out = 0
+            while r.data.status not in [RunStatus.COMPLETED.value, RunStatus.FAILED.value, RunStatus.EXPIRED.value]:
+                pbar.update(20)
+                time.sleep(wait_secs)
+                r = self.manager.get(ServiceRuns).get_run(thread_id, run_id)
+                time_out += 1
+                if time_out > retries:
+                    self.log.warn(f'Timeout waiting for run {run_id} to complete')
+                    break
+            if r.data.status == RunStatus.FAILED.value:
+                self.log.error(f'\nError encountered while waiting for run "{run_id}" to complete. '
+                               f'\n{r.data.last_error.message}')
 
     @property
     def properties(self):

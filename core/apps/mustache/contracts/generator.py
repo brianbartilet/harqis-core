@@ -12,6 +12,7 @@ class IGenerator(ABC):
         self.files: Dict[str, str] = {}  # key: file_path, value: content
         self.directories: Dict[str, str] = {}
         self.templates: Dict[str, str] = {}
+        self.tests = []
 
     @abstractmethod
     def initialize_directories(self, base_path: str) -> None:

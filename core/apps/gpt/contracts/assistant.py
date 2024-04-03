@@ -58,9 +58,13 @@ class IAssistant(ABC):
         ...
 
     @abstractmethod
+    def download_file(self, *args, **kwargs) -> dict:
+        ...
+
+    @abstractmethod
     def download_files(self, *args, **kwargs) -> dict:
         ...
 
     @abstractmethod
-    def wait_for_status(self, **kwargs):
+    def wait_for_run_to_complete(self, **kwargs):
         ...

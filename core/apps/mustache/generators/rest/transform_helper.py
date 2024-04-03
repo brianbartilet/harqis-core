@@ -256,7 +256,9 @@ def transform_paths(resource: dict):
     return operations
 
 
-def transform_tests(resource, operations: list, test_suite_name: str = 'sanity', tags: list = None):
+def transform_tests(resource, operations: list,
+                    test_suite_name: str = 'sanity',
+                    tags: list = None, test_technique: str = 'api'):
     tests = []
 
     for operation in operations:
@@ -295,6 +297,7 @@ def transform_tests(resource, operations: list, test_suite_name: str = 'sanity',
             name=operation['operation_id'],
             description=operation['description'],
             test_suite_name=test_suite_name,
+            test_technique=test_technique,
             tags=tags,
             given=[],
             when=when,

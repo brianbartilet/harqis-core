@@ -7,7 +7,7 @@ HARQIS_GPT:
   parameters:
     base_url: 'https://api.openai.com/v1'
     response_encoding: 'utf-8'
-    verify: False
+    verify: True
     timeout: 60
     stream: True
   app_data:

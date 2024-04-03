@@ -50,7 +50,7 @@ class Message(JsonObject):
 
 
 class MessageCreate(JsonObject):
-    role: str = None # The role of the message.
+    role: str = None  # The role of the message.
     content: Any = None  # The content of the message.
     file_ids: Optional = []
     metadata: Optional = None  # Optional metadata associated with the message.

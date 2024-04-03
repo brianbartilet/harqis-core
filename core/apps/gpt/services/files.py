@@ -60,7 +60,7 @@ class ServiceFiles(BaseServiceHarqisGPT):
         """
         uploaded_files = []
 
-        for file_name in tqdm(file_names, desc="Uploading Files..."):
+        for file_name in file_names:
             uploaded_files.append(self.upload_file(file_name, base_path))
 
         return uploaded_files
@@ -76,7 +76,7 @@ class ServiceFiles(BaseServiceHarqisGPT):
             The file object
         """
         request = self.request\
-            .set_method(HttpMethod.GET)\
+            .set_method(HttpMethod.GET) \
             .add_uri_parameter(file_id) \
             .build()
 

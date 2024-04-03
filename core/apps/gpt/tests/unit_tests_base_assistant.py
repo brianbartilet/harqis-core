@@ -21,7 +21,7 @@ class TestServiceAssistant(unittest.TestCase):
         assistant.add_messages_to_thread(messages)
 
         trigger = RunCreate(assistant_id=assistant.properties.id,
-                               instructions='Add all numbers. Give me numeric value only.')
+                            instructions='Add all numbers. Give me numeric value only.')
         assistant.run_thread(run=trigger)
         assistant.wait_for_runs_to_complete()
 

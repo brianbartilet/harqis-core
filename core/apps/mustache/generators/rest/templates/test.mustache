@@ -24,15 +24,14 @@ def setup_service_{{functions.setup.service_name}}():
     """
     given = Service{{functions.setup.service_class_name}}(CONFIG)
     when = None
-    then = given.verify.common
+    then = given.verify
 
     return given, when, then
 
 
-#  region Sanity Tests
-
 {{#tests.items}}
 @pytest.mark.{{test_suite_name}}
+@pytest.mark.{{test_technique}}
 def test_{{name}}(setup_service_{{data.service_name}}):
     """
     {{description}}
@@ -48,10 +47,9 @@ def test_{{name}}(setup_service_{{data.service_name}}):
     when = given.{{name}}({{#data.has_payload}}payload=payload_{{data.payload.name}}{{/data.has_payload}}{{#args}}{{name}}={{{schema.example}}}{{#not_last}}, {{/not_last}}{{/args}})
     {{/when}}
     {{#then}}
-    then.common.assert_that(when.status_code, then.equal_to({{data.http_status}}))
+    then.common.assert_that(when.status_code, then.common.equal_to({{data.http_status}}))
     {{/then}}
 
 
 {{/tests.items}}
-#  endregion
 
