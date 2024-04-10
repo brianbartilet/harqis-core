@@ -16,34 +16,45 @@
 #### :white_check_mark: SOAP
 #### :triangular_ruler: gRPC
 
-### Communication Protocols
-#### WebSockets
-#### ssh
-
 ### GUI Testing
-#### Selenium
-
-### Mobile Testing
-#### Appium
-
+#### :white_check_mark: Selenium
+#### :triangular_ruler: Appium
+#### :triangular_ruler: BDD behave
 
 ### Non-Functional Testing
+#### :triangular_ruler: Locust
 
+### Test Automation Fixtures
+#### :white_check_mark: REST API Testing
+#### :white_check_mark: GraphQL Testing
+#### :construction: Page Object Model Testing
 
 ### Code Generation
+#### :white_check_mark: Mustache Templates
+
+### Mocking
+#### :white_check_mark: OpenAPI with Docker Prism
 
 ### Containerization
+#### :white_check_mark: Docker and Docker Compose
 
 ### Package Management
+#### :white_check_mark: pip and setup.py
 
-### Continuous Integration
+### :triangular_ruler: Continuous Integration
 
-## Reporting and Analytics
+## :triangular_ruler: Reporting and Analytics
 
 ## Tasks Automation
-### Task Scheduling
-### Queue Management
+### :white_check_mark: Task Scheduling Using Celery RabbitMQ
+### :triangular_ruler: Flower tasks requests
 
-## Observability and Monitoring
+## :triangular_ruler: Observability and Monitoring
 
 ## Integrations
+### :white_check_mark: OpenAI API
+
+## Utilities
+### Communication
+#### :triangular_ruler: WebSockets
+#### :white_check_mark: ssh
