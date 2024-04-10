@@ -1,12 +1,12 @@
 # HARQIS Features Inventory
 
-### Status
-| Status          | Description        |
-|-----------------|--------------------|
-| **Planned**     | :white_check_mark: |
-| **In Progress** | :construction:     |
-| **Completed**   | :pause_button:     |
-| **On Hold**     | :no_entry_sign:    |
+
+| Status                         |
+|--------------------------------|
+| :white_check_mark: **Planned** |
+| :construction: **In Progress** |
+| :pause_button: **Completed**   |
+| :no_entry_sign: **On Hold**    |
 
 
 ## Core Automation and Testing
