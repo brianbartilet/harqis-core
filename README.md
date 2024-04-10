@@ -38,13 +38,15 @@
 - Publish workflow tasks as events that can be consumed for execution.
 - Support e2e testing and task automation.
 
+## Features Inventory
+Please refer here for the complete [HARQIS Features Inventory](docs/INDEX.md).
+
 ## Demo Project
 - Please refer here [harqis-demo-generic-framework](https://github.com/brianbartilet/harqis-demo-generic-framework) for an sample application of **HARQIS-core**.
 - The demo project can be used as a template for creating new projects and providing basic operations of fixtures and templates.
 - See the [README.md](https://github.com/brianbartilet/harqis-demo-generic-framework/blob/main/README.md)
 
 ## Contact
-
 For questions or feedback, please contact [brian.bartilet@gmail.com](mailto:brian.bartilet@gmail.com).
 
 
@@ -112,7 +114,7 @@ To get started with **HARQIS-core**, follow these steps:
   ```sh
   docker-compose up
   ```
-  
+
 **Package Management**:
 - To build the package, execute the following command:
    ```sh
