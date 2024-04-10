@@ -11,12 +11,13 @@
 
 ## Core Automation and Testing
 ### Unit Testing
-#### pytest
+#### :white_check_mark: pytest
 
 ### Web Services
-#### REST
-#### GraphQL
-#### SOAP
+#### :white_check_mark: REST
+#### :white_check_mark: GraphQL
+#### :white_check_mark: SOAP
+#### :triangular_ruler: gRPC
 
 ### Communication Protocols
 #### WebSockets
