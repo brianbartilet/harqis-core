@@ -49,17 +49,17 @@
 #### :white_check_mark: pip and setup.py
 
 ## Tasks Automation
-### :white_check_mark: Task Scheduling Using Celery RabbitMQ
-### :triangular_ruler: Flower tasks requests
+#### :white_check_mark: Task Scheduling Using Celery RabbitMQ
+#### :triangular_ruler: Flower tasks requests
 
 ## Reporting and Analytics
-### :triangular_ruler: Allure Reporting
+#### :triangular_ruler: Allure Reporting
 
 ## Observability and Monitoring
-### :triangular_ruler: Elastic Stack
+#### :triangular_ruler: Elastic Stack
 
 ## Integrations
-### :white_check_mark: OpenAI API
+#### :white_check_mark: OpenAI API
 
 ## Utilities
 ### Communication
