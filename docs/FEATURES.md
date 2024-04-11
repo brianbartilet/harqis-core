@@ -8,22 +8,20 @@
 ## Core Automation and Testing
 ### Unit Testing
 #### :white_check_mark: pytest
-![pytest](https://img.shields.io/badge/pytest-8.0.2-blue)
 - [pytest](https://docs.pytest.org/en/stable/) is a testing framework that makes it easy to write small tests, yet scales to support complex functional testing for applications and libraries.
 - this framework utilizes `pytest` fixtures and related plugins to support various testing scenarios.
 
 ### Web Services Testing
-![requests](https://img.shields.io/badge/requests-2.31.0-blue)
 - utilizes primarily the [requests](https://requests.readthedocs.io/en/latest/) library for sending and receiving HTTP requests.
 - provide reusable fixtures for testing and contracts for scalable and maintainable tests.
 
-| Service                              | Description                                                                                                                     | Dependencies                                               |
-|--------------------------------------|---------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------|
-| :white_check_mark: REST API          | provide reusable fixtures for testing REST APIs supporting [OpenAPI](https://spec.openapis.org/oas/latest.html) specifications. |                                                            |
-| :white_check_mark: GraphQL           | provide reusable fixtures for testing [GraphQL](https://graphql.org/) queries and mutations.                                    |                                                            |
-| :triangular_ruler: gRPC              | support in progress for [gRPC](https://grpc.io/) services.                                                                      | ![grpcio](https://img.shields.io/badge/grpcio-1.62.0-blue) |
-| :white_check_mark: SOAP              | provides reusable fixtures for testing [SOAP XML](https://www.w3schools.com/xml/xml_soap.asp) services.                         |                                                            |
-| :triangular_ruler: Contract Testing  | development in progress to provide [contract testing](https://docs.pact.io/) using `pact-python`.                               |
+| Service                             | Description                                                                                                                     | Dependencies                                                                                                                  |
+|-------------------------------------|---------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------|
+| :white_check_mark: REST API         | provide reusable fixtures for testing REST APIs supporting [OpenAPI](https://spec.openapis.org/oas/latest.html) specifications. | ![pytest](https://img.shields.io/badge/pytest-8.0.2-blue)</br>![requests](https://img.shields.io/badge/requests-2.31.0-blue)  |
+| :white_check_mark: GraphQL          | provide reusable fixtures for testing [GraphQL](https://graphql.org/) queries and mutations.                                    | ![pytest](https://img.shields.io/badge/pytest-8.0.2-blue)</br>![requests](https://img.shields.io/badge/requests-2.31.0-blue)  |
+| :triangular_ruler: gRPC             | support in progress for [gRPC](https://grpc.io/) services.                                                                      | ![pytest](https://img.shields.io/badge/pytest-8.0.2-blue)</br>![grpcio](https://img.shields.io/badge/grpcio-1.62.0-blue)      |
+| :white_check_mark: SOAP XML         | provides reusable fixtures for testing [SOAP XML](https://www.w3schools.com/xml/xml_soap.asp) services.                         | ![pytest](https://img.shields.io/badge/pytest-8.0.2-blue)</br>![requests](https://img.shields.io/badge/requests-2.31.0-blue)  |
+| :triangular_ruler: Contract Testing | development in progress to provide [contract testing](https://docs.pact.io/) using `pact-python`.                               |                                                                                                                               |
 
 ### Frontend Testing
 - utilizes web drivers and related utilities to perform mobile, web and/or desktop frontend automated testing.

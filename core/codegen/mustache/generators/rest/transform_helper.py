@@ -1,6 +1,6 @@
 from core.utilities.data.strings import convert_to_snake_case, convert_dict_values_to_snake
 from core.utilities.data.qlist import QList
-from codegen.mustache.generators.rest import MustacheTemplateTestCase, MustacheTemplateTestStep
+from core.codegen.mustache.generators.rest.models.test import MustacheTemplateTestCase, MustacheTemplateTestStep
 
 
 from http import HTTPStatus
