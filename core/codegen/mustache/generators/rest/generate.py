@@ -12,14 +12,14 @@ from core.utilities.logging.custom_logger import create_logger
 from core.utilities.data.strings import convert_to_snake_case, remove_special_chars
 from core.utilities.path import get_module_from_file_path
 
-from core.apps.mustache.contracts.generator import IGenerator
-from core.apps.mustache.generators.rest.transform_helper import transform_types, transform_paths, transform_models, \
+from core.codegen.mustache.contracts.generator import IGenerator
+from core.codegen.mustache.generators.rest.transform_helper import transform_types, transform_paths, transform_models, \
     group_paths_by_resource, transform_tests
-from core.apps.mustache.generators.rest.templates import GENERATOR_PATH_REST
-from core.apps.mustache.generators.rest.models.models import MustacheTemplateModel
-from core.apps.mustache.generators.rest.models.service import MustacheTemplateService
-from core.apps.mustache.generators.rest.models.config_yaml import MustacheTemplateConfigYaml
-from core.apps.mustache.generators.rest.models.test import MustacheTemplatePyTest
+from core.codegen.mustache.generators.rest import GENERATOR_PATH_REST
+from core.codegen.mustache.generators.rest.models.models import MustacheTemplateModel
+from core.codegen.mustache.generators.rest.models.service import MustacheTemplateService
+from core.codegen.mustache.generators.rest.models.config_yaml import MustacheTemplateConfigYaml
+from core.codegen.mustache.generators.rest.models.test import MustacheTemplatePyTest
 
 
 class TestGeneratorServiceRest(IGenerator):

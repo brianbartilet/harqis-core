@@ -1,4 +1,4 @@
-from core.apps.mustache.generators.base.py_template import MustachePyTemplate
+from core.codegen.mustache.generators.base.py_template import MustachePyTemplate
 
 
 class MustacheTemplateConfigYaml(MustachePyTemplate):

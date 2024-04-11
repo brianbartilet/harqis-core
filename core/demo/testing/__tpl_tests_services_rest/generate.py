@@ -3,8 +3,8 @@ import os
 import time
 from datetime import datetime
 
-from core.apps.mustache.generators.rest import GENERATOR_PATH_REST
-from core.apps.mustache.generators.rest.generate import TestGeneratorServiceRest
+from core.codegen.mustache.generators.rest import GENERATOR_PATH_REST
+from core.codegen.mustache.generators.rest.generate import TestGeneratorServiceRest
 
 from core.apps.gpt.assistants.base import BaseAssistant
 from core.apps.gpt.models.assistants.message import MessageCreate
