@@ -39,7 +39,7 @@
 - Support e2e testing and task automation.
 
 ## Features Inventory
-Please refer here for the complete [HARQIS Features Inventory](docs/INDEX.md).
+Please refer here for the complete map of the [HARQIS Features](docs/FEATURES).
 
 ## Demo Project
 - Please refer here [harqis-demo-generic-framework](https://github.com/brianbartilet/harqis-demo-generic-framework) for an sample application of **HARQIS-core**.
@@ -63,7 +63,7 @@ To get started with **HARQIS-core**, follow these steps:
    - Runs on Python 3.12
    - Clone the repository
       ```sh
-      git https://github.com/brianbartilet/harqis-core.git
+      git clone https://github.com/brianbartilet/harqis-core.git
       ```
    - Set up and activate the virtual environment
       ```sh
