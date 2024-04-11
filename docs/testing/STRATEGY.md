@@ -1,7 +1,7 @@
 # Testing Strategy
 - This document outlines the initial tasks required to define a robust testing strategy.
 - Each task is broken down into subtasks, target documentation to be generated and related concepts to provide a comprehensive guide for formulating a testing strategy.
----------------------
+
 ## Tasks
 ### Identify Testing Methodology For Project
   - [ ] Agile Testing Methodology
@@ -13,7 +13,7 @@
   - [ ] Define Test Automation Approach
   - [ ] Identify Test Automation Tools
   - [ ] Establish Test Automation Framework
-------------------------------------------
+
 ## Target Documentation
 ### Overall Testing Strategy
   - [ ] Functional Testing Coverage From Testing Pyramid
@@ -40,7 +40,7 @@
     - [ ] Staging Testing Environment
     - [ ] Production Testing Environment
     - [ ] Cross-Browser Testing
----------------------
+
 ## Related Concepts
 ### Testing Principles
   - [ ] Testing Pyramid

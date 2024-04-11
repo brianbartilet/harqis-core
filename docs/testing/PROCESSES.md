@@ -2,7 +2,7 @@
 - This document outlines the test processes that needed to be established for a project.
 - This would be very valuable for day to day testing activities and would be a good reference for the team to follow.
 - Each task is broken down into subtasks, target documentation to be generated and related concepts to provide a comprehensive guide for formulating a testing strategy.
----------------------
+
 ## Tasks
 ### Define Process For Analyzing Requirements
 - [ ] Identify Requirements Artifacts
@@ -28,7 +28,6 @@
 - [ ] Define Testing Definition of Done
 ### Establish Guidelines For Testing Retrospective
 
-------------------------------------------
 ## Target Documentation
 ### Process Documentation
 - [ ] Analyzing Requirements
@@ -67,7 +66,6 @@
 - [ ] Test Cycle Closure
 - [ ] Testing Retrospective Guidelines
 
----------------------
 ## Related Concepts
 ### Analyzing Requirements
 - [ ] Requirement Analysis
