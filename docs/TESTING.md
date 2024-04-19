@@ -1,7 +1,6 @@
 # HARQIS in Action: A Generic Project Testing Boilerplate
-This documentation aims to provide a ready-to-use test project template, complete with a detailed guide for implementing testing processes that are specifically tailored to your project's context.
-
-By leveraging the HARQIS-core components, this template offers an initial project structure that is not only highly extensible but also effortlessly adapts to the evolving demands of your project.
+- This documentation aims to provide a ready-to-use test project template, complete with a detailed guide for implementing testing processes that are specifically tailored to your project's context.
+- By leveraging the [**HARQIS-core**](../README.md) components, this template offers an initial project structure that is not only highly extensible but also effortlessly adapts to the evolving demands of your project.
 
 ## Key Objectives
 ### Generate A Project Testing Checklist
@@ -25,3 +24,8 @@ Create a project documentation structure that can be easily adapted to meet the 
 - **Scalable Test Effort**: Enhances the scalability and efficiency of test efforts, facilitating easier management and execution across multiple projects.
 - **Enhanced Governance**: Improves governance across projects, provides clear documentation, and effectively manages stakeholders' expectations.
 - **Increased Visibility**: Boosts the visibility of test strategies and promotes collaboration and feedback among team members.
+
+## Scripts
+### Overview
+
+### How To Use

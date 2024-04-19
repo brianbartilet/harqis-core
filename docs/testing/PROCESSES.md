@@ -42,7 +42,7 @@
     - [ ] Functional Testing
     - [ ] Integration Testing
     - [ ] Negative Testing
-  - [ ] Create Test Suites
+  - [ ] Test Suites
     - [ ] Test Type
     - [ ] Test Nature
     - [ ] Feature
