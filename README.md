@@ -39,7 +39,7 @@
 - Support e2e testing and task automation.
 
 ## Features Inventory
-Please refer here for the complete map of the [HARQIS Features](docs/FEATURES.md).
+Please refer here for the complete map of the [HARQIS Features](core/docs/FEATURES.md).
 
 ## Demo Project
 - Please refer here [harqis-demo-generic-framework](https://github.com/brianbartilet/harqis-demo-generic-framework) for an sample application of **HARQIS-core**.

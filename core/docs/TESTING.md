@@ -1,6 +1,6 @@
 # HARQIS in Action: A Generic Project Testing Boilerplate
 - This documentation aims to provide a ready-to-use test project template, complete with a detailed guide for implementing testing processes that are specifically tailored to your project's context.
-- By leveraging the [**HARQIS-core**](../README.md) components, this template offers an initial project structure that is not only highly extensible but also effortlessly adapts to the evolving demands of your project.
+- By leveraging the [**HARQIS-core**](../../README.md) components, this template offers an initial project structure that is not only highly extensible but also effortlessly adapts to the evolving demands of your project.
 
 ## Key Objectives
 ### Generate A Project Testing Checklist
@@ -8,10 +8,10 @@ Create a comprehensive checklist to ensure all essential components are included
 
 | Category                                                       | Description                                                                                                                           |
 |----------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------|
-| [**Testing Strategy**](../docs/testing/STRATEGY.md)            | Formulate a robust testing strategy that outlines the methodology, tools, and lifecycle to be employed.                               |
-| [**Test Processes**](../docs/testing/PROCESSES.md)             | Develop and establish a comprehensive set of processes for analyzing requirements, planning tests, developing test cases, and more.   |
-| [**Test Tooling**](../docs/testing/TOOLING.md)                 | Identify and implement appropriate tools for both frontend and backend automation testing, test data mocking, and other requirements. |
-| [**Managing Stakeholders**](../docs/testing/STAKEHOLDERS.md)   | Effectively classify stakeholders, align ways of working, and communicate quality assurance expectations and progress.                |
+| [**Testing Strategy**](/STRATEGY.md)            | Formulate a robust testing strategy that outlines the methodology, tools, and lifecycle to be employed.                               |
+| [**Test Processes**](/PROCESSES.md)             | Develop and establish a comprehensive set of processes for analyzing requirements, planning tests, developing test cases, and more.   |
+| [**Test Tooling**](/testing/TOOLING.md)                 | Identify and implement appropriate tools for both frontend and backend automation testing, test data mocking, and other requirements. |
+| [**Managing Stakeholders**](/STAKEHOLDERS.md)   | Effectively classify stakeholders, align ways of working, and communicate quality assurance expectations and progress.                |
 
 ### Setup A Initial Project Documentation Structure
 Create a project documentation structure that can be easily adapted to meet the specific requirements of the project from the above categories.

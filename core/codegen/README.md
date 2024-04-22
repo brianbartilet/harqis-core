@@ -1,6 +1,6 @@
 # Transform and Generate Code Using Mustache
 - [Mustache](https://mustache.github.io/) is a logic-less template syntax. It can be used for HTML, config files, source code - anything. It works by expanding tags in a template using values provided in a hash or object.
-- This module organizes related transform code and generators for the [fixtures](../../docs/FEATURES.md#testing-fixtures) in HARQIS core.
+- This module organizes related transform code and generators for the [fixtures](../docs/FEATURES.md#testing-fixtures) in HARQIS core.
 
 ## Modules
 - `/contracts` - contains the configuration files for generation behavior.
