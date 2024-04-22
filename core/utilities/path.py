@@ -18,9 +18,6 @@ def update_sys_path(top_level_directory: str):
         sys.path.append(top_level_directory)
 
 
-import os
-
-
 def get_module_from_file_path(file_path: str, start_folder: str = 'core'):
     """
     Get the module path from a file path, starting from a specified folder.

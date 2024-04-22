@@ -2,7 +2,7 @@ import unittest
 import os
 import time
 from core.apps.gpt.services.files import ServiceFiles
-from core.apps.apps_config import AppConfigLoader, AppNames
+from core.apps.config import AppConfigLoader, AppNames
 from core.utilities.logging.custom_logger import create_logger
 
 from http import HTTPStatus

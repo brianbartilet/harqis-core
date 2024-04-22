@@ -1,8 +1,8 @@
 import pytest
 from http import HTTPStatus
 
-from demo.testing.__tpl_tests_services_graphql.config import CONFIG
-from demo.testing.__tpl_tests_services_graphql.mutations.save_media_list_entry.mutation import ServiceMutationSaveMediaListEntry
+from demo.testing.example_tests_services_graphql.config import CONFIG
+from demo.testing.example_tests_services_graphql.mutations.save_media_list_entry.mutation import ServiceMutationSaveMediaListEntry
 
 
 @pytest.fixture()

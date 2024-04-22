@@ -1,10 +1,18 @@
+# Sprout!
+A simple Django app for running tasks
 
-Set this in working directory to enable celery restart
-```
-git --no-pager log > DailyDashboard/git_log.txt
-```
+## Description
+- this module is a simple Django app for managing tasks (a automation script) that can be run on a schedule.
 
+## Dependencies
+- utilizes the [celery](https://docs.celeryproject.org/en/stable/) library for task scheduling and applying related decorators.
+- uses [RabbitMQ](https://www.rabbitmq.com/) as the message broker for celery.
 
-start /high python.exe manage.py scheduler
-
-start /high python.exe manage.py worker
+## Modules
+- `/app/management/commands` - contains the commands for the app for managing workers, schedule and restart.
+- `/app/tests` - contains the tests for the app.
+- `/app/manage.py` - the Django management script.
+- `/app/helpers` - contains helper functions for the app.
+-
+## Demo
+- Please see the application demo in the [demo](../../demo/workflows/README.md).

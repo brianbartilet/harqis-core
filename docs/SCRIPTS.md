@@ -10,5 +10,7 @@
 ## Details
 ### generate_boilerplate_sample_docs.py
 #### GPT Instructions
+- WIP
 #### How To Use
+- WIP
 

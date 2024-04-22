@@ -1,6 +1,6 @@
 import argparse
 import os
-import time
+
 from datetime import datetime
 
 from core.codegen.mustache.generators.rest import GENERATOR_PATH_REST
@@ -10,6 +10,7 @@ from core.apps.gpt.assistants.base import BaseAssistant
 from core.apps.gpt.models.assistants.message import MessageCreate
 from core.apps.gpt.models.assistants.run import RunCreate
 from core.utilities.files import zip_folder, remove_files_with_patterns
+
 
 if __name__ == '__main__':
     #  region Create the argument parser
@@ -61,7 +62,7 @@ if __name__ == '__main__':
 
             trigger = RunCreate(assistant_id=assistant.properties.id,
                                 tools=[{'type': 'code_interpreter'}],
-                                temperature=0)
+                                temperature=0.01)
 
             assistant.run_thread(run=trigger, )
             assistant.wait_for_runs_to_complete()

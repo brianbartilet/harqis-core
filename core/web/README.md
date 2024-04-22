@@ -16,10 +16,10 @@
 - Fixtures are reusable components that can be used to set up the state of the system under test.
 - Please see the currently supported fixtures below and their corresponding demo documentation.
 
-| Fixture                         | Description               | How to Use                                    |
-|---------------------------------|---------------------------|-----------------------------------------------|
-| `/services/fixtures/rest.py`    | Test fixture for REST API | [WEBSERVICES.md](../../docs/demo/WEBSERVICES.md) |
-| `/services/fixtures/graphql.py` | Test fixture for GraphQL  | [WEBSERVICES.md](../../docs/demo/WEBSERVICES.md) |
+| Fixture                         | Description               | How to Use                                         |
+|---------------------------------|---------------------------|----------------------------------------------------|
+| `/services/fixtures/rest.py`    | Test fixture for REST API | [WEBSERVICES.md](../../docs/demo/WEBSERVICES.md)   |
+| `/services/fixtures/graphql.py` | Test fixture for GraphQL  | [WEBSERVICES.md](../../docs/demo/WEBSERVICES.md)   |
 
 ## Mocking
 - In progress.

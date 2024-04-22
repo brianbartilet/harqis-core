@@ -5,38 +5,52 @@ from core.utilities.logging.custom_logger import create_logger
 from queue import Empty
 
 
-# This class is used to handle multiprocessing tasks.
 class MultiProcessingClient:
-    # The constructor for the MultiProcessingClient class.
-    # It initializes the worker count, queue, tasks, output list, lock, and function.
-    # It also adds tasks to the queue.
-    def __init__(self, tasks: list, worker_count=None):
-        # Create a logger for this class
-        self.log = create_logger(self.__class__.__name__)
+    """
+    A class for handling multiprocessing tasks, allowing parallel execution of functions across multiple processes.
 
-        # Set the worker count to the provided value or the number of CPUs if not provided
+    Attributes:
+        log: Logger object for logging information, errors, etc.
+        worker_count (int): Number of worker processes to use.
+        queue (mp.Queue): Multiprocessing queue to hold tasks to be processed.
+        tasks (list): List of tasks to be executed.
+        output_list (list): List to store outputs of the executed tasks.
+        lock (mp.Lock): Lock for managing concurrent writes to the output_list.
+        func (callable): The function to be applied to each task.
+    """
+    def __init__(self, tasks: list, worker_count=None):
+        """
+        Initializes the MultiProcessingClient with a list of tasks and optionally specifies the number of workers.
+
+        Args:
+            tasks (list): A list of tasks to be executed.
+            worker_count (int, optional): The number of worker processes to use. Defaults to the number of CPUs available.
+        """
+        self.log = create_logger(self.__class__.__name__)
         self.worker_count = worker_count or psutil.cpu_count()
-        # Initialize a multiprocessing queue
+
         self.queue = mp.Queue()
-        # Store the tasks to be executed
         self.tasks = tasks
-        # Initialize an empty list to store the output of the tasks
         self.output_list = []
-        # Initialize a lock for thread-safe operations
         self.lock = mp.Lock()
-        # Initialize the function to be executed on the tasks to None
         self.func = None
-        # Add the tasks to the queue
         self.add_tasks_to_queue()
 
-    # This method adds tasks to the queue.
     def add_tasks_to_queue(self):
+        """
+        Adds tasks to the multiprocessing queue.
+        """
         # Iterate over the tasks and put each one in the queue
         for task in self.tasks:
             self.queue.put(task)
 
-    # This method executes the tasks with the provided function using a pool of workers.
     def execute_tasks(self, func):
+        """
+         Executes the tasks using a pool of workers and a specified function.
+
+         Args:
+             func (callable): The function to apply to each task.
+         """
         # Create a pool of workers
         with mp.Pool(self.worker_count) as pool:
             # Map the function to the tasks and get the results
@@ -44,9 +58,14 @@ class MultiProcessingClient:
             # Extend the output list with the results
             self.output_list.extend(results)
 
-    # This method is a wrapper for the worker function.
-    # It executes the function on the tasks in the queue and stores the output.
     def worker_wrapper(self, func, args):
+        """
+        Worker function that processes tasks from the queue and stores results in output_list.
+
+        Args:
+            func (callable): The function to execute for each task.
+            args (tuple): Additional arguments to pass to `func`.
+        """
         # While there are tasks in the queue
         while not self.queue.empty():
             try:
@@ -66,4 +85,10 @@ class MultiProcessingClient:
 
     # This method returns the output of the tasks.
     def get_tasks_output(self):
+        """
+        Returns the collected outputs from all processed tasks.
+
+        Returns:
+            list: Outputs of all executed tasks.
+        """
         return self.output_list

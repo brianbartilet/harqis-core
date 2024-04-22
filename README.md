@@ -55,6 +55,7 @@ For questions or feedback, please contact [brian.bartilet@gmail.com](mailto:bria
 We welcome contributions! If you have ideas for new features or improvements, please submit a pull request or open an issue.
 
 Please refer here to this [project](https://github.com/users/brianbartilet/projects/1) containing features completed or to be developed.
+
 ## Getting Started
 
 To get started with **HARQIS-core**, follow these steps:
