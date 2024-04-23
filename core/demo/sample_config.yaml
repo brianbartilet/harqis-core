@@ -5,6 +5,13 @@ example_tests_services_rest:
     response_encoding: 'utf-8'
     "verify": True
 
+example_tests_services_rest_generated:
+  client: 'rest'
+  parameters:
+    base_url: 'https://jsonplaceholder.typicode.com/'
+    response_encoding: 'utf-8'
+    "verify": True
+
 example_tests_services_graphql:
   client: 'graphql'
   parameters:
@@ -12,7 +19,7 @@ example_tests_services_graphql:
     response_encoding: 'utf-8'
     "verify": True
 
-sample_config_features_webdriver:
+example_features_webdriver:
   type: selenium
   browser: firefox
   parameters:
