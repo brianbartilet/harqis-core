@@ -1,5 +1,5 @@
 # Instructions
-## Create a Python data dictionary that contains integration and negative test cases from given mustache templates and fixtures.  Generate it in a text file for download.
+Create a Python data dictionary that contains integration and negative test cases from given mustache templates and fixtures.  Generate it in a text file for download.
 
 ### Context:
 - Use the `mustache\templates\test.mustache` template as reference to generate the test cases in form of a Python dictionary.
@@ -10,6 +10,8 @@
 - Provide explanation of code using Google style docstrings using the `{{description}}`.
 - Set the `{{#not_implemented}}` flag always to `True` for future review and implementation.
 
+#### data.zip
+- `data/test_cases.json` - a sample output file that you can use as reference for the expected output.
 #### specs.zip
 - `specs/tasks_api_specs.yaml` - A YAML file defining OpenAPI specifications and the primary entry criteria of the task.
 - The goal is to generate additional test code, replicated structure from `generated.zip` as a baseline.

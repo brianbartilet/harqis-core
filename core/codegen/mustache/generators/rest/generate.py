@@ -50,7 +50,7 @@ class TestGeneratorServiceRest(IGenerator):
 
     def initialize_templates(self):
         """Sets up template file paths."""
-        self.templates = {name: os.path.join(GENERATOR_PATH_REST, f"{name}.mustache")
+        self.templates = {name: os.path.join(GENERATOR_PATH_REST, 'templates', f"{name}.mustache")
                           for name in ['base_service', 'config', 'config_yaml', 'models', 'service', 'test']}
 
     def load_source(self) -> dict:

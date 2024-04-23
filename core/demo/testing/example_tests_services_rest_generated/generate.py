@@ -41,10 +41,10 @@ if __name__ == '__main__':
         #  region Archive and upload files
 
         zip_folder(GENERATOR_PATH_REST, 'mustache.zip')
-        zip_folders = ['generated', 'specs']
+        zip_folders = ['generated', 'specs', 'data']
+        # zip and upload the generated code, specs and data
         for folder in zip_folders:
             zip_folder(f'{folder}', f'{folder}.zip')
-
         files = assistant.upload_files(base_directory=os.getcwd(), file_patterns=['*.zip'])
         file_ids = [f.id for f in files]
         #  endregion
@@ -90,4 +90,6 @@ if __name__ == '__main__':
 
         #  endregion
 
+    #  region Cleanup
     remove_files_with_patterns(['*.zip'])
+    #  endregion

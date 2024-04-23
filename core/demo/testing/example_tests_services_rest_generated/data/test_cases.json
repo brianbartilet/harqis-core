@@ -1,0 +1,342 @@
+{
+    "integration_test_cases": [
+        {
+            "name": "list_tasks",
+            "description": "List all tasks",
+            "test_suite_name": "sanity",
+            "test_technique": "api",
+            "tags": null,
+            "given": [],
+            "when": [
+                {
+                    "data": {
+                        "name": "list_tasks"
+                    },
+                    "args": []
+                }
+            ],
+            "then": [
+                {
+                    "data": {
+                        "http_status": "404"
+                    }
+                }
+            ],
+            "status": null,
+            "data": {
+                "service_name": "tasks"
+            }
+        },
+        {
+            "name": "create_task",
+            "description": "Create a new task",
+            "test_suite_name": "sanity",
+            "test_technique": "api",
+            "tags": null,
+            "given": [],
+            "when": [
+                {
+                    "data": {
+                        "name": "create_task",
+                        "has_payload": true,
+                        "payload": {
+                            "name": "create_task",
+                            "class_name": "NewTask"
+                        }
+                    },
+                    "args": []
+                }
+            ],
+            "then": [
+                {
+                    "data": {
+                        "http_status": "201"
+                    }
+                }
+            ],
+            "status": null,
+            "data": {
+                "service_name": "tasks"
+            }
+        },
+        {
+            "name": "get_task_by_id",
+            "description": "Get a task by ID",
+            "test_suite_name": "sanity",
+            "test_technique": "api",
+            "tags": null,
+            "given": [],
+            "when": [
+                {
+                    "data": {
+                        "name": "get_task_by_id"
+                    },
+                    "args": [
+                        {
+                            "in": "path",
+                            "name": "task_id",
+                            "required": true,
+                            "schema": {
+                                "type": "str",
+                                "example": "\"1\""
+                            },
+                            "inPath": true,
+                            "not_last": true
+                        },
+                        {
+                            "in": "query",
+                            "name": "results",
+                            "required": true,
+                            "schema": {
+                                "type": "float",
+                                "example": 10
+                            },
+                            "inQuery": true,
+                            "not_last": false
+                        }
+                    ]
+                }
+            ],
+            "then": [
+                {
+                    "data": {
+                        "http_status": "404"
+                    }
+                }
+            ],
+            "status": null,
+            "data": {
+                "service_name": "tasks"
+            }
+        },
+        {
+            "name": "list_workflows",
+            "description": "List all workflows",
+            "test_suite_name": "sanity",
+            "test_technique": "api",
+            "tags": null,
+            "given": [],
+            "when": [
+                {
+                    "data": {
+                        "name": "list_workflows"
+                    },
+                    "args": []
+                }
+            ],
+            "then": [
+                {
+                    "data": {
+                        "http_status": "404"
+                    }
+                }
+            ],
+            "status": null,
+            "data": {
+                "service_name": "workflows"
+            }
+        },
+        {
+            "name": "create_workflow",
+            "description": "Create a new workflow",
+            "test_suite_name": "sanity",
+            "test_technique": "api",
+            "tags": null,
+            "given": [],
+            "when": [
+                {
+                    "data": {
+                        "name": "create_workflow",
+                        "has_payload": true,
+                        "payload": {
+                            "name": "create_workflow",
+                            "class_name": "NewWorkflow"
+                        }
+                    },
+                    "args": []
+                }
+            ],
+            "then": [
+                {
+                    "data": {
+                        "http_status": "201"
+                    }
+                }
+            ],
+            "status": null,
+            "data": {
+                "service_name": "workflows"
+            }
+        }
+    ],
+    "negative_test_cases": [
+        {
+            "name": "negative_list_tasks",
+            "description": "List all tasks",
+            "test_suite_name": "negative",
+            "test_technique": "api",
+            "tags": null,
+            "given": [],
+            "when": [
+                {
+                    "data": {
+                        "name": "list_tasks"
+                    },
+                    "args": []
+                }
+            ],
+            "then": [
+                {
+                    "data": {
+                        "http_status": "404"
+                    }
+                }
+            ],
+            "status": null,
+            "data": {
+                "service_name": "tasks"
+            }
+        },
+        {
+            "name": "negative_create_task",
+            "description": "Create a new task",
+            "test_suite_name": "negative",
+            "test_technique": "api",
+            "tags": null,
+            "given": [],
+            "when": [
+                {
+                    "data": {
+                        "name": "create_task",
+                        "has_payload": true,
+                        "payload": {
+                            "name": "create_task",
+                            "class_name": "NewTask"
+                        }
+                    },
+                    "args": []
+                }
+            ],
+            "then": [
+                {
+                    "data": {
+                        "http_status": "201"
+                    }
+                }
+            ],
+            "status": null,
+            "data": {
+                "service_name": "tasks"
+            }
+        },
+        {
+            "name": "negative_get_task_by_id",
+            "description": "Get a task by ID",
+            "test_suite_name": "negative",
+            "test_technique": "api",
+            "tags": null,
+            "given": [],
+            "when": [
+                {
+                    "data": {
+                        "name": "get_task_by_id"
+                    },
+                    "args": [
+                        {
+                            "in": "path",
+                            "name": "task_id",
+                            "required": true,
+                            "schema": {
+                                "type": "str",
+                                "example": "\"1\""
+                            },
+                            "inPath": true,
+                            "not_last": true
+                        },
+                        {
+                            "in": "query",
+                            "name": "results",
+                            "required": true,
+                            "schema": {
+                                "type": "float",
+                                "example": 10
+                            },
+                            "inQuery": true,
+                            "not_last": false
+                        }
+                    ]
+                }
+            ],
+            "then": [
+                {
+                    "data": {
+                        "http_status": "404"
+                    }
+                }
+            ],
+            "status": null,
+            "data": {
+                "service_name": "tasks"
+            }
+        },
+        {
+            "name": "negative_list_workflows",
+            "description": "List all workflows",
+            "test_suite_name": "negative",
+            "test_technique": "api",
+            "tags": null,
+            "given": [],
+            "when": [
+                {
+                    "data": {
+                        "name": "list_workflows"
+                    },
+                    "args": []
+                }
+            ],
+            "then": [
+                {
+                    "data": {
+                        "http_status": "404"
+                    }
+                }
+            ],
+            "status": null,
+            "data": {
+                "service_name": "workflows"
+            }
+        },
+        {
+            "name": "negative_create_workflow",
+            "description": "Create a new workflow",
+            "test_suite_name": "negative",
+            "test_technique": "api",
+            "tags": null,
+            "given": [],
+            "when": [
+                {
+                    "data": {
+                        "name": "create_workflow",
+                        "has_payload": true,
+                        "payload": {
+                            "name": "create_workflow",
+                            "class_name": "NewWorkflow"
+                        }
+                    },
+                    "args": []
+                }
+            ],
+            "then": [
+                {
+                    "data": {
+                        "http_status": "201"
+                    }
+                }
+            ],
+            "status": null,
+            "data": {
+                "service_name": "workflows"
+            }
+        }
+    ]
+}
