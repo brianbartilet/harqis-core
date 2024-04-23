@@ -69,15 +69,3 @@ class ServiceRestExamplePost(BaseServiceApp):
             .add_json_body(payload)
 
         return self.client.execute_request(self.request.build())
-
-    def request_delete(self):
-        """
-        Prepares a DELETE request to remove a specific post. This method does not execute the request but builds it for later execution.
-
-        Returns:
-            Request: The prepared DELETE request.
-        """
-        self.request \
-            .set_method(HttpMethod.DELETE)
-
-        return self.client.execute_request(self.request.build())

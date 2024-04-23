@@ -56,20 +56,6 @@ def test_run_unit_tests_post(given_service):
 
 
 @pytest.mark.sanity
-def test_run_unit_tests_delete(given_service):
-    """
-    Test the DELETE request functionality to verify that a non-existing resource returns HTTPStatus.NOT_FOUND.
-
-    Args:
-        given_service (ServiceRestExamplePost): The service instance to use for making the DELETE request.
-    """
-    given_request = given_service.request_delete()
-    when = given_service.send_request(given_request)
-    then = given_service.verify.common
-    then.assert_that(when.status_code, then.equal_to(HTTPStatus.NOT_FOUND))
-
-
-@pytest.mark.sanity
 def test_run_unit_tests_get_with_hook(given_service):
     """
     GET request functionality with a response hook, check that the data returned is correctly parsed into a User model.
