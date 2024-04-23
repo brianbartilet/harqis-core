@@ -5,7 +5,8 @@
 - Related fixtures and sample tests are located here: [**core/tests/webservices**](../../web/services/README.md).
 
 ## Summary
-| Implementation                                                                             | Type    | Description                                               |
-|--------------------------------------------------------------------------------------------|---------|-----------------------------------------------------------|
-| [example_tests_services_rest](../../demo/testing/example_tests_services_rest/README.md)    | REST    | Simplified tests on REST endpoints using current fixtures |
-| [example_tests_services_soap](../../demo/testing/example_tests_services_graphql/README.md) | GraphQL | Execute tests on GraphQL queries and mutations            |
+| Implementation                                                                                              | Type    | Description                                               |
+|-------------------------------------------------------------------------------------------------------------|---------|-----------------------------------------------------------|
+| [example_tests_services_rest](../../demo/testing/example_tests_services_rest/README.md)                     | REST    | Simplified tests on REST endpoints using current fixtures |
+| [example_tests_services_rest_generated](../../demo/testing/example_tests_services_rest_generated/README.md) | REST    | Generated tests from OpenAPI specs                        |
+| [example_tests_services_soap](../../demo/testing/example_tests_services_graphql/README.md)                  | GraphQL | Execute tests on GraphQL queries and mutations            |

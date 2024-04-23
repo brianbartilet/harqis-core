@@ -20,7 +20,7 @@ def given_service():
     return given_service
 
 
-@pytest.mark.sanity
+@pytest.mark.sanity  # Mark the test as a sanity test
 def test_run_unit_tests_get(given_service):
     """
     Test the GET request functionality to verify if it successfully retrieves a post and returns HTTPStatus.OK.
@@ -34,7 +34,7 @@ def test_run_unit_tests_get(given_service):
     then.assert_that(isinstance(when.data, dict), True)
 
 
-@pytest.mark.sanity
+@pytest.mark.sanity # Mark the test as a sanity test
 def test_run_unit_tests_post(given_service):
     """
     Test the POST request functionality by sending a predefined payload and verifying the creation status code.
@@ -55,7 +55,7 @@ def test_run_unit_tests_post(given_service):
     then.assert_that(when.data, then.has_entries())
 
 
-@pytest.mark.sanity
+@pytest.mark.sanity # Mark the test as a sanity test
 def test_run_unit_tests_get_with_hook(given_service):
     """
     GET request functionality with a response hook, check that the data returned is correctly parsed into a User model.

@@ -13,5 +13,5 @@ HARQIS_GPT:
   app_data:
     api_key: ${OPENAI_API_KEY}
     model: 'davinci-002'
-    max_tokens: 500
+    max_tokens: 1000
     default_assistant_id: ${OPENAI_ASSISTANT_ID}

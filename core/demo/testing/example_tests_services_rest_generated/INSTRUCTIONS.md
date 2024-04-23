@@ -1,5 +1,7 @@
 # Instructions
-Create a Python data dictionary that contains integration and negative test cases from given mustache templates and fixtures.  Generate it in a text file for download.
+- Create a Python data dictionary that contains integration and negative test cases from given mustache templates and fixtures.
+- Use `data/test_cases.json` as a reference for the expected output.
+- Generate it in a text file for download.
 
 ### Context:
 - Use the `mustache\templates\test.mustache` template as reference to generate the test cases in form of a Python dictionary.

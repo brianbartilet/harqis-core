@@ -50,7 +50,7 @@ if __name__ == '__main__':
         #  endregion
 
         #  region Load GPT instructions
-        with open("GPT_INSTRUCTIONS.md", 'r') as file:
+        with open("INSTRUCTIONS.md", 'r') as file:
             instructions = file.read()
 
         if instructions:
@@ -60,9 +60,8 @@ if __name__ == '__main__':
             ]
             assistant.add_messages_to_thread(messages)
 
-            trigger = RunCreate(assistant_id=assistant.properties.id,
-                                tools=[{'type': 'code_interpreter'}],
-                                temperature=0.01)
+            trigger = RunCreate(assistant_id=assistant.properties.id, tools=[{'type': 'code_interpreter'}],
+                                temperature=0)
 
             assistant.run_thread(run=trigger, )
             assistant.wait_for_runs_to_complete()
@@ -74,12 +73,14 @@ if __name__ == '__main__':
                 test_file = 'test_cases.log'
                 target_file = replies[0].file_ids[0]
                 assistant.download_file(target_file, test_file)
-                with open(test_file, 'r') as file:
+                generated_path_log = os.path.join(os.getcwd(), 'generated', test_file)
+                with open(generated_path_log, 'r') as file:
                     output = file.read()
             except IndexError:
                 output = {}
 
-            with open("GPT_RESPONSES.md", 'a') as file:
+            generated_path_response_md = os.path.join(os.getcwd(), 'generated', "GPT_RESPONSE.md")
+            with open(generated_path_response_md, 'a') as file:
                 now = datetime.now()
                 file.write(f'\n#### {now.strftime('%Y-%m-%d %H:%M:%S')}\n')
                 for reply in reversed(replies):

@@ -1,43 +1,52 @@
 # REST API OpenAPI Test Generation
 
 ## Introduction
-- a simple demo of writing and testing REST API endpoints.
-- contains a basic setup and structure to get started with REST API testing.
+- Ability to generate out-of-box and run ready tests from a REST API OpenAPI specification from a url or file source.
+- Generates the test code using existing core fixtures and utilities which are defined in mustache templates.
+- Integrates with OpenAI API to generate test cases from the OpenAPI specification.
 
 ## Design
-- the [`example_tests_services_rest`](../example_tests_services_rest) represents a target application to be tested.
-- this would contain the models, services, resources, configuration and tests for the target application.
-- **please** read docstring and comments in the code for more information.
+- Use the script `generate.py` to generate the test cases from the OpenAPI specifications in a Python dictionary.
+- This dictionary data can be parsed to the test mustache templates to generate the test code.
+- Tests are generated into two core processes:
+  - **generate test code from OpenAPI** process a URL or file source argument spec to generate the test cases and code from using core fixtures..
+  - **update and add test cases using GPT** uploads and analyses the generated files to add more test cases using OpenAI API.
+- This demo is still in development and will be updated with more features and functionalities. *bugs*
 
 ## Modules
-### [`/models`](./models)
-- contains the data models for the tested applications.
-- this can be defined from OpenAPI specifications or from existing data models from the application.
-### [`/services`](./services)
-- structure to organize the services and corresponding resources of the application.
-- this contains reusable service classed to send, receive and process data from the application.
-### [`/services/base_service.py`](./services/base_service.py)
-- a base service class to be inherited by the services.
-- primary class to integration with core fixtures and utilities.
-- base headers and client setup can be defined here.
-### [`/services/posts`](./services/posts)
-- represents a service to organize the resources for the posts endpoint.
-### [`/services/posts/post.py`](./services/posts/post.py)
-- a service class to interact with the `posts` endpoint.
-- contains the http methods (GET, POST, PATCH, etc.) to interact with the endpoint.
-### [`/tests`](./tests)
-- contains the test cases for the services.
-- tests are written in BDD/Cucumber style for readability and maintainability.
-- utilizes `pytest` as the test runner along with its fixtures and utilities.
-### [`/tests/post.py`](./tests/post.py)
-- main test file to test the `posts` endpoint.
-- please see the docstrings and comments in the code for more information.
-### [`/config.py`](./config.py)
-- contains the configuration for the tests, loads from the configuration [`sample_config.yaml`](../../sample_config.yaml).
-- please see the docstrings and comments in the code for more information.
+- [`/data`](./data)
+  - Contains sample data to upload to GPT
+- [`/specs`](./specs)
+  - Contains sample OpenAPI specifications to generate test cases
+- [`/specs/tasks_api_specs.yaml`](./specs/tasks_api_specs.yaml)
+  - Sample input OpenAPI specification to generate test cases
+- [`/generate.py`](./generate.py)
+  - Main script to generate test code from fixtures and baseline tests *needs additional work*
+  - Please see the docstrings and comments in the code for more information and flow.
+  - Run command below to script usage and help.
+    ```bash
+    python generate.py --help
+    ```
+  - Run with default setup
+    ```bash
+    python generate.py
+    ```
+## Generated Files
+- [`/generated`](./generated)
+  - Contains the generated test code from the OpenAPI specification
+  - Mimics the test application structure of [demo REST tests](../example_tests_services_rest/README.md)
+- [`/generated/GPT_RESPONSE.md`](./generated/GPT_RESPONSE.md)
+  - Store the GPT response from the OpenAI API.
 
 ## Run Tests
-- to run the tests, execute the following command:
-```bash
-pytest tests/*
-```
+- Run the service for the mocked openAPI in the Docker compose file.
+  ```bash
+  cd .. && docker-compose up prism
+  ```
+
+- Run the tests using the command below.
+  ```bash
+  pytest
+  ```
+
+

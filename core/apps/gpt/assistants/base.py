@@ -136,12 +136,12 @@ class BaseAssistant(IAssistant):
         for file_id in file_ids:
             self.download_file(file_id, f'{file_id}.txt')
 
-    def wait_for_run_to_complete(self, thread_id: str, run_id: str, wait_secs=10, retries=60 * 5):
+    def wait_for_run_to_complete(self, thread_id: str, run_id: str, wait_secs=10, retries=100):
         with tqdm(total=retries, desc='Waiting for GPT runs to complete') as pbar:
             r = self.manager.get(ServiceRuns).get_run(thread_id, run_id)
             time_out = 0
             while r.data.status not in [RunStatus.COMPLETED.value, RunStatus.FAILED.value, RunStatus.EXPIRED.value]:
-                pbar.update(20)
+                pbar.update(5)
                 time.sleep(wait_secs)
                 r = self.manager.get(ServiceRuns).get_run(thread_id, run_id)
                 time_out += 1

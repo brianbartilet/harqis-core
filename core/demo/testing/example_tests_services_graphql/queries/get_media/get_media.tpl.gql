@@ -1,9 +1,19 @@
+# Query: GetMedia
+# Retrieves detailed information about a specific media item by its ID and type.
+#
+# Arguments:
+#   $id (Int): The unique identifier of the media item.
+#   $type (MediaType): The type of the media (e.g., Movie, TVShow, VideoGame).
+#
+# Returns:
+#   A Media object containing the media's ID and title in English and the native language.
+#
 query GetMedia($id: Int, $type: MediaType) {
   Media(id: $id, type: $type) {
-    id
-    title {
-      english
-      native
+    id        # The unique identifier of the media item.
+    title {   # The title object containing localized titles.
+      english # The title of the media in English.
+      native  # The title of the media in its native language.
     }
   }
 }

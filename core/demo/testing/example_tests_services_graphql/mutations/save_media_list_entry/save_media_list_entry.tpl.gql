@@ -1,8 +1,18 @@
+# Mutation: SaveMediaListEntry
+# This mutation allows the client to save or update a media list entry in the database.
+# It can handle both new entries and updates to existing entries based on the provided ID.
+#
+# Arguments:
+#   $id (Int): The ID of the media list entry to update. If null, a new entry will be created.
+#   $mediaId (Int): The ID of the media that the entry relates to.
+#   $status (MediaListStatus): The status of the media in the list, e.g., WATCHING, PLANNED.
+#
+# Returns:
+#   The updated or newly created media list entry with its ID, associated media ID, and current status.
 mutation SaveMediaListEntry($id: Int, $mediaId: Int, $status: MediaListStatus) {
   SaveMediaListEntry(id: $id, mediaId: $mediaId, status: $status) {
-    id
-    mediaId
-    status
+    id        # The unique identifier of the media list entry
+    mediaId   # The identifier of the media associated with this entry
+    status    # The current status of this media in the user's list
   }
 }
-
