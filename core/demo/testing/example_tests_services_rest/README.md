@@ -39,5 +39,5 @@
 ## Run Tests
 - to run the tests, execute the following command:
 ```bash
-pytest tests/post.py
+pytest tests/*
 ```

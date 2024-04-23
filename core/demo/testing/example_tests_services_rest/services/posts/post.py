@@ -1,9 +1,9 @@
 from core.web.services.core.constants.http_methods import HttpMethod
+from core.web.services.core.contracts.response import IResponse
 
 from demo.testing.example_tests_services_rest.services.base_service import BaseServiceApp
 from demo.testing.example_tests_services_rest.models.user import User
 from demo.testing.example_tests_services_rest.models.payload import PostPayload
-from web.services.core.contracts.response import IResponse
 
 
 class ServiceRestExamplePost(BaseServiceApp):
