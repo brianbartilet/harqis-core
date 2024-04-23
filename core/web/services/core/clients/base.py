@@ -82,7 +82,8 @@ class BaseWebClient(IWebClient, ABC):
         """
         self.proxies = proxies
 
-    def execute_request(self, r: IWebServiceRequest, response_hook: Type[TResponseData] = dict, **kwargs) -> IResponse[TResponseData]:
+    def execute_request(self, r: IWebServiceRequest, response_hook: Type[TResponseData] = dict, **kwargs) \
+            -> IResponse[TResponseData]:
         """
         Executes a web service request and returns the response.
 

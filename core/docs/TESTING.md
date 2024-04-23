@@ -6,12 +6,12 @@
 ### Generate A Project Testing Checklist
 Create a comprehensive checklist to ensure all essential components are included when starting a testing project.  These are grouped into the following core categories along with best practices and guidelines that can be applied:
 
-| Category                                                       | Description                                                                                                                           |
-|----------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------|
-| [**Testing Strategy**](/STRATEGY.md)            | Formulate a robust testing strategy that outlines the methodology, tools, and lifecycle to be employed.                               |
-| [**Test Processes**](/PROCESSES.md)             | Develop and establish a comprehensive set of processes for analyzing requirements, planning tests, developing test cases, and more.   |
-| [**Test Tooling**](/testing/TOOLING.md)                 | Identify and implement appropriate tools for both frontend and backend automation testing, test data mocking, and other requirements. |
-| [**Managing Stakeholders**](/STAKEHOLDERS.md)   | Effectively classify stakeholders, align ways of working, and communicate quality assurance expectations and progress.                |
+| Category                                               | Description                                                                                                                           |
+|--------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------|
+| [**Testing Strategy**](./testing/STRATEGY.md)          | Formulate a robust testing strategy that outlines the methodology, tools, and lifecycle to be employed.                               |
+| [**Test Processes**](./testing/PROCESSES.md)           | Develop and establish a comprehensive set of processes for analyzing requirements, planning tests, developing test cases, and more.   |
+| [**Test Tooling**](./testing/TOOLS.md)                 | Identify and implement appropriate tools for both frontend and backend automation testing, test data mocking, and other requirements. |
+| [**Managing Stakeholders**](./testing/STAKEHOLDERS.md) | Effectively classify stakeholders, align ways of working, and communicate quality assurance expectations and progress.                |
 
 ### Setup A Initial Project Documentation Structure
 Create a project documentation structure that can be easily adapted to meet the specific requirements of the project from the above categories.
