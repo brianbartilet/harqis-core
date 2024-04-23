@@ -24,6 +24,7 @@ jobs:
 
   trigger-demo-project-build:
     runs-on: ubuntu-latest
+    if: github.actor != 'dependabot[bot]' && github.actor != 'dependabot-preview[bot]'
     steps:
       - name: Trigger Build
         uses: peter-evans/repository-dispatch@v1
