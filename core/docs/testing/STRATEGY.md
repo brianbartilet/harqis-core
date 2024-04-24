@@ -2,44 +2,47 @@
 - This document outlines the initial tasks required to define a robust testing strategy.
 - Each task is broken down into subtasks, target documentation to be generated and related concepts to provide a comprehensive guide for formulating a testing strategy.
 
-## Tasks
-### Identify Testing Methodology For Project
+## Tasks and Target Documentation
+### Overall Testing Strategy Documentation
+- [ ] Identify Testing Methodology For Project From:
   - [ ] Agile Testing Methodology
   - [ ] Waterfall Testing Methodology
-### Establish A Testing Lifecycle
-  - [ ] Establish Testing Backlog
-### Define Test Automation Coverage
+- [ ] Define Functional Testing Coverage From Testing Pyramid For:
+  - [ ] Unit Testing
+  - [ ] Integration Testing
+  - [ ] System Testing
+  - [ ] Acceptance Testing
+- [ ] Define Roles and Responsibilities
+- [ ] Define Target Testing Framework From:
+  - [ ] Behavior-Driven Development (BDD)
+  - [ ] Test-Driven Development (TDD)
+- [ ] Define Functional Test Automation Coverage For:
+  - [ ] Frontend Automation Strategy
+  - [ ] Backend Automation Strategy
+  - [ ] Unit Testing and Code Coverage
+  - [ ] Overview of Testing Framework and Tools
+- [ ] Define Non-Functional Testing Coverage For:
+  - [ ] Performance Testing
+  - [ ] Load Testing
+  - [ ] Cross-Browser Testing
+### Testing Life Cycle Documentation
+- [ ] Establish Target Testing Lifecycle From:
+  - [ ] Agile Testing
+  - [ ] Waterfall Testing
+  - [ ] Adhoc Testing
+  - [ ] Exploratory Testing
+- [ ] Establish Testing Backlog
+- [ ] Define Test Strategies For Target Environments:
+  - [ ] Local Testing Environment
+  - [ ] Development Testing Environment
+  - [ ] Staging Testing Environment
+  - [ ] Production Testing Environment
+  - [ ] Cross-Browser Testing
+### Test Automation Coverage Documentation
   - [ ] Determine Test Automation Scope
   - [ ] Define Test Automation Approach
   - [ ] Identify Test Automation Tools
   - [ ] Establish Test Automation Framework
-
-## Target Documentation
-### Overall Testing Strategy
-  - [ ] Functional Testing Coverage From Testing Pyramid
-  - [ ] Roles and Responsibilities
-  - [ ] Target Testing Lifecycle
-    - [ ] Agile Testing Lifecycle
-    - [ ] Waterfall Testing Lifecycle
-    - [ ] Adhoc Testing Lifecycle
-    - [ ] Exploratory Testing Lifecycle
-  - [ ] Target Testing Framework
-    - [ ] Behavior-Driven Development (BDD)
-    - [ ] Test-Driven Development (TDD)
-  - [ ] Test Automation Coverage
-    - [ ] Frontend Automation Strategy
-    - [ ] Backend Automation Strategy
-    - [ ] Unit Testing and Code Coverage
-    - [ ] Overview of Testing Framework and Tools
-  - [ ] Non-Functional Testing Coverage
-    - [ ] Performance Testing
-    - [ ] Load Testing
-  - [ ] Test Environment Strategy
-    - [ ] Local Testing Environment
-    - [ ] Development Testing Environment
-    - [ ] Staging Testing Environment
-    - [ ] Production Testing Environment
-    - [ ] Cross-Browser Testing
 
 ## Related Concepts
 ### Testing Principles

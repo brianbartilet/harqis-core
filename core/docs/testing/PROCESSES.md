@@ -3,68 +3,50 @@
 - This would be very valuable for day to day testing activities and would be a good reference for the team to follow.
 - Each task is broken down into subtasks, target documentation to be generated and related concepts to provide a comprehensive guide for formulating a testing strategy.
 
-## Tasks
-### Define Process For Analyzing Requirements
+## Tasks and Target Documentation
+### Analyzing Requirements Documentation
 - [ ] Identify Requirements Artifacts
 - [ ] Identify Existing Acceptance Criteria
-### Define Process For Test Planning
+### Test Planning Documentation
 - [ ] Define Test Cycle Plan
-- [ ] Define Test Type Prioritization
-- [ ] Define Test Automation Prioritization
-- [ ] Create Test Suites
+- [ ] Define Test Type Prioritization For:
+  - [ ] Functional Testing
+  - [ ] Integration Testing
+  - [ ] Negative Testing
+  - [ ] Non-Functional Testing
+- [ ] Define Test Automation Prioritization For:
+  - [ ] Functional Testing
+  - [ ] Integration Testing
+  - [ ] Negative Testing
+- [ ] Create Test Suites For:
+  - [ ] Test Type
+  - [ ] Test Nature
+  - [ ] Feature
+  - [ ] Module
+  - [ ] Development Status
 - [ ] Define Test Estimation Techniques
-### Define Process For Test Case Development
+### Test Case Development Documentation
 - [ ] Determine Test Case Repository
 - [ ] Create Guidelines for Test Automation Scripting
+  -   - [ ] Draft Automation Coding Standards
 - [ ] Determine Test Execution Environment
 - [ ] Define Test Data Management Process
 - [ ] Define Test Review Process
-### Define Process For Test Execution
+### Test Execution Documentation
+- [ ] Document Test Execution Processes
 - [ ] Define Test Execution By Test Suites Guidelines
 - [ ] Define Continuous Testing and CI/CD Strategy
 - [ ] Create Process For Bug and Issues Management
-### Establish Guidelines for Continuous Feedback
-### Define Process For Test Cycle Closure
-- [ ] Define Testing Definition of Done
-### Establish Guidelines For Testing Retrospective
-
-## Target Documentation
-### Process Documentation
-- [ ] Analyzing Requirements
-- [ ] Test Planning
-  - [ ] Define Test Cycle Plan
-  - [ ] Define Test Type Prioritization
-    - [ ] Functional Testing
-    - [ ] Integration Testing
-    - [ ] Negative Testing
-    - [ ] Non-Functional Testing
-  - [ ] Define Test Automation Prioritization
-    - [ ] Functional Testing
-    - [ ] Integration Testing
-    - [ ] Negative Testing
-  - [ ] Test Suites
-    - [ ] Test Type
-    - [ ] Test Nature
-    - [ ] Feature
-    - [ ] Module
-    - [ ] Development Status
-  - [ ] Test Estimation
-- [ ] Test Case Development
-  - [ ] Test Case Repository
-  - [ ] Test Automation Scripting Guidelines
-  - [ ] Test Automation Coding Standards
-  - [ ] Test Execution Environment
-  - [ ] Test Review Process
-- [ ] Test Execution
-  - [ ] Test Suites Execution Guidelines
-  - [ ] Continuous Testing and CI/CD Strategy
-  - [ ] Bug and Issues Management
-- [ ] Continuous Feedback Guidelines
+### Continuous Feedback Documentation
+- [ ] Formulate Continuous Feedback Guidelines For:
   - [ ] Exploratory Testing Guidelines
   - [ ] UAT Testing Guidelines
   - [ ] Feedback Loop
-- [ ] Test Cycle Closure
-- [ ] Testing Retrospective Guidelines
+### Test Cycle Closure Documentation
+- [ ] Define Testing Definition of Done
+- [ ] Define Entry Criteria Prior To Test Cycle Closure
+### Testing Retrospective Documentation
+- [ ] Establish Guidelines For Testing Retrospective
 
 ## Related Concepts
 ### Analyzing Requirements

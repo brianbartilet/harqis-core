@@ -3,14 +3,14 @@
 - Leverages the **OpenAI** API to generate content from given context and instructions.
 
 ## Overview
-| Script                               | Description   | Output |
-|--------------------------------------|---------------|--------|
-| generate_boilerplate_sample_docs.py  |               |        |
+| Script                               | Description                                                                                                                               | Output                                                                  |
+|--------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------|
+| generate_boilerplate_sample_docs.py  | From toggled checklist items in the markdowns, generate a more detailed view of information for principles and concepts using OpenAI GPT. | A generated markdown file that can perform as a starting documentation. |
 
 ## Details
 ### generate_boilerplate_sample_docs.py
 #### GPT Instructions
-- WIP
+- Work In Progress
 #### How To Use
-- WIP
+- Work In Progress
 
