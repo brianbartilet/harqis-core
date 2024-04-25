@@ -7,7 +7,7 @@ attrs==23.2.0
 backcall==0.2.0
 bcrypt==4.1.2
 beautifulsoup4==4.12.3
-behave==1.2.5
+behave==1.2.6
 billiard==4.2.0
 bleach==6.1.0
 cachetools==5.3.3

@@ -6,7 +6,7 @@
 ### Testing Tools Inventory Documentation
 - [ ] Formulate An Inventory of Testing Tools and Resources
 - [ ] Formulate Testing Landscape Covering Implementations From:
-  - Manual and Automated Coverage
+  - [ ] Manual and Automated Coverage
   - [ ] Frontend Testing
     - [ ] Web Browser Testing
     - [ ] Mobile Browser Testing

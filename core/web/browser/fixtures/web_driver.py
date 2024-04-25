@@ -74,7 +74,6 @@ class BaseFixtureWebDriver(Generic[TWebDriver]):
         self._instance = WebDriverClass.map[config.type](config, **kwargs)
         self._browser = BrowserTypeClass.map[config.browser](self._instance)
 
-        self.kwargs = kwargs
         self.properties = self.get_properties()
 
     @property

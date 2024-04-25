@@ -28,3 +28,5 @@ class IWebElement(ABC, Generic[TWebElement]):
         self.driver = driver
         self.element_template = element_template
         self.kwargs = kwargs
+
+

@@ -1,4 +1,4 @@
-from typing import Iterable, Union, Any
+from typing import Iterable, Union, Any, Callable, List, Tuple
 
 from core.web.browser.core.contracts.page import IPage
 from core.web.browser.core.contracts.browser import IBrowser
@@ -13,79 +13,6 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 
 TLocator = Union[str, By]
-
-
-def find_element(locator: TLocator, value: Any) -> Any:
-    """
-    A decorator that enhances a function to find a single web element using a specified locator and value.
-
-    Args:
-        locator (TLocator): The type of locator to use (e.g., By.ID, By.XPATH).
-        value (Any): The value associated with the locator.
-
-    Returns:
-        Any: A decorator that, when applied, enables the decorated function to locate and return a web element.
-    """
-
-    def decorator(func):
-        def wrapper(*args):
-            try:
-                return args[0].driver.find_element(locator, value)
-            except Exception as e:
-                raise Exception(f"Error {e} finding element with locator: {locator}={value}")
-
-        return wrapper
-
-    return decorator
-
-
-def find_elements(locator: TLocator, value: str) -> [Any]:
-    """
-    A decorator that enhances a function to find multiple web elements using a specified locator and value.
-
-    Args:
-        locator (TLocator): The type of locator to use (e.g., By.ID, By.XPATH).
-        value (str): The value associated with the locator.
-
-    Returns:
-        [Any]: A decorator that, when applied, enables the decorated function to locate and return multiple web elements.
-    """
-
-    def decorator(func):
-        def wrapper(*args) -> []:
-            try:
-                return args[0].driver.find_elements(locator, value)
-            except Exception as e:
-                raise Exception(f"Error {e} finding elements with locator: {locator}={value}")
-
-        return wrapper
-
-    return decorator
-
-
-def find_element_by_pattern(pattern: TWebElement, locator: TLocator, value: str) -> Any:
-    """
-    A decorator for finding elements based on a specific pattern and locator.
-
-    Args:
-        pattern (TWebElement): The pattern of the web element to match.
-        locator (TLocator): The type of locator to use (e.g., By.ID, By.XPATH).
-        value (str): The value associated with the locator.
-
-    Returns:
-        Any: A decorator that, when applied, enables the decorated function to locate and return a web element matching the pattern.
-    """
-
-    def decorator(func):
-        def wrapper(*args) -> []:
-            try:
-                return args[0].driver.find_element_by_pattern(pattern, locator, value)
-            except Exception as e:
-                raise Exception(f"Error {e} finding elements with locator: {locator}={value}")
-
-        return wrapper
-
-    return decorator
 
 
 class BaseFixturePageObject(IPage):
@@ -108,18 +35,21 @@ class BaseFixturePageObject(IPage):
                                 is created based on the class name.
                       - browser: An optional browser interface instance. If not provided, defaults to None.
                       - config: An optional configuration dictionary or object. If not provided, defaults to None.
-                      - app_data: An optional dictionary to hold application-specific data. If not provided, defaults to None.
+                      - app_data: An optional dictionary to hold application-specific data.
 
         Attributes:
             driver (TWebDriver): The web driver instance used for browser interactions.
             log (Logger): The logging instance used to log messages and errors.
-            _browser (IBrowser, optional): The browser interface instance, may be used to access browser-specific functionalities.
+            uri (str): The URI of the current page. Used for navigation and verification.
+            title (str): The title of the current page.
+            _browser (IBrowser, optional): The browser interface instance, to access browser-specific functionalities.
             _config (Any, optional): Configuration data that can be used throughout the instance for various settings.
-            _app_data (dict, optional): A dictionary for storing application-specific data that might be needed across different
-                                        parts of the application.
+            _app_data (dict, optional): A dictionary for storing application-specific data
         """
         self.driver = driver
         self.log = kwargs.get('logger', create_logger(self.__class__.__name__))
+        self.uri: str = None
+        self.title: str = None
 
         self._browser = kwargs.get("browser", None)
         self._config = kwargs.get("config", None)
@@ -139,7 +69,7 @@ class BaseFixturePageObject(IPage):
         Navigates to a specified URL or to a default URL if none provided.
 
         Args:
-            url (str, optional): The URL to navigate to. If not specified, navigates to the default URL from the configuration.
+            url (str, optional): The URL to navigate to. If not specified, navigates to the default URL from the config.
         """
         if url is not None:
             self.driver.get(url)

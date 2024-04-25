@@ -28,7 +28,7 @@
 ### Test Case Development Documentation
 - [ ] Determine Test Case Repository
 - [ ] Create Guidelines for Test Automation Scripting
-  -   - [ ] Draft Automation Coding Standards
+  - [ ] Draft Automation Coding Standards
 - [ ] Determine Test Execution Environment
 - [ ] Define Test Data Management Process
 - [ ] Define Test Review Process

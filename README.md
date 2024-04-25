@@ -67,7 +67,13 @@ To get started with **HARQIS-core**, follow these steps:
       git clone https://github.com/brianbartilet/harqis-core.git
       ```
    - Set up and activate the virtual environment
-      ```sh
+     *windows*
+     ```bash
+      python -m venv venv
+      venv/scripts/activate
+     ```
+     *linux*
+     ```sh
       python -m venv venv
       source venv/bin/activate
       ```
