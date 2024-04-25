@@ -5,6 +5,7 @@ from core.config.constants.environment import Environment
 from core.config.env_variables import ENV
 
 from core.web.browser.fixtures.web_driver import BaseFixtureWebDriver
+from core.web.browser.fixtures.base_page import BaseFixturePageObject
 from core.web.browser.core.config.web_driver import AppConfigWebDriver
 
 from selenium.webdriver.remote.webdriver import WebDriver
@@ -39,5 +40,14 @@ class TestWebDriverSelenium(unittest.TestCase):
         self.assertIsInstance(edge.driver, WebDriver)
         edge.driver.quit()
 
+    @unittest.skipIf(ENV != Environment.DEV.value, "Skipping tests for non-development environment.")
     def test_basic_webdriver_flow(self):
-        ...
+        chrome_driver = BaseFixtureWebDriver(self.config_chrome)
+        page = BaseFixturePageObject(**chrome_driver.properties)
+        page.navigate_to_page()
+
+        test_element = page.find_element('id', 'content')
+        self.assertIsNotNone(test_element)
+
+
+

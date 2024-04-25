@@ -4,6 +4,15 @@
 - This document outlines the core implementations to test various web services.
 - Please refer to docstrings in the code for more information.
 
+## Core Objects
+- **Client**: an interface to interact with the web services.
+- **Request**: an object to define a web service request.
+- **Response**: an object to define a web service response.
+- **Request Builder**: a chainable builder to construct a web service request.
+- **Fixture**: a reusable object to test in scale various web services.
+- **Service Manager**: a utility to facilitate web services.
+- **Configuration**: settings to define the behaviour of the web services.
+
 ## Modules
 ### core.web.services.core
 - `/core` - contains the core implementations to test various web services.

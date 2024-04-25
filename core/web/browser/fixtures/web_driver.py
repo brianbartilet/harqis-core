@@ -57,9 +57,9 @@ class BaseFixtureWebDriver(Generic[TWebDriver]):
     setup and provides a unified interface for interacting with the web driver and browser.
 
     Attributes:
-        config (AppConfigWebDriver): Configuration for the web driver.
-        instance (IWebDriver): The initialized web driver instance.
-        browser (IBrowser): The initialized browser instance.
+        _config (AppConfigWebDriver): Configuration for the web driver.
+        _instance (IWebDriver): The initialized web driver instance.
+        _browser (IBrowser): The initialized browser instance.
     """
 
     def __init__(self, config: AppConfigWebDriver, **kwargs):
@@ -75,6 +75,7 @@ class BaseFixtureWebDriver(Generic[TWebDriver]):
         self._browser = BrowserTypeClass.map[config.browser](self._instance)
 
         self.kwargs = kwargs
+        self.properties = self.get_properties()
 
     @property
     def loader(self) -> IWebDriver[TWebDriver]:
@@ -105,3 +106,25 @@ class BaseFixtureWebDriver(Generic[TWebDriver]):
             IBrowser[TBrowser]: The initialized browser instance.
         """
         return self._browser
+
+    @property
+    def config(self) -> AppConfigWebDriver:
+        """
+        Returns the configuration.
+
+        Returns:
+            Instance of target configuration.
+        """
+        return self._config
+
+    def get_properties(self) -> dict:
+        """
+        Returns the web driver fixture properties.
+        Returns:
+            Key value pairs of the web driver fixture properties.
+        """
+        props = {}
+        for prop_name in dir(self):
+            if isinstance(getattr(type(self), prop_name, None), property):
+                props[prop_name] = getattr(self, prop_name)
+        return props

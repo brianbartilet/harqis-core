@@ -21,10 +21,12 @@ example_tests_services_graphql:
 
 example_features_webdriver:
   type: selenium
-  browser: firefox
+  browser: chrome
   parameters:
     url: 'https://the-internet.herokuapp.com/'
     headless: True
   options:
-    - "--width=1920"
-    - "--height=1080"
+    - "start-maximized"
+    - "disable-extensions"
+    - "no-default-browser-check"
+    - "--window-size=1920,1020"

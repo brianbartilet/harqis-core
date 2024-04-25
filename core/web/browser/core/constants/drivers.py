@@ -13,3 +13,4 @@ class WebDriverNames(Enum):
     SELENIUM = "selenium"
     PLAYWRIGHT = "playwright"
     PUPPETEER = "puppeteer"
+    BEAUTIFULSOUP = "beautifulsoup"

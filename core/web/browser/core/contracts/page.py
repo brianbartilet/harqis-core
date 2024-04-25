@@ -1,26 +1,10 @@
 from abc import abstractmethod, ABC
-from typing import Optional, Dict, Any, Iterable
-
-from core.web.browser.core.contracts.driver import TDriver, IWebDriver
+from typing import Optional, Any, Iterable
 
 from core.web.browser.core.contracts.element import TWebElement
 
 
 class IPage(ABC):
-    """
-    Defines the interface for a generic page object model.
-
-    This interface encapsulates the behavior expected from a web page in a web automation
-    framework, including navigation, element interaction, and condition checks for page load.
-    """
-    def __init__(self, driver: TDriver, **kwargs):
-        self.driver = driver
-
-        self._browser = None
-        self._config = None
-        self._app_data = kwargs.get("app_data", None)
-
-        self.kwargs = kwargs
 
     @abstractmethod
     def did_page_load(self, *args) -> bool:
@@ -136,7 +120,7 @@ class IPage(ABC):
         ...
 
     @abstractmethod
-    def wait_page_to_load(self, *args) -> None:
+    def wait_page_to_load(self, *args) -> Any:
         """
         Waits for the page to load until certain conditions are met.
 
