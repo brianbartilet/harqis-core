@@ -1,4 +1,4 @@
 include LICENSE
 include README.md
-recursive-include core/demo *.yaml *.gql *.md *.bat *.sh *.mustache *.ini
+recursive-include core/demo *.yaml *.gql *.md *.bat *.sh *.mustache *.ini *.feature *.json
 recursive-include core/docs *.md *.bat *.sh
