@@ -1,6 +1,5 @@
 from behave import *
 
-from demo.testing.example_features_webdriver.references.pages.frames.frames import PageHerokuFrames
 from demo.testing.example_features_webdriver.references.pages.status_codes import BasePageHerokuStatusCode
 
 
@@ -12,11 +11,6 @@ def step_given_i_am_on_the_page(context, page_name):
         context (behave.runner.Context): The behave context.
         page_name (str): The name of the page to navigate to.
     """
-    def get_page_frames():
-        """
-        This function returns an instance of the PageHerokuFrames class.
-        """
-        return PageHerokuFrames(context.driver)
 
     def get_page_status_codes():
         """
@@ -25,7 +19,6 @@ def step_given_i_am_on_the_page(context, page_name):
         return BasePageHerokuStatusCode(context.driver)
 
     pages_map = {
-        'frames': get_page_frames,
         'status': get_page_status_codes
     }
 
