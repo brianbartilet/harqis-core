@@ -45,8 +45,8 @@
 |-------------------------------------------------|--------------------------------------------------------------|
 | :white_check_mark: **REST API**                 | fixture for testing REST APIs                                |
 | :white_check_mark: **GraphQL**                  | fixture for testing GraphQL APIs                             |
-| :arrow_forward: **Page Object Model**           | fixture for testing web applications using Page Object Model |
-| :arrow_forward: **Behave Hooks Management**     | fixture for managing behave hooks                            |
+| :white_check_mark: **Page Object Model**           | fixture for testing web applications using Page Object Model |
+| :white_check_mark: **Behave Hooks Management**     | fixture for managing behave hooks                            |
 | :white_check_mark: **Configuration Management** | fixture for managing configuration files                     |
 
 ### Non-Functional Testing
