@@ -4,7 +4,7 @@ import os
 from datetime import datetime
 
 from core.codegen.mustache.generators.rest import GENERATOR_PATH_REST
-from core.codegen.mustache.generators.rest.generate import TestGeneratorServiceRest
+from core.codegen.mustache.generators.rest.generate import ServiceTestGeneratorRest
 
 from core.apps.gpt.assistants.base import BaseAssistant
 from core.apps.gpt.models.assistants.message import MessageCreate
@@ -22,7 +22,7 @@ if __name__ == '__main__':
     #  endregion
 
     #  region Run Generated Code using Mustache
-    generator = TestGeneratorServiceRest(source=parser.parse_args().spec)
+    generator = ServiceTestGeneratorRest(source=parser.parse_args().spec)
     data = generator.load_source()
 
     generator.create_directories()

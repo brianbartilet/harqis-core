@@ -21,7 +21,7 @@ example_tests_services_graphql:
 
 example_features_webdriver:
   type: selenium
-  browser: chrome
+  browser: headless
   parameters:
     url: 'https://the-internet.herokuapp.com/'
     headless: True
@@ -30,3 +30,9 @@ example_features_webdriver:
     - "disable-extensions"
     - "no-default-browser-check"
     - "--window-size=1920,1020"
+    - "--no-sandbox"
+    - "--disable-gpu"
+    - "--disable-dev-shm-usage"
+    - "--disable-extensions"
+    - "--disable-infobars"
+    - "--remote-debugging-port=9222"

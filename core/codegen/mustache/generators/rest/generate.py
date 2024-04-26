@@ -22,7 +22,7 @@ from core.codegen.mustache.generators.rest.models.config_yaml import MustacheTem
 from core.codegen.mustache.generators.rest.models.test import MustacheTemplatePyTest
 
 
-class TestGeneratorServiceRest(IGenerator):
+class ServiceTestGeneratorRest(IGenerator):
 
     def __init__(self, source: str, base_path: str = os.getcwd()):
         super().__init__(source=source, base_path=base_path)
