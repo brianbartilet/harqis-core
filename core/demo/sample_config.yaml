@@ -20,8 +20,8 @@ example_tests_services_graphql:
     "verify": True
 
 example_features_webdriver:
-  type: selenium
-  browser: headless
+  type: headless
+  browser: chrome
   parameters:
     url: 'https://the-internet.herokuapp.com/'
     headless: True
