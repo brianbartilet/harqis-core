@@ -27,5 +27,8 @@ Create a project documentation structure that can be easily adapted to meet the 
 
 ## Scripts
 ### Overview
+- Ability to provide additional context and documentation from ticked checkbox items in the tasks and documentation from the categories above..
+- Utilizing OpenAI's GPT to generate markdown documentation and provide details to concepts and tasks.
 
 ### How To Use
+- This section is still work-in-progress and will be updated with detailed instructions on how to use the scripts.
