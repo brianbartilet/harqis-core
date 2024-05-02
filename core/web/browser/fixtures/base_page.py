@@ -1,10 +1,9 @@
-from typing import Iterable, Union, Any, Callable, List, Tuple
-
+from typing import Iterable, Union, Any, List
 from core.web.browser.core.contracts.page import IPage
 from core.web.browser.core.contracts.browser import IBrowser
 
 from core.web.browser.core.contracts.driver import TWebDriver
-from core.web.browser.core.contracts.element import TWebElement
+from core.web.browser.core.contracts.element import TWebElement, WebElement
 
 from core.utilities.logging.custom_logger import create_logger
 from core.utilities.asserts.helper import LoggedAssertHelper
@@ -48,8 +47,8 @@ class BaseFixturePageObject(IPage):
         """
         self.driver = driver
         self.log = kwargs.get('logger', create_logger(self.__class__.__name__))
-        self.uri: str = None
-        self.title: str = None
+        self.uri: str = ''
+        self.title: str = ''
 
         self._browser = kwargs.get("browser", None)
         self._config = kwargs.get("config", None)
