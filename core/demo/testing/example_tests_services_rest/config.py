@@ -13,12 +13,12 @@ Attributes:
                                 connection settings specific to the application determined by APP_NAME.
 """
 import os
-from core.config.loader import ConfigFileLoader
+from core.config.loader import ConfigLoaderService
 from core.web.services.core.config.webservice import AppConfigWSClient
 
 # Load configuration from a YAML file using the ConfigFileLoader class.
 # The 'file_name' parameter specifies the name of the YAML configuration file.
-load_config = ConfigFileLoader(file_name='sample_config.yaml').config
+load_config = ConfigLoaderService(file_name='sample_config.yaml').config
 
 # Determine the application name by extracting the base name of the directory
 # where the current script is located. This is used to segment the configuration

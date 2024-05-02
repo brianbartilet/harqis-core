@@ -1,5 +1,7 @@
 from abc import ABC, abstractmethod
-from typing import TypeVar, Any, Dict, Union, Generic
+from typing import TypeVar, Any, Dict, Union, Generic, Optional, Iterable
+
+from core.utilities.logging.custom_logger import create_logger
 
 # add other inherited interfaces here to extend the functionality
 from selenium.webdriver.remote.webdriver import WebDriver
@@ -16,9 +18,10 @@ class IWebDriver(ABC, Generic[TWebDriver]):
     """
 
     def __init__(self, config, **kwargs):
-        self.driver = None
         self.config = config
-        self.kwargs = kwargs
+        self.log = kwargs.get('logger', create_logger(self.__class__.__name__))
+
+    # region Abstract Methods For Driver Implementation
 
     @abstractmethod
     def get_driver_options(self) -> Any:
@@ -76,7 +79,7 @@ class IWebDriver(ABC, Generic[TWebDriver]):
         ...
 
     @abstractmethod
-    def start(self) -> Generic[TWebDriver]:
+    def start(self) -> Any:
         """
         starts the web driver session, initializing the web driver instance and opening a new window.
 
@@ -104,3 +107,80 @@ class IWebDriver(ABC, Generic[TWebDriver]):
         is no longer needed.
         """
         ...
+    # endregion
+
+    # region Abstract Methods For Driver Actions
+
+    @abstractmethod
+    def find_element(self, locator: str, value: Any) -> Optional[Any]:
+        """
+        Finds a single web element in the current page.
+
+        Args:
+            locator: locator type (e.g., by id, xpath).
+            value: value of the locator.
+
+        Returns:
+            An instance of the element if found, otherwise None.
+        """
+        ...
+
+    @abstractmethod
+    def find_elements(self, locator: str, value: Any) -> Optional[Iterable[Any]]:
+        """
+        Finds multiple web elements in the current page.
+
+        Args:
+            locator: locator type (e.g., by id, xpath).
+            value: value of the locator.
+
+        Returns:
+            A list of element instances if found, otherwise an empty list.
+        """
+        ...
+
+    @abstractmethod
+    def find_element_by_pattern(self, pattern, locator: str, value: Any) -> Any:
+        """
+        Finds a web element using a pattern in the current page.
+
+        Args:
+            pattern: The pattern to use for finding the element.
+            locator: The locator type (e.g., by id, xpath).
+            value: The value of the locator.
+
+        Returns:
+            The element instance if found, otherwise None.
+        """
+        ...
+
+    @abstractmethod
+    def wait_for_element_to_be_visible(self, *args):
+        """
+        Waits for the specified element to be visible on the page.
+        """
+        ...
+
+    @abstractmethod
+    def wait_page_to_load(self, timeout=30):
+        """
+        Waits for the page to load, with an optional timeout.
+
+        Args:
+            timeout: The maximum time to wait for the page to load, in seconds.
+        """
+        ...
+
+    @abstractmethod
+    def scroll_to_element(self, *args):
+        """Scrolls to the specified element using JavaScript.
+        """
+        ...
+
+    @abstractmethod
+    def high_light_element(self,  *args):
+        """Highlights the specified element using JavaScript.
+        """
+        ...
+
+    # endregion

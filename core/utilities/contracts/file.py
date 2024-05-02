@@ -23,7 +23,7 @@ class IFileLoader(ABC, Generic[TFile]):
         file_extension: The expected file extension. If provided, it will be appended to the file name if not already present.
     """
 
-    def __init__(self, file_name: str, base_path: str = None, **kwargs) -> None:
+    def __init__(self, base_path: str = None, **kwargs) -> None:
         """
         Initializes a new instance of the IFileLoader class.
 
@@ -35,12 +35,12 @@ class IFileLoader(ABC, Generic[TFile]):
 
         self.log = kwargs.get('logger', create_logger(self.__class__.__name__))
 
-        self.file_name = file_name
+        self.file_name = kwargs.get('file_name', 'apps_config.yaml')
         self.base_path = Path(os.getcwd() if base_path is None else base_path)
 
         self.file_extension = kwargs.get('file_extension', None)
         if self.file_extension:
-            if not file_name.endswith(self.file_extension):
+            if not self.file_name.endswith(self.file_extension):
                 self.file_name += self.file_extension
 
         self.full_path_to_file = self.find_file_from_base_path()

@@ -8,9 +8,7 @@ class WebDriverNames(Enum):
     Attributes:
         SELENIUM (str): Represents the Selenium WebDriver.
         PLAYWRIGHT (str): Represents the Playwright tool for browser automation.
-        PUPPETEER (str): Represents the Puppeteer library for controlling headless Chrome or Chromium.
     """
     SELENIUM = "selenium"
     PLAYWRIGHT = "playwright"
-    PUPPETEER = "puppeteer"
     BEAUTIFULSOUP = "beautifulsoup"

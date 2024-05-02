@@ -1,4 +1,4 @@
-from typing import Dict, Any, Generic
+from typing import Dict, Any
 
 from core.web.browser.core.contracts.driver import IWebDriver, TWebDriver
 
@@ -9,16 +9,19 @@ from webdriver_manager.microsoft import EdgeChromiumDriverManager
 from selenium.webdriver import ChromeOptions, FirefoxOptions, EdgeOptions
 from selenium.webdriver import Chrome, Firefox, Edge
 
+from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.chrome.service import Service as ServiceChrome
 from selenium.webdriver.firefox.service import Service as ServiceFirefox
 from selenium.webdriver.edge.service import Service as ServiceEdge
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as ec
 
 from core.web.browser.core.config.web_driver import AppConfigWebDriver
 from core.web.browser.core.constants.browsers import BrowserNames
 
 
-class SeleniumDriverMapping:
-    """Maps browser names to their WebDriver manager, options, and driver class.
+class _DriverTransformClass:
+    """A class transformer from configurations
 
     Attributes:
         map (Dict[str, Tuple[Any]]): A mapping from browser names to their WebDriver
@@ -43,7 +46,6 @@ class DriverSelenium(IWebDriver[TWebDriver]):
         **kwargs: Additional keyword arguments for driver customization.
 
     Attributes:
-        kwargs (Dict[str, Any]): Keyword arguments for driver customization.
         service (Any): The WebDriver manager for the browser.
         options (Any): Configured options for the WebDriver.
         driver (TDriver): The Selenium WebDriver instance.
@@ -52,15 +54,15 @@ class DriverSelenium(IWebDriver[TWebDriver]):
     def __init__(self, config: AppConfigWebDriver, **kwargs):
         """Initializes a new instance of the DriverSelenium class."""
         super().__init__(config, **kwargs)
-        self.kwargs = kwargs
-        self._kls_manager = SeleniumDriverMapping.map[self.config.browser][0]
-        self._kls_service = SeleniumDriverMapping.map[self.config.browser][1]
-        self._kls_options = SeleniumDriverMapping.map[self.config.browser][2]
-        self._kls_driver = SeleniumDriverMapping.map[self.config.browser][3]
+        # Retrieve the mapped classes for the specified browser configuration.
+        try:
+            driver_classes = _DriverTransformClass.map[self.config.browser]
+            self._driver_manager, self._driver_service, self._driver_options, self._driver_class = driver_classes
+        except KeyError:
+            raise ValueError(f"Unsupported browser type {self.config.browser}")
 
         self.service = self.get_driver_binary()
         self.options = self.get_driver_options()
-
         self.driver = self.start()
 
     def get_driver_options(self) -> Any:
@@ -69,7 +71,7 @@ class DriverSelenium(IWebDriver[TWebDriver]):
         Returns:
             Any: A configured options instance for the Selenium WebDriver.
         """
-        options = self._kls_options()
+        options = self._driver_options()
 
         if self.config.parameters['headless'] is True:
             options.add_argument("--headless")
@@ -86,18 +88,18 @@ class DriverSelenium(IWebDriver[TWebDriver]):
         Returns:
             Any: The path to the installed WebDriver binary.
         """
-        service = self._kls_service(self._kls_manager().install())
+        service = self._driver_service(self._driver_manager().install())
 
         return service
 
-    def start(self) -> Generic[TWebDriver]:
+    def start(self) -> Any:
         """Starts a new Selenium WebDriver session.
 
         Returns:
             Any: An instance of the Selenium WebDriver.
         """
 
-        return self._kls_driver(service=self.service, options=self.options)
+        return self._driver_class(service=self.service, options=self.options)
 
     def get_info(self) -> Dict[str, Any]:
         """Gets information about the current WebDriver session.
@@ -125,9 +127,121 @@ class DriverSelenium(IWebDriver[TWebDriver]):
 
     def close(self) -> None:
         """Closes the current window."""
-        raise NotImplementedError
+        self.driver.close()
 
     def quit(self) -> None:
         """Closes the browser and quits the WebDriver session."""
+        self.driver.quit()
+
+    def find_element(self, locator, value: Any) -> Any:
+        """
+        Finds a single web element using the specified locator and value.
+
+        Args:
+            locator (TLocator): The locator strategy, such as By.ID or By.XPATH.
+            value (Any): The value of the locator to search for.
+
+        Returns:
+            Any: The web element found using the specified locator and value.
+        """
+        return self.driver.find_element(locator, value)
+
+    def find_elements(self, locator, value: Any):
+        """
+        Finds multiple web elements using the specified locator and value.
+
+        Args:
+            locator (TLocator): The locator strategy, such as By.ID or By.XPATH.
+            value (Any): The value of the locator to search for multiple elements.
+
+        Returns:
+            Iterable[Any]: A list of web elements found using the specified locator and value.
+        """
+        return self.driver.find_elements(locator, value)
+
+    def find_element_by_pattern(self, pattern, locator, value: str) -> Any:
+        """
+        Method to be implemented in subclasses for finding an element by a specific pattern. Raises NotImplementedError.
+
+        Args:
+            pattern (TWebElement): The pattern to match against elements.
+            locator (TLocator): The locator strategy, such as By.ID or By.XPATH.
+            value (str): The value associated with the locator.
+
+        Returns:
+            Any: The element found matching the pattern.
+
+        Raises:
+            NotImplementedError: Indicates that the method needs to be implemented in subclasses.
+        """
         raise NotImplementedError
+
+    def wait_jquery_load(self, time_sec=30):
+        """
+        Waits for the jquery to complete loading.
+        Arguments:
+            time_sec (int): The maximum time to wait for jquery to load, in seconds.
+        """
+        # this is a fix for the error caused by waiting jquery stuff twice.
+        # instead of consecutive calls, which appears to mess the driver out
+        # we only use one call.
+        WebDriverWait(self.driver, time_sec).until(
+            lambda d: d.execute_script(
+                "return jQuery.active == 0 && $(':animated').length == 0")
+        )
+        self.log.debug("waiting for animations and for jquery complete")
+
+    def wait_page_to_load(self, timeout=30) -> None:
+        """
+        Waits for the page to load completely by checking the document's ready state.
+        Arguments:
+            timeout (int): The maximum time to wait for the page to load, in seconds.
+        """
+        def is_page_load_complete(driver):
+            """Check if the document's readystate is 'complete'."""
+            return self.driver.execute_script("return document.readyState") == "complete"
+        try:
+            # Wait for the document ready state to be complete.
+            WebDriverWait(self.driver, timeout).until(is_page_load_complete)
+            # Additional wait for a specific element that signifies the page is fully loaded can be added here.
+            # Example: Wait for an element that is known to appear last on the page.
+            # WebDriverWait(driver, timeout).until(EC.presence_of_element_located((By.ID, "myElement")))
+        except TimeoutError:
+            self.log.error("Timed out waiting for page to load")
+
+    def wait_for_element_to_be_visible(self, element, timeout=15, poll_frequency=0.3):
+        """
+        Waits for the specified element to be visible on the page.
+        Args:
+            element (Any): The element to wait for.
+            timeout (int): The maximum time to wait for the element to be visible.
+            poll_frequency (float): The frequency to poll for the element's visibility.
+        """
+        return WebDriverWait(self.driver, timeout, poll_frequency).until(
+            ec.visibility_of(element)) is not None
+
+    def scroll_to_element(self, element: WebElement):
+        """Scrolls to the specified element using JavaScript.
+
+        Args:
+            element (Any): The web element to scroll to.
+        """
+        self.driver.execute_script("arguments[0].scrollIntoView();", element)
+        self.wait_page_to_load()
+        self.log.debug(f"Scrolled to element {element}")
+
+    def high_light_element(self, element: WebElement):
+        """Highlights the specified element using JavaScript.
+
+        Args:
+            element (Any): The web element to highlight.
+        """
+        def apply_style(s):
+            self.driver.execute_script("arguments[0].setAttribute('style', arguments[1]);",
+                                       element, s)
+            self.log.warn("Potential issue with slow loading - executed script on previous screen.")
+
+        original_style = element.get_attribute('style')
+        apply_style("background: yellow; border: 2px solid red;")
+        apply_style(original_style)
 

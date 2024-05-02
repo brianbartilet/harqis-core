@@ -1,7 +1,7 @@
 from typing import TypeVar, Type, Any, Generic
 from enum import Enum
 
-from core.config.loader import ConfigFileLoader
+from core.config.loader import ConfigLoaderService
 from core.utilities.logging.custom_logger import create_logger
 
 TApp = TypeVar('TApp', bound=Enum)
@@ -29,7 +29,6 @@ class AppConfig(Generic[TCfg]):
 
     Attributes:
         log (Logger): A logger instance for logging error messages.
-        base_path (str): The base path where the configuration file is located.
         app_config (dict): The loaded configuration for the specified application.
         _config (ConfigClass): An instance of the configuration class initialized with the loaded configuration.
 
@@ -50,7 +49,7 @@ class AppConfig(Generic[TCfg]):
         self.kwargs = kwargs
 
         try:
-            self.app_config = ConfigFileLoader(**kwargs).config[app.value]
+            self.app_config = ConfigLoaderService(**kwargs).config[app.value]
             self._config = type_hook_config(**self.app_config)  # Instantiate ConfigClass
         except KeyError:
             self.log.error(f"Cannot find application key for {app}.")

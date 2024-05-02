@@ -1,32 +1,13 @@
-from abc import ABC
-from typing import Union, TypeVar, Generic
+from typing import *
+from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElement
+from selenium.webdriver.common.by import By as SeleniumBy
+from selenium.webdriver.common.keys import Keys as SeleniumKeys
+from selenium.common import exceptions as SeleniumExceptions
 
-from core.web.browser.core.contracts.driver import IWebDriver
+from playwright.async_api import ElementHandle as PlaywrightElementHandle, Locator as PlaywrightLocator, Keyboard as PlaywrightKeyboard, Error as PlaywrightError
 
-# add other inherited interfaces here to extend the functionality
-from selenium.webdriver.remote.webelement import WebElement
-
-T = TypeVar("T", bound=WebElement)
-TWebElement = Union[T,]
-
-
-class IWebElement(ABC, Generic[TWebElement]):
-    """
-    Defines an interface for interacting with web elements within a web page.
-    It encapsulates actions like clicking, setting text, and retrieving text.
-    """
-
-    def __init__(self, driver: IWebDriver, element_template=None, **kwargs):
-        """
-        Initializes the BaseElement with a driver and optional keyword arguments.
-
-        Parameters:
-            driver (IWebDriver): The web driver instance.
-            element_template (TElement): The element template to use for locating elements.
-            **kwargs: Additional keyword arguments for customization.
-        """
-        self.driver = driver
-        self.element_template = element_template
-        self.kwargs = kwargs
-
-
+# TypeVars are more useful for generic classes and functions
+TElement = Union[SeleniumWebElement, PlaywrightElementHandle]
+TLocator = Union[SeleniumBy, PlaywrightLocator]
+TKeyboard = Union[SeleniumKeys, PlaywrightKeyboard]
+TException = Union[SeleniumExceptions.WebDriverException, PlaywrightError]

@@ -10,13 +10,13 @@ from core.web.browser.core.config.web_driver import AppConfigWebDriver
 
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from core.config.loader import ConfigFileLoader
+from core.config.loader import ConfigLoaderService
 
 
 class TestWebDriverSelenium(unittest.TestCase):
     def setUp(self):
         base_path = os.path.dirname(os.path.abspath(__file__))
-        load_config = ConfigFileLoader(file_name='config.yaml', base_path=base_path).config
+        load_config = ConfigLoaderService(file_name='config.yaml', base_path=base_path).config
 
         self.config_chrome = AppConfigWebDriver(**load_config['driver_selenium_chrome'])
         self.config_firefox = AppConfigWebDriver(**load_config['driver_selenium_firefox'])
@@ -46,7 +46,7 @@ class TestWebDriverSelenium(unittest.TestCase):
         page = BaseFixturePageObject(**chrome_driver.properties)
         page.navigate_to_page()
 
-        test_element = page.find_element('id', 'content')
+        test_element = page.driver.find_element('id', 'content')
         self.assertIsNotNone(test_element)
 
 

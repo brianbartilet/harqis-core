@@ -77,6 +77,7 @@ parso==0.8.3
 pickleshare==0.7.5
 pipreqs==0.5.0
 platformdirs==4.2.0
+playwright==1.43.0
 pluggy==1.4.0
 pre-commit==3.6.2
 prometheus_client==0.20.0

@@ -1,4 +1,3 @@
-import os
 from typing import TypeVar, Type, Generic
 from enum import Enum
 
@@ -8,7 +7,7 @@ from core.config.types.yaml import ConfigFileYaml
 TConfig = TypeVar('TConfig')
 
 
-class ConfigFile(Enum):
+class ConfigSource(Enum):
     """
     Enum class for configuration file types.
     """
@@ -17,7 +16,7 @@ class ConfigFile(Enum):
     JSON = ConfigFileJson
 
 
-class ConfigFileLoader(Generic[TConfig]):
+class ConfigLoaderService(Generic[TConfig]):
     """
     Class to load a configuration from a target file with support for dynamic path detection.
 
@@ -27,19 +26,16 @@ class ConfigFileLoader(Generic[TConfig]):
     Methods:
         config: Loads the configuration using the specified loader.
     """
-    def __init__(self,
-                 file: ConfigFile = ConfigFile.YAML,
-                 file_name="apps_config.yaml",
-                 **kwargs):
+    def __init__(self, source: ConfigSource = ConfigSource.YAML, **kwargs):
         """
         Initializes the ConfigLoader.
 
         Args:
-            file (Type[IFileLoader]): The class of the file loader to use for loading the configuration.
+            source (Type[IFileLoader]): The class of the file loader to use for loading the configuration.
             file_name (str): The name of the configuration file to load.
             base_path (str): The base path to start searching for the configuration file.
         """
-        self._config = file.value(file_name=file_name, **kwargs)
+        self._config = source.value(**kwargs)
 
     @property
     def config(self) -> TConfig:
@@ -48,14 +44,7 @@ class ConfigFileLoader(Generic[TConfig]):
 
         Returns:
             The loaded configuration.
-
-        Raises:
-            FileNotFoundError: If the configuration file is not found in the base path or its parent directories.
         """
-        file_path = self._config.find_file_from_base_path()
-        if file_path is None:
-            raise FileNotFoundError(f"Configuration file {self._config.file_name} not found in "
-                                    f"{self._config.base_path} or its parent directories.")
 
         return self._config.load()
 

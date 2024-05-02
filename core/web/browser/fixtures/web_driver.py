@@ -7,7 +7,6 @@ from core.web.browser.core.config.web_driver import AppConfigWebDriver
 from core.web.browser.core.constants.drivers import WebDriverNames
 from core.web.browser.core.driver.selenium import DriverSelenium
 from core.web.browser.core.driver.playwright import DriverPlaywright
-from core.web.browser.core.driver.puppeteer import DriverPuppeteer
 
 from core.web.browser.core.constants.browsers import BrowserNames
 from core.web.browser.core.browser.chrome import BrowserChrome
@@ -17,23 +16,21 @@ from core.web.browser.core.browser.edge import BrowserEdge
 TFixture = TypeVar("TFixture")
 
 
-class WebDriverClass:
+class _WebDriverClass:
     """
     A class that provides a mapping between web driver names and their implementation classes.
 
     This facilitates the dynamic selection and initialization of web drivers based on
-    configuration or runtime choices, supporting different web automation tools like Selenium,
-    Playwright, and Puppeteer.
+    configuration or runtime choices, supporting different web automation tools like Selenium, bs4 and Playwright
     """
 
     map = {
         WebDriverNames.SELENIUM.value: DriverSelenium,
-        WebDriverNames.PUPPETEER.value: DriverPuppeteer,
         WebDriverNames.PLAYWRIGHT.value: DriverPlaywright,
     }
 
 
-class BrowserTypeClass:
+class _BrowserTypeClass:
     """
     A class that maps browser names to their corresponding browser classes.
 
@@ -71,20 +68,10 @@ class BaseFixtureWebDriver(Generic[TWebDriver]):
             **kwargs: Additional keyword arguments for driver initialization.
         """
         self._config = config
-        self._instance = WebDriverClass.map[config.type](config, **kwargs)
-        self._browser = BrowserTypeClass.map[config.browser](self._instance)
+        self._instance = _WebDriverClass.map[config.type](config, **kwargs)
+        self._browser = _BrowserTypeClass.map[config.browser](self._instance)
 
         self.properties = self.get_properties()
-
-    @property
-    def loader(self) -> IWebDriver[TWebDriver]:
-        """
-        Returns the web driver instance.
-
-        Returns:
-            IWebDriver[TWebDriver]: The initialized web driver instance.
-        """
-        return self._instance
 
     @property
     def driver(self) -> TWebDriver:

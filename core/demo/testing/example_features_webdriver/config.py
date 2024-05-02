@@ -1,5 +1,5 @@
 import os
-from core.config.loader import ConfigFileLoader
+from core.config.loader import ConfigLoaderService
 from core.web.browser.core.config.web_driver import AppConfigWebDriver
 
 """
@@ -12,7 +12,7 @@ configurations to a web driver instance.
 """
 
 # Load configurations from a specified YAML file.
-load_config = ConfigFileLoader(file_name='sample_config.yaml').config
+load_config = ConfigLoaderService(file_name='sample_config.yaml').config
 
 # Determine the application's name based on the directory name where this script is located.
 APP_NAME = os.path.basename(os.path.dirname(os.path.abspath(__file__)))

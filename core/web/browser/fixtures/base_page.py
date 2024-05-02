@@ -1,17 +1,17 @@
-from typing import Iterable, Union, Any, List
+from core.web.browser.core.contracts.element import *
+
 from core.web.browser.core.contracts.page import IPage
 from core.web.browser.core.contracts.browser import IBrowser
-
 from core.web.browser.core.contracts.driver import TWebDriver
-from core.web.browser.core.contracts.element import TWebElement, WebElement
+
 
 from core.utilities.logging.custom_logger import create_logger
 from core.utilities.asserts.helper import LoggedAssertHelper
 
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-
-TLocator = Union[str, By]
+By = TLocator
+WebDriverError = TException
+WebElement = TElement
+Keys = TKeyboard
 
 
 class BaseFixturePageObject(IPage):
@@ -75,49 +75,6 @@ class BaseFixturePageObject(IPage):
         else:
             self.driver.get(self._config.parameters['url'])
 
-    def find_element(self, locator: TLocator, value: Any) -> Any:
-        """
-        Finds a single web element using the specified locator and value.
-
-        Args:
-            locator (TLocator): The locator strategy, such as By.ID or By.XPATH.
-            value (Any): The value of the locator to search for.
-
-        Returns:
-            Any: The web element found using the specified locator and value.
-        """
-        return self.driver.find_element(locator, value)
-
-    def find_elements(self, locator: TLocator, value: Any) -> Iterable[Any]:
-        """
-        Finds multiple web elements using the specified locator and value.
-
-        Args:
-            locator (TLocator): The locator strategy, such as By.ID or By.XPATH.
-            value (Any): The value of the locator to search for multiple elements.
-
-        Returns:
-            Iterable[Any]: A list of web elements found using the specified locator and value.
-        """
-        return self.driver.find_elements(locator, value)
-
-    def find_element_by_pattern(self, pattern: TWebElement, locator: TLocator, value: str) -> Any:
-        """
-        Method to be implemented in subclasses for finding an element by a specific pattern. Raises NotImplementedError.
-
-        Args:
-            pattern (TWebElement): The pattern to match against elements.
-            locator (TLocator): The locator strategy, such as By.ID or By.XPATH.
-            value (str): The value associated with the locator.
-
-        Returns:
-            Any: The element found matching the pattern.
-
-        Raises:
-            NotImplementedError: Indicates that the method needs to be implemented in subclasses.
-        """
-        raise NotImplementedError
-
     def login(self, *args) -> None:
         """
         Method to be implemented in subclasses for handling login functionality.
@@ -146,19 +103,7 @@ class BaseFixturePageObject(IPage):
         Returns:
             bool: True if the page loads within the timeout, False otherwise.
         """
-        def is_page_load_complete(driver):
-            """Check if the document's readystate is 'complete'."""
-            return driver.execute_script("return document.readyState") == "complete"
-        try:
-            # Wait for the document ready state to be complete.
-            WebDriverWait(self.driver, timeout).until(is_page_load_complete)
-            # Additional wait for a specific element that signifies the page is fully loaded can be added here.
-            # Example: Wait for an element that is known to appear last on the page.
-            # WebDriverWait(driver, timeout).until(EC.presence_of_element_located((By.ID, "myElement")))
-            return True
-        except TimeoutError:
-            self.log.error("Timed out waiting for page to load")
-            return False
+        return self.driver.wait_page_to_load(timeout)
 
     def did_page_load(self, *args) -> bool:
         """

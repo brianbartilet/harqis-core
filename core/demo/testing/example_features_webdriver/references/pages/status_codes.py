@@ -1,5 +1,5 @@
 from demo.testing.example_features_webdriver.references.base_page import BasePageHeroku
-from core.web.browser.fixtures.base_page import WebElement, List
+from core.web.browser.fixtures.base_page import TElement, List
 
 from selenium.webdriver.common.by import By
 
@@ -18,7 +18,7 @@ class BasePageHerokuStatusCode(BasePageHeroku):
         self.uri = '/status_codes'
 
     @property
-    def status_code_links(self) -> List[WebElement]:
+    def status_code_links(self) -> List[TElement]:
         """
         Returns a list of web elements representing the links to different status codes on the page.
 
@@ -29,7 +29,7 @@ class BasePageHerokuStatusCode(BasePageHeroku):
         return elements
 
     @property
-    def status_code_success(self) -> WebElement:
+    def status_code_success(self) -> TElement:
         """
         Returns the WebElement corresponding to the '200' status code link.
 
@@ -38,7 +38,7 @@ class BasePageHerokuStatusCode(BasePageHeroku):
         """
         return self.driver.find_element(By.XPATH, '//a[text()="200"]')
 
-    def get_link_status(self, status_code) -> WebElement:
+    def get_link_status(self, status_code) -> TElement:
         """
         Retrieves the link WebElement for a given status code.
 
@@ -50,7 +50,7 @@ class BasePageHerokuStatusCode(BasePageHeroku):
         """
         return self.driver.find_element(By.XPATH, f'//a[text()="{status_code}"]')
 
-    def get_link_status_text(self, status_code) -> WebElement:
+    def get_link_status_text(self, status_code) -> TElement:
         """
         Retrieves the WebElement containing the description text for a given status code.
 
