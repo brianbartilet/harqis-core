@@ -5,9 +5,9 @@ ARG ENV="TEST"
 
 # set the base image for the container
 # use an official Python runtime as a parent image as interpreter
-FROM python:${PYTHON_VERSION}-alpine AS base
+FROM python:${PYTHON_VERSION}-slim AS base
 # add git to the image
-RUN apk update && apk add git
+RUN apt-get update && apt-get install -y git
 
 # set the working directory in the container
 WORKDIR /app/core
@@ -18,22 +18,29 @@ COPY core/. .
 # create a mount point for the volume
 VOLUME /app/data
 
-# install dependencies
-RUN apk add gcc python3-dev musl-dev linux-headers
+# Install dependencies
+RUN apt-get update && apt-get install -y \
+    gcc \
+    python3-dev \
+    linux-headers-generic \
+    wget \
+    gnupg \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
 
-# load virtual environment
+# Install Google Chrome
+RUN wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | gpg --dearmor -o /usr/share/keyrings/google-chrome-keyring.gpg \
+    && echo "deb [arch=amd64 signed-by=/usr/share/keyrings/google-chrome-keyring.gpg] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list \
+    && apt-get update \
+    && apt-get install -y google-chrome-stable \
+
+# l=Load virtual environment
 RUN python -m venv /app/venv
 ENV PATH="/app/venv/bin:$PATH"
 
-# install packages
+# Install Python packages
 RUN python -m pip install --upgrade pip
-RUN pip install --no-cache-dir -r requirements.txt
-
-# install Chromium for testing webdrivers
-# RUN apk update && apk add --no-cache chromium
-
-# Setting Chromium as the default browser for compatibility with tools expecting "google-chrome" or similar
-# RUN ln -s /usr/bin/chromium-browser /usr/bin/google-chrome
+RUN pip install -r requirements.txt
 
 # run the tests
 RUN sh /app/core/demo/scripts/set_env.sh
