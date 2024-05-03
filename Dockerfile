@@ -6,7 +6,6 @@ ARG ENV="TEST"
 # set the base image for the container
 # use an official Python runtime as a parent image as interpreter
 FROM python:${PYTHON_VERSION}-slim AS base
-# add git to the image
 RUN apt-get update && apt-get install -y git
 
 # set the working directory in the container
@@ -32,7 +31,7 @@ RUN apt-get update && apt-get install -y \
 RUN wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | gpg --dearmor -o /usr/share/keyrings/google-chrome-keyring.gpg \
     && echo "deb [arch=amd64 signed-by=/usr/share/keyrings/google-chrome-keyring.gpg] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list \
     && apt-get update \
-    && apt-get install -y google-chrome-stable \
+    && apt-get install -y google-chrome-stable
 
 # l=Load virtual environment
 RUN python -m venv /app/venv
