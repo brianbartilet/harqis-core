@@ -103,7 +103,8 @@ ENV_CURRENT_USER_PROFILE = os.environ.get("USERPROFILE", None)
 ENV_ENABLE_PROXY = os.environ.get("ENABLE_PROXY", False)
 
 # Path to the application configuration, default is the current working directory
-ENV_APP_CONFIG = os.environ.get("PATH_APP_CONFIG", "apps_config.yaml")
+ENV_APP_CONFIG = os.environ.get("PATH_APP_CONFIG", os.getcwd())
+ENV_APP_CONFIG_FILE = os.environ.get("APP_CONFIG_FILE", "apps_config_{0}.yaml".format(ENV).lower())
 
 # Root directory of the application, default is the root directory of the repository, unless specified
 ENV_ROOT_DIRECTORY = os.environ.get('ROOT_DIRECTORY', os.path.dirname(os.path.abspath(__file__)))

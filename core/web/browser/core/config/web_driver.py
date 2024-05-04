@@ -1,9 +1,11 @@
 from dataclasses import dataclass
 from typing import Optional, Dict, Any
 
+from core.config.app_config import BaseAppConfigModel
+
 
 @dataclass
-class AppConfigWebDriver:
+class AppConfigWebDriver(BaseAppConfigModel):
     """
     Base configuration object for a web driver
     """
@@ -17,4 +19,3 @@ class AppConfigWebDriver:
     # **IMPORTANT** The following attributes are optional and should be set to None if not used as some options
     # may not be available for all web drivers
     options: Optional[str] = None              # additional options to pass to the web driver
-    app_data: Optional[Dict[str, Any]] = None  # placeholder dictionary to contain other app information e.g. api keys

@@ -1,21 +1,37 @@
-from typing import Callable, TypeVar, Generic, MutableSequence, Iterable
+from typing import Callable, TypeVar, Generic, MutableSequence, Iterable, Union, Dict, Any
 
-T = TypeVar("T")
+T = TypeVar("T", bound=Union[Dict, Iterable])
 
 
 class QList(list, Generic[T], MutableSequence[T], Iterable[T]):
     """
     A class that mimics LINQ in C# providing a fluent way for list comprehension.
     This class extends the built-in list class and adds methods for querying and
-    manipulating lists in a more expressive and readable way.
+    manipulating lists in a more expressive and readable way. It has been enhanced
+    to handle dictionary-type data effectively.
     """
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def __contains__(self, item):
+        # This method is inherited from list, but redefining here for clarity
+        return super().__contains__(item)
+
+    def __iter__(self):
+        # This method is inherited from list, but redefining here for clarity
+        return super().__iter__()
+
     def __getitem__(self, item):
-        result = list.__getitem__(self, item)
+        # Utilize the built-in __getitem__ for normal index and slicing operations.
         try:
-            return result
+            return super(QList, self).__getitem__(item)
         except TypeError:
-            return result
+            return self
+
+    def __len__(self):
+        # Utilize the length method provided by the parent list class
+        return super().__len__()
 
     def any(self, condition: Callable[[T], bool] = lambda x: True) -> bool:
         """
@@ -173,14 +189,25 @@ class QList(list, Generic[T], MutableSequence[T], Iterable[T]):
         """
         return QList(item for sublist in map(selector, self) for item in sublist)
 
-    def distinct(self) -> "QList":
+    def distinct(self, key: Callable[[T], Any] = lambda x: x) -> "QList":
         """
-        Returns a new QList containing distinct elements from the original list.
+        Returns a new QList containing distinct elements from the original list, uniquely identified by a key function.
+
+        Args:
+            key (Callable): A function that extracts a comparison key from each element. This key is used to determine
+                            uniqueness among the elements. If not provided, the element itself is used as the key.
 
         Returns:
-            A new QList with distinct elements.
+            A new QList with distinct elements based on the provided key.
         """
-        return QList(set(self))
+        seen = set()
+        distinct_items = []
+        for item in self:
+            comparator = key(item)  # Extract the unique key from the item
+            if comparator not in seen:
+                seen.add(comparator)  # Mark this key as seen
+                distinct_items.append(item)  # Add the original item to the result list
+        return QList(distinct_items)
 
     def min(self, key: Callable[[T], T] = lambda x: x) -> T:
         """

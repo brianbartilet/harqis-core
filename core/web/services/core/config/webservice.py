@@ -1,9 +1,11 @@
 from dataclasses import dataclass
 from typing import Optional
 
+from core.config.app_config import BaseAppConfigModel
+
 
 @dataclass
-class AppConfigWSClient:
+class AppConfigWSClient(BaseAppConfigModel):
     """
     Base configuration object for web services
     """
@@ -19,4 +21,4 @@ class AppConfigWSClient:
 
     }
     headers: Optional[dict] = None   # default headers to initialize the requests *USE CAREFULLY FOR AUTHORIZATION*
-    app_data: Optional[dict] = None  # placeholder dictionary to contain other app context information e.g. api keys
+
