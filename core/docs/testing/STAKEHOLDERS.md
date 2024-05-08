@@ -66,12 +66,12 @@
   - [ ] Grid Analysis
   - [ ] Salience Model
   - [ ] Onion Model
-- Engaging Stakeholders
+- [ ] Engaging Stakeholders
   - [ ] Stakeholder Engagement Assessment Matrix
   - [ ] Stakeholder Engagement Plan
   - [ ] Stakeholder Engagement Matrix
   - [ ] Engagement Strategies
-- Ways of Working
+- [ ] Ways of Working
   - [ ] Acceptance Criteria
   - [ ] Exploratory Testing
   - [ ] Test Automation Coverage
