@@ -1,6 +1,8 @@
 driver_selenium_chrome:
   type: selenium
   browser: chrome
+  app_data: None
+  app_id: 'heroku'
   parameters:
     url: https://the-internet.herokuapp.com/
     headless: True
@@ -13,6 +15,8 @@ driver_selenium_chrome:
 driver_selenium_firefox:
   type: selenium
   browser: firefox
+  app_data: None
+  app_id: 'heroku'
   parameters:
     url: https://the-internet.herokuapp.com/
     headless: True
@@ -23,6 +27,8 @@ driver_selenium_firefox:
 driver_selenium_edge:
   type: selenium
   browser: edge
+  app_data: None
+  app_id: 'heroku'
   parameters:
     url: https://the-internet.herokuapp.com/
     headless: True

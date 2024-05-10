@@ -1,6 +1,6 @@
-from typing import TypeVar, Type, Any, Optional, Generic
+from typing import TypeVar, Type, Any, Optional, Generic, Dict
 from enum import Enum
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 # Importing configuration loader and custom logger services
 from core.config.loader import ConfigLoaderService
@@ -22,6 +22,8 @@ TAppConfig = TypeVar('TAppConfig', bound=Any)
 Type variable for application configuration objects, unrestricted in type to allow flexibility in configuration structure.
 """
 
+
+@dataclass
 class BaseAppConfigModel:
     """
     Base model for storing generic application configuration details.
@@ -32,8 +34,8 @@ class BaseAppConfigModel:
         app_id (Optional[str]): Unique identifier for the application instance.
         id (Optional[str]): Configuration identifier, potentially used for versioning or referencing configurations.
     """
-    parameters: Optional[dict] = None
-    app_data: Optional[dict] = None
+    parameters: Dict[str, Any] = field(default_factory=dict)
+    app_data: Dict[str, Any] = field(default_factory=dict)
     app_id: Optional[str] = None
     id: Optional[str] = None
 
@@ -145,6 +147,6 @@ class AppConfigManager:
         try:
             target = QList(self._current_app_configs).first_or_default(lambda x: config_id in x.keys())
             return loader_class(**target[config_id])
-        except TypeError:
-            raise TypeError(f"Verify configuration setup and properties with {config_id}")
+        except TypeError as e:
+            raise TypeError(f"Verify configuration setup and properties with {config_id}\nError: {e}")
 

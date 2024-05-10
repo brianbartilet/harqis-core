@@ -1,24 +1,27 @@
-from dataclasses import dataclass
-from typing import Optional
+from dataclasses import dataclass, field
+from typing import Optional, Dict
 
 from core.config.app_config import BaseAppConfigModel
-
 
 @dataclass
 class AppConfigWSClient(BaseAppConfigModel):
     """
-    Base configuration object for web services
+    Base configuration object for web services.
+
+    Attributes:
+        client (str): Specifies the type of service to be used (e.g., REST, cURL, gRPC, GraphQL).
+        parameters (Dict[str, Optional[any]]): Keyword arguments to pass to service, including
+            base_url, response_encoding, verify, timeout, stream, and logging.
+        headers (Optional[Dict[str, str]]): Default headers to initialize the requests. Use carefully,
+            especially for authorization.
     """
-    client: str                      # type of service to be used: rest, curl, grpc, graphql
-    parameters: {                    # keyword arguments to pass to required args: base_url
-        "base_url": str,
-        "response_encoding": Optional[str],
-        "verify": Optional[bool],
-        "timeout": Optional[int],
-        "stream": [bool],
-        "logging": Optional[str]
-
-
-    }
-    headers: Optional[dict] = None   # default headers to initialize the requests *USE CAREFULLY FOR AUTHORIZATION*
-
+    client: Optional[str] = None
+    parameters: Dict[str, Optional[any]] = field(default_factory=lambda: {
+        "base_url": None,
+        "response_encoding": None,
+        "verify": None,
+        "timeout": None,
+        "stream": False,
+        "logging": None
+    })
+    headers: Optional[Dict[str, str]] = None
