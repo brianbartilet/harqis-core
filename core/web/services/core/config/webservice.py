@@ -3,6 +3,7 @@ from typing import Optional, Dict
 
 from core.config.app_config import BaseAppConfigModel
 
+
 @dataclass
 class AppConfigWSClient(BaseAppConfigModel):
     """

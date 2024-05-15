@@ -4,7 +4,7 @@ The hooks are set to an instance of the HooksWebDriver class.
 """
 
 from core.testing.gherkin.behave.hooks_manager import *
-from demo.testing.example_features_webdriver.references.hooks.webdriver import HooksWebDriver
+from demo.testing.example_features_webdriver.references.hooks.web_driver import HooksWebDriver
 
 # BehaveHooksManager is a class that manages hooks for the behave testing framework.
 # Hooks are functions that run before or after certain events during the test execution.

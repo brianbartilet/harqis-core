@@ -1,7 +1,4 @@
-from demo.testing.example_features_webdriver.references.base_page import BasePageHeroku
-from core.web.browser.fixtures.base_page import TElement, List
-
-from selenium.webdriver.common.by import By
+from demo.testing.example_features_webdriver.references.base_page import BasePageHeroku, By
 
 
 class BasePageHerokuStatusCode(BasePageHeroku):
@@ -18,18 +15,18 @@ class BasePageHerokuStatusCode(BasePageHeroku):
         self.uri = '/status_codes'
 
     @property
-    def status_code_links(self) -> List[TElement]:
+    def links_status(self):
         """
         Returns a list of web elements representing the links to different status codes on the page.
 
         Returns:
-            List[WebElement]: A list of WebElement instances representing the status code links.
+            list[WebElement]: A list of WebElement instances representing the status code links.
         """
         elements = self.driver.find_elements(By.XPATH, '//a')
         return elements
 
     @property
-    def status_code_success(self) -> TElement:
+    def text_status_code_success(self):
         """
         Returns the WebElement corresponding to the '200' status code link.
 
@@ -38,7 +35,7 @@ class BasePageHerokuStatusCode(BasePageHeroku):
         """
         return self.driver.find_element(By.XPATH, '//a[text()="200"]')
 
-    def get_link_status(self, status_code) -> TElement:
+    def get_link_status(self, status_code):
         """
         Retrieves the link WebElement for a given status code.
 
@@ -50,7 +47,7 @@ class BasePageHerokuStatusCode(BasePageHeroku):
         """
         return self.driver.find_element(By.XPATH, f'//a[text()="{status_code}"]')
 
-    def get_link_status_text(self, status_code) -> TElement:
+    def get_link_status_text(self, status_code):
         """
         Retrieves the WebElement containing the description text for a given status code.
 
@@ -63,7 +60,7 @@ class BasePageHerokuStatusCode(BasePageHeroku):
         xpath = f'//p[contains(text(), "This page returned a {status_code} status code")]'
         return self.driver.find_element(By.XPATH, xpath)
 
-    def click_link_status(self, status_code) -> None:
+    def click_link_status(self, status_code):
         """
         Clicks on the link corresponding to a given status code.
 

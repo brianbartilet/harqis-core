@@ -45,7 +45,7 @@ class _BrowserTypeClass:
     }
 
 
-class BaseFixtureWebDriver(Generic[TWebDriver]):
+class BaseFixtureWebDriverLoader(Generic[TWebDriver]):
     """
     A base fixture class for web driver and browser initialization.
 
@@ -74,14 +74,14 @@ class BaseFixtureWebDriver(Generic[TWebDriver]):
         self.properties = self.get_properties()
 
     @property
-    def driver(self) -> TWebDriver:
+    def driver(self) -> IWebDriver[TWebDriver]:
         """
         Returns the driver of the web driver instance.
 
         Returns:
             TWebDriver: The driver attribute of the web driver instance.
         """
-        return self._instance.driver
+        return self._instance
 
     @property
     def browser(self) -> IBrowser[TBrowser]:
@@ -102,6 +102,16 @@ class BaseFixtureWebDriver(Generic[TWebDriver]):
             Instance of target configuration.
         """
         return self._config
+
+    @property
+    def app_data(self) -> dict:
+        """
+        Returns the configuration.
+
+        Returns:
+            Instance of target configuration.
+        """
+        return self._config.app_data
 
     def get_properties(self) -> dict:
         """

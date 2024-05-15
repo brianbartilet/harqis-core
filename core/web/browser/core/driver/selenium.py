@@ -1,4 +1,5 @@
 from typing import Dict, Any
+import time
 
 from core.web.browser.core.contracts.driver import IWebDriver, TWebDriver
 
@@ -46,9 +47,8 @@ class DriverSelenium(IWebDriver[TWebDriver]):
         **kwargs: Additional keyword arguments for driver customization.
 
     Attributes:
-        service (Any): The WebDriver manager for the browser.
-        options (Any): Configured options for the WebDriver.
-        driver (TDriver): The Selenium WebDriver instance.
+        _service (Any): The WebDriver manager for the browser.
+        _options (Any): Configured options for the WebDriver.
     """
 
     def __init__(self, config: AppConfigWebDriver, **kwargs):
@@ -61,9 +61,13 @@ class DriverSelenium(IWebDriver[TWebDriver]):
         except KeyError:
             raise ValueError(f"Unsupported browser type {self.config.browser}")
 
-        self.service = self.get_driver_binary()
-        self.options = self.get_driver_options()
-        self.driver = self.start()
+        self._service = self.get_driver_binary()
+        self._options = self.get_driver_options()
+
+        self._driver = self.start()
+
+    def get(self, url: str):
+        self._driver.get(url)
 
     def get_driver_options(self) -> Any:
         """Generates options for the Selenium WebDriver based on configuration.
@@ -92,14 +96,14 @@ class DriverSelenium(IWebDriver[TWebDriver]):
 
         return service
 
-    def start(self) -> Any:
+    def start(self) -> TWebDriver:
         """Starts a new Selenium WebDriver session.
 
         Returns:
             Any: An instance of the Selenium WebDriver.
         """
 
-        return self._driver_class(service=self.service, options=self.options)
+        return self._driver_class(service=self._service, options=self._options)
 
     def get_info(self) -> Dict[str, Any]:
         """Gets information about the current WebDriver session.
@@ -127,13 +131,13 @@ class DriverSelenium(IWebDriver[TWebDriver]):
 
     def close(self) -> None:
         """Closes the current window."""
-        self.driver.close()
+        self._driver.close()
 
     def quit(self) -> None:
         """Closes the browser and quits the WebDriver session."""
-        self.driver.quit()
+        self._driver.quit()
 
-    def find_element(self, locator, value: Any) -> Any:
+    def find_element(self, locator, value: Any) -> WebElement:
         """
         Finds a single web element using the specified locator and value.
 
@@ -144,9 +148,9 @@ class DriverSelenium(IWebDriver[TWebDriver]):
         Returns:
             Any: The web element found using the specified locator and value.
         """
-        return self.driver.find_element(locator, value)
+        return self._driver.find_element(locator, value)
 
-    def find_elements(self, locator, value: Any):
+    def find_elements(self, locator, value: Any) -> list[WebElement]:
         """
         Finds multiple web elements using the specified locator and value.
 
@@ -157,7 +161,7 @@ class DriverSelenium(IWebDriver[TWebDriver]):
         Returns:
             Iterable[Any]: A list of web elements found using the specified locator and value.
         """
-        return self.driver.find_elements(locator, value)
+        return self._driver.find_elements(locator, value)
 
     def find_element_by_pattern(self, pattern, locator, value: str) -> Any:
         """
@@ -176,33 +180,21 @@ class DriverSelenium(IWebDriver[TWebDriver]):
         """
         raise NotImplementedError
 
-    def wait_jquery_load(self, time_sec=30):
-        """
-        Waits for the jquery to complete loading.
-        Arguments:
-            time_sec (int): The maximum time to wait for jquery to load, in seconds.
-        """
-        # this is a fix for the error caused by waiting jquery stuff twice.
-        # instead of consecutive calls, which appears to mess the driver out
-        # we only use one call.
-        WebDriverWait(self.driver, time_sec).until(
-            lambda d: d.execute_script(
-                "return jQuery.active == 0 && $(':animated').length == 0")
-        )
-        self.log.debug("waiting for animations and for jquery complete")
-
-    def wait_page_to_load(self, timeout=30) -> None:
+    def wait_page_to_load(self, timeout=30, sleep=0.5) -> None:
         """
         Waits for the page to load completely by checking the document's ready state.
         Arguments:
             timeout (int): The maximum time to wait for the page to load, in seconds.
+            sleep (float): The time to sleep between checks for the document's ready state.
         """
+        time.sleep(sleep)
+
         def is_page_load_complete(driver):
             """Check if the document's readystate is 'complete'."""
-            return self.driver.execute_script("return document.readyState") == "complete"
+            return self._driver.execute_script("return document.readyState") == "complete"
         try:
             # Wait for the document ready state to be complete.
-            WebDriverWait(self.driver, timeout).until(is_page_load_complete)
+            WebDriverWait(self._driver, timeout).until(is_page_load_complete)
             # Additional wait for a specific element that signifies the page is fully loaded can be added here.
             # Example: Wait for an element that is known to appear last on the page.
             # WebDriverWait(driver, timeout).until(EC.presence_of_element_located((By.ID, "myElement")))
@@ -217,7 +209,7 @@ class DriverSelenium(IWebDriver[TWebDriver]):
             timeout (int): The maximum time to wait for the element to be visible.
             poll_frequency (float): The frequency to poll for the element's visibility.
         """
-        return WebDriverWait(self.driver, timeout, poll_frequency).until(
+        return WebDriverWait(self._driver, timeout, poll_frequency).until(
             ec.visibility_of(element)) is not None
 
     def scroll_to_element(self, element: WebElement):
@@ -226,7 +218,7 @@ class DriverSelenium(IWebDriver[TWebDriver]):
         Args:
             element (Any): The web element to scroll to.
         """
-        self.driver.execute_script("arguments[0].scrollIntoView();", element)
+        self._driver.execute_script("arguments[0].scrollIntoView();", element)
         self.wait_page_to_load()
         self.log.debug(f"Scrolled to element {element}")
 
@@ -237,11 +229,24 @@ class DriverSelenium(IWebDriver[TWebDriver]):
             element (Any): The web element to highlight.
         """
         def apply_style(s):
-            self.driver.execute_script("arguments[0].setAttribute('style', arguments[1]);",
-                                       element, s)
+            self._driver.execute_script("arguments[0].setAttribute('style', arguments[1]);", element, s)
             self.log.warn("Potential issue with slow loading - executed script on previous screen.")
 
         original_style = element.get_attribute('style')
         apply_style("background: yellow; border: 2px solid red;")
         apply_style(original_style)
 
+    def wait_jquery_load(self, time_sec=30):
+        """
+        Waits for the jquery to complete loading.
+        Arguments:
+            time_sec (int): The maximum time to wait for jquery to load, in seconds.
+        """
+        # this is a fix for the error caused by waiting jquery stuff twice.
+        # instead of consecutive calls, which appears to mess the driver out
+        # we only use one call.
+        WebDriverWait(self._driver, time_sec).until(
+            lambda d: d.execute_script(
+                "return jQuery.active == 0 && $(':animated').length == 0")
+        )
+        self.log.debug("waiting for animations and for jquery complete")

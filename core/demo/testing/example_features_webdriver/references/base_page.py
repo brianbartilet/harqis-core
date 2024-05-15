@@ -1,4 +1,4 @@
-from core.web.browser.fixtures.base_page import BaseFixturePageObject
+from core.web.browser.fixtures.base_page import *
 
 
 class BasePageHeroku(BaseFixturePageObject):

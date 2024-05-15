@@ -2,7 +2,7 @@ from core.web.browser.core.contracts.element import *
 
 from core.web.browser.core.contracts.page import IPage
 from core.web.browser.core.contracts.browser import IBrowser
-from core.web.browser.core.contracts.driver import TWebDriver
+from core.web.browser.core.contracts.driver import IWebDriver
 
 
 from core.utilities.logging.custom_logger import create_logger
@@ -23,12 +23,12 @@ class BaseFixturePageObject(IPage):
         driver (TWebDriver): The web driver interface to control the browser.
     """
 
-    def __init__(self, driver: TWebDriver, **kwargs):
+    def __init__(self, driver: IWebDriver, **kwargs):
         """
         Initialize an instance of the class with a web driver and optional configuration parameters.
 
         Args:
-            driver (TWebDriver): An instance of TWebDriver that facilitates interaction with the web browser.
+            driver (IWebDriver): An instance of IWebDriver that facilitates interaction with the web browser.
             **kwargs: Arbitrary keyword arguments that provide additional configuration. Supported keywords include:
                       - logger: An optional logger instance for logging activities. If not provided, a default logger
                                 is created based on the class name.
@@ -46,6 +46,7 @@ class BaseFixturePageObject(IPage):
             _app_data (dict, optional): A dictionary for storing application-specific data
         """
         self.driver = driver
+
         self.log = kwargs.get('logger', create_logger(self.__class__.__name__))
         self.uri: str = ''
         self.title: str = ''
@@ -61,7 +62,7 @@ class BaseFixturePageObject(IPage):
         Returns:
             str: The title of the page.
         """
-        return self.driver.title
+        return self.title
 
     def navigate_to_page(self, url=None) -> None:
         """
@@ -121,7 +122,7 @@ class BaseFixturePageObject(IPage):
         """
         Switches the context to the default content/frame of the web page.
         """
-        self.driver.switch_to.default_content()
+        raise NotImplementedError
 
     def switch_to_frame(self, frame_reference: str) -> None:
         """
@@ -130,7 +131,7 @@ class BaseFixturePageObject(IPage):
         Args:
             frame_reference (str): The reference to the frame to switch to, which could be an id, name, or WebElement.
         """
-        self.driver.switch_to.frame(frame_reference)
+        raise NotImplementedError
 
     @property
     def browser(self) -> IBrowser:

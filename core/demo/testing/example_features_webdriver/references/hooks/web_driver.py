@@ -1,6 +1,6 @@
 from core.testing.gherkin.behave.contracts.hooks import IBehaveHooks, log
 from demo.testing.example_features_webdriver.config import CONFIG
-from core.web.browser.fixtures.web_driver import BaseFixtureWebDriver
+from core.web.browser.fixtures.web_driver import BaseFixtureWebDriverLoader
 
 
 class HooksWebDriver(IBehaveHooks):
@@ -16,9 +16,8 @@ class HooksWebDriver(IBehaveHooks):
         It starts the WebDriver and stores it in the context for other steps to use.
         """
         log.info("Starting the browser..")
-        context.fixture = BaseFixtureWebDriver(CONFIG)
+        context.driver = BaseFixtureWebDriverLoader(CONFIG).driver
         context.base_url = CONFIG.parameters['url']
-        context.driver = context.fixture.driver
 
     @staticmethod
     def before_scenario(context, scenario):
@@ -30,10 +29,14 @@ class HooksWebDriver(IBehaveHooks):
 
     @staticmethod
     def after_scenario(context, scenario):
+        ...
+
+    @staticmethod
+    def after_all(context):
         """
-        This hook is called after each scenario is tested.
+        This hook is called after all tests were executed.
         It quits the WebDriver, effectively closing the browser.
         """
-        # context.driver.quit()
-        ...
+        context.driver.quit()
+
 

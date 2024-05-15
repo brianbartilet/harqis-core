@@ -99,22 +99,10 @@ class JsonObject(Generic[TJsonObject]):
             *args: Optional arguments that can be used to initialize the object.
             **kwargs: Optional keyword arguments that can be used to initialize the object.
         """
+        self.log = kwargs.get('logger', create_logger(self.__class__.__name__))
+
         if args is not None and len(args) > 0 and isinstance(args[-1], dict):
             vars(self).update(args[-1])
-
-        if kwargs.get('convert_kwargs'):
-            for arg in kwargs:
-                clean_chars = kwargs.get('clean_chars')
-                try:
-                    value = kwargs[arg]
-                    if clean_chars is not None and isinstance(value, str):
-                        for char in clean_chars:
-                            value = value.replace(char, '')
-                    kwargs[arg] = getattr(self, arg)(value)
-                except AttributeError:
-                    continue
-
-        self.__dict__.update(kwargs)
 
     def get_json(self) -> str:
         """Converts the object to a JSON string."""
@@ -124,6 +112,38 @@ class JsonObject(Generic[TJsonObject]):
         """Converts the object to a dictionary."""
         s = JsonUtility.serialize(self)
         return JsonUtility.deserialize(s, type_hook=OrderedDict)
+
+    def sanitize(self, remove_characters: [] = None):
+        """
+        Sanitizes the attributes of the instance based on the specified configurations.
+
+        This method iterates over each attribute stored in the instance, optionally
+        removing specified characters from string values. It then attempts to convert
+        each value to the original type of the attribute.
+
+        Instance attributes are updated with their sanitized and converted values.
+
+        Parameters:
+            remove_characters (list, optional): A list of characters to remove from
+            string values in the instance attributes. Defaults to None, which means
+            no characters are removed.
+
+        Raises:
+            AttributeError: If an error occurs when trying to convert a value to a type,
+            or if an attribute conversion fails.
+        """
+        for attr, value in vars(self).items():
+            original_type = None
+            try:
+                if remove_characters is not None and isinstance(value, str):
+                    for char in remove_characters:
+                        value = value.replace(char, '')
+                # Assuming that you want to keep the conversion to the original type
+                original_type = type(getattr(self, attr))
+                setattr(self, attr, original_type(value))
+            except AttributeError:
+                self.log.warn(f"Cannot convert '{value}' from type '{original_type}'")
+                continue
 
 
 class JsonUtility:

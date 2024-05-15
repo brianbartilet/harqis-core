@@ -4,7 +4,7 @@ import os
 from core.config.constants.environment import Environment
 from core.config.env_variables import ENV
 
-from core.web.browser.fixtures.web_driver import BaseFixtureWebDriver
+from core.web.browser.fixtures.web_driver import BaseFixtureWebDriverLoader
 from core.web.browser.fixtures.base_page import BaseFixturePageObject
 from core.web.browser.core.config.web_driver import AppConfigWebDriver
 
@@ -24,25 +24,25 @@ class TestWebDriverSelenium(unittest.TestCase):
 
     @unittest.skipIf(ENV != Environment.DEV.value, "Skipping tests for non-development environment.")
     def test_create_webdriver_chrome(self):
-        chrome = BaseFixtureWebDriver(self.config_chrome)
-        self.assertIsInstance(chrome.driver, WebDriver)
+        chrome = BaseFixtureWebDriverLoader(self.config_chrome)
+        self.assertIsInstance(chrome.driver._driver, WebDriver)
         chrome.driver.quit()
 
     @unittest.skipIf(ENV != Environment.DEV.value, "Skipping tests for non-development environment.")
     def test_create_webdriver_firefox(self):
-        firefox = BaseFixtureWebDriver(self.config_firefox)
-        self.assertIsInstance(firefox.driver, WebDriver)
+        firefox = BaseFixtureWebDriverLoader(self.config_firefox)
+        self.assertIsInstance(firefox.driver._driver, WebDriver)
         firefox.driver.quit()
 
     @unittest.skipIf(ENV != Environment.DEV.value, "Skipping tests for non-development environment.")
     def test_create_webdriver_edge(self):
-        edge = BaseFixtureWebDriver(self.config_edge)
-        self.assertIsInstance(edge.driver, WebDriver)
+        edge = BaseFixtureWebDriverLoader(self.config_edge)
+        self.assertIsInstance(edge.driver._driver, WebDriver)
         edge.driver.quit()
 
     @unittest.skipIf(ENV != Environment.DEV.value, "Skipping tests for non-development environment.")
     def test_basic_webdriver_flow(self):
-        chrome_driver = BaseFixtureWebDriver(self.config_chrome)
+        chrome_driver = BaseFixtureWebDriverLoader(self.config_chrome)
         page = BaseFixturePageObject(**chrome_driver.properties)
         page.navigate_to_page()
 

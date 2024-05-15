@@ -1,7 +1,9 @@
 from abc import ABC, abstractmethod
+from abc import ABC, abstractmethod
 from typing import TypeVar, Any, Dict, Union, Generic, Optional, Iterable
 
 from core.utilities.logging.custom_logger import create_logger
+from core.web.browser.core.contracts.element import TElement
 
 # add other inherited interfaces here to extend the functionality
 from selenium.webdriver.remote.webdriver import WebDriver
@@ -20,6 +22,7 @@ class IWebDriver(ABC, Generic[TWebDriver]):
     def __init__(self, config, **kwargs):
         self.config = config
         self.log = kwargs.get('logger', create_logger(self.__class__.__name__))
+        self._driver = None
 
     # region Abstract Methods For Driver Implementation
 
@@ -79,12 +82,19 @@ class IWebDriver(ABC, Generic[TWebDriver]):
         ...
 
     @abstractmethod
-    def start(self) -> Any:
+    def start(self) -> TWebDriver:
         """
         starts the web driver session, initializing the web driver instance and opening a new window.
 
         Returns:
             Any: The web driver instance that was started.
+        """
+        ...
+
+    @abstractmethod
+    def get(self, *args) -> None:
+        """
+        navigate to base url
         """
         ...
 
@@ -112,7 +122,7 @@ class IWebDriver(ABC, Generic[TWebDriver]):
     # region Abstract Methods For Driver Actions
 
     @abstractmethod
-    def find_element(self, locator: str, value: Any) -> Optional[Any]:
+    def find_element(self, locator: str, value: Any) -> TElement:
         """
         Finds a single web element in the current page.
 
@@ -126,7 +136,7 @@ class IWebDriver(ABC, Generic[TWebDriver]):
         ...
 
     @abstractmethod
-    def find_elements(self, locator: str, value: Any) -> Optional[Iterable[Any]]:
+    def find_elements(self, locator: str, value: Any) -> list[TElement]:
         """
         Finds multiple web elements in the current page.
 
@@ -155,30 +165,27 @@ class IWebDriver(ABC, Generic[TWebDriver]):
         ...
 
     @abstractmethod
-    def wait_for_element_to_be_visible(self, *args):
+    def wait_for_element_to_be_visible(self,  *args, **kwargs):
         """
         Waits for the specified element to be visible on the page.
         """
         ...
 
     @abstractmethod
-    def wait_page_to_load(self, timeout=30):
+    def wait_page_to_load(self, *args, **kwargs):
         """
         Waits for the page to load, with an optional timeout.
-
-        Args:
-            timeout: The maximum time to wait for the page to load, in seconds.
         """
         ...
 
     @abstractmethod
-    def scroll_to_element(self, *args):
+    def scroll_to_element(self,  *args, **kwargs):
         """Scrolls to the specified element using JavaScript.
         """
         ...
 
     @abstractmethod
-    def high_light_element(self,  *args):
+    def high_light_element(self,   *args, **kwargs):
         """Highlights the specified element using JavaScript.
         """
         ...
