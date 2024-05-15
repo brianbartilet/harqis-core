@@ -4,9 +4,6 @@ from enum import Enum
 from core.web.services.core.json import JsonObject
 from core.config.app_config import AppConfig
 
-from core.config.constants.environment import Environment
-from core.config.env_variables import ENV
-
 
 class MockedTypeObject(JsonObject):
     """
@@ -46,7 +43,7 @@ class TestAppConfig(unittest.TestCase):
         Test that AppConfig initializes correctly with valid input.
         """  # base_path defaults to /tests, file_name="apps_config.yaml"
         when_app_config = AppConfig(MockedAppNames.APPLICATION_CONFIG, MockedTypeObject, base_path=self.path)
-        self.assertEqual(when_app_config.config.name, 'Cool Application')
+        self.assertEqual(when_app_config.app_config['name'], 'Cool Application')
 
     def test_app_config_key_error(self):
         """

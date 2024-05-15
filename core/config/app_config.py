@@ -19,7 +19,8 @@ Type variable for configuration objects, unrestricted in type to allow flexibili
 
 TAppConfig = TypeVar('TAppConfig', bound=Any)
 """
-Type variable for application configuration objects, unrestricted in type to allow flexibility in configuration structure.
+Type variable for application configuration objects,
+unrestricted in type to allow flexibility in configuration structure.
 """
 
 

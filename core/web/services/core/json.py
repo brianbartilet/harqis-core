@@ -99,10 +99,10 @@ class JsonObject(Generic[TJsonObject]):
             *args: Optional arguments that can be used to initialize the object.
             **kwargs: Optional keyword arguments that can be used to initialize the object.
         """
-        self.log = kwargs.get('logger', create_logger(self.__class__.__name__))
-
         if args is not None and len(args) > 0 and isinstance(args[-1], dict):
             vars(self).update(args[-1])
+
+        self.__dict__.update(kwargs)
 
     def get_json(self) -> str:
         """Converts the object to a JSON string."""
@@ -142,7 +142,7 @@ class JsonObject(Generic[TJsonObject]):
                 original_type = type(getattr(self, attr))
                 setattr(self, attr, original_type(value))
             except AttributeError:
-                self.log.warn(f"Cannot convert '{value}' from type '{original_type}'")
+                print(f"Cannot convert '{value}' from type '{original_type}'")
                 continue
 
 
