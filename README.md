@@ -114,8 +114,8 @@ To get started with **HARQIS-core**, follow these steps:
 **Docker**:
 - Alternatively, you may test the package from the provided `Dockerfile`, by executing the following commands:
    ```sh
-   docker build . -t harqis-core
-   docker run harqis-core
+   docker build . -t harqis-core --target base
+   docker run -v app_volume:/app/data harqis-core
    ```
 - Enable dependencies from Docker compose
   ```sh
