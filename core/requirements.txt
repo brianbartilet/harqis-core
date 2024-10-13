@@ -132,7 +132,7 @@ validators==0.24.0
 vine==5.1.0
 virtualenv==20.25.1
 wcwidth==0.2.13
-webdriver-manager==4.0.1
+webdriver-manager==4.0.2
 webencodings==0.5.1
 wheel==0.43.0
 wsproto==1.2.0
