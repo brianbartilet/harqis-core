@@ -41,7 +41,6 @@ greenlet==3.0.3
 grpc_requests==0.1.16
 grpcio==1.62.1
 grpcio-reflection==1.62.1
-h11==0.16.0
 httpcore==1.0.4
 httpx==0.27.0
 humanize==4.9.0
