@@ -1,0 +1,47 @@
+version: '3.9'
+
+services:
+  rabbitmq:
+    image: rabbitmq:3.8-management
+    ports:
+      - "${HOST_PORT_RABBIT_MQ}:15672"
+
+  sprout-scheduler:
+    build: ./            # scheduler image built from repo root
+    volumes:
+      - ./workflows:/app
+    depends_on:
+      - rabbitmq
+    command: [ "python", "run_tests.py", "scheduler" ]
+
+  sprout-runner:
+    build: ./   # worker image built from ./workflows
+    volumes:
+      - ./workflows:/app
+    depends_on:
+      - rabbitmq
+    command: [ "python", "run_tests.py", "worker" ]
+
+  n8n:
+    image: docker.n8n.io/n8nio/n8n:latest
+    container_name: n8n
+    restart: unless-stopped
+    ports:
+      - "${HOST_PORT_N8N:-5678}:5678"
+    volumes:
+      - n8n_data:/home/node/.n8n
+    environment:
+      # Optional but useful:
+      - TZ=Asia/Singapore
+      # If you plan to access via a hostname or reverse proxy later:
+      # - N8N_HOST=localhost
+      # - N8N_PORT=5678
+      # Basic auth (uncomment to enable):
+      # - N8N_BASIC_AUTH_ACTIVE=true
+      # - N8N_BASIC_AUTH_USER=admin
+      # - N8N_BASIC_AUTH_PASSWORD=change-me
+      # Encryption key for creds (set your own in .env):
+      # - N8N_ENCRYPTION_KEY=${N8N_ENCRYPTION_KEY}
+
+volumes:
+  n8n_data:
