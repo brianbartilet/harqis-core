@@ -4,7 +4,7 @@ services:
   rabbitmq:
     image: rabbitmq:3.8-management
     ports:
-      - "${HOST_PORT_RABBIT_MQ}:15672"
+      - "${HOST_PORT_RABBIT_MQ:-5672}:5672"
 
   sprout-scheduler:
     build: ./            # scheduler image built from repo root
