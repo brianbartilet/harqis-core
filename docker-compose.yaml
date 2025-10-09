@@ -1,5 +1,3 @@
-version: '3.9'
-
 services:
   rabbitmq:
     image: rabbitmq:3.8-management
@@ -15,7 +13,7 @@ services:
     command: [ "python", "run_tests.py", "scheduler" ]
 
   sprout-runner:
-    build: ./   # worker image built from ./workflows
+    build: ./            # worker image built from ./workflows
     volumes:
       - ./workflows:/app
     depends_on:
@@ -29,19 +27,55 @@ services:
     ports:
       - "${HOST_PORT_N8N:-5678}:5678"
     volumes:
-      - n8n_data:/home/node/.n8n
+      - ../backups/n8n:/home/node/.n8n
     environment:
-      # Optional but useful:
       - TZ=Asia/Singapore
-      # If you plan to access via a hostname or reverse proxy later:
       # - N8N_HOST=localhost
       # - N8N_PORT=5678
-      # Basic auth (uncomment to enable):
       # - N8N_BASIC_AUTH_ACTIVE=true
       # - N8N_BASIC_AUTH_USER=admin
       # - N8N_BASIC_AUTH_PASSWORD=change-me
-      # Encryption key for creds (set your own in .env):
       # - N8N_ENCRYPTION_KEY=${N8N_ENCRYPTION_KEY}
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.15.2
+    container_name: elasticsearch
+    restart: unless-stopped
+    ports:
+      - "${HOST_PORT_ELASTICSEARCH_HTTP:-9200}:9200"
+      - "${HOST_PORT_ELASTICSEARCH_TRANSPORT:-9300}:9300"
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - ES_JAVA_OPTS=-Xms1g -Xmx1g
+      - path.repo=/usr/share/elasticsearch/snapshots
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - ../backups/es_data:/usr/share/elasticsearch/data
+      - ../backups/es_snapshots:/usr/share/elasticsearch/snapshots
+    healthcheck:
+      test: ["CMD-SHELL","curl -fsS http://localhost:9200/_cluster/health?wait_for_status=yellow&timeout=1s >/dev/null"]
+      interval: 20s
+      timeout: 5s
+      retries: 15
+      start_period: 40s
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.15.2
+    container_name: kibana
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    ports:
+      - "${HOST_PORT_KIBANA:-5601}:5601"
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - SERVER_PUBLICBASEURL=http://localhost:${HOST_PORT_KIBANA:-5601}
 
 volumes:
   n8n_data:
+  es_data:
+  es_snapshots_vol:
