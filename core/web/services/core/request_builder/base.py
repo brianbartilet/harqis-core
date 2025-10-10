@@ -42,6 +42,49 @@ class RequestBuilder(IWebRequestBuilder):
 
         self.kwargs = kwargs
 
+    def get(self):
+        """
+        Sets the HTTP method to GET.
+        """
+        return self.set_method(HttpMethod.GET)
+
+    def post(self):
+        """
+        Sets the HTTP method to POST.
+        """
+        return self.set_method(HttpMethod.POST)
+
+    def put(self):
+        """
+        Sets the HTTP method to PUT.
+        """
+        return self.set_method(HttpMethod.PUT)
+
+    def delete(self):
+        """
+        Sets the HTTP method to DELETE.
+        """
+        return self.set_method(HttpMethod.DELETE)
+
+    def patch(self):
+        """
+        Sets the HTTP method to PATCH.
+        """
+        return self.set_method(HttpMethod.PATCH)
+
+    def head(self):
+        """
+        Sets the HTTP method to HEAD.
+        """
+        return self.set_method(HttpMethod.HEAD)
+
+    def options(self):
+        """
+        Sets the HTTP method to OPTIONS.
+        """
+        return self.set_method(HttpMethod.OPTIONS)
+
+
     def set_method(self, method: HttpMethod) -> IWebRequestBuilder:
         """
         Sets the HTTP method for the request.
