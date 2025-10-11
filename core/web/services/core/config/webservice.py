@@ -15,6 +15,7 @@ class AppConfigWSClient(BaseAppConfigModel):
             base_url, response_encoding, verify, timeout, stream, and logging.
         headers (Optional[Dict[str, str]]): Default headers to initialize the requests. Use carefully,
             especially for authorization.
+        return_data_only (bool): If True, only the deserialized data is returned from service calls.
     """
     client: Optional[str] = None
     parameters: Dict[str, Optional[any]] = field(default_factory=lambda: {
@@ -26,3 +27,4 @@ class AppConfigWSClient(BaseAppConfigModel):
         "logging": None
     })
     headers: Optional[Dict[str, str]] = None
+    return_data_only: bool = True
