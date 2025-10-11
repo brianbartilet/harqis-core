@@ -132,3 +132,5 @@ def deserialized(type_hook: Type[TTypeHook], child: str = None, wait=None):
             return response_instance
 
         return wrapper
+
+    return decorator
