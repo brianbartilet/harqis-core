@@ -109,7 +109,7 @@ def deserialized(type_hook: Type[TTypeHook], child: str = None, wait=None):
             response_instance: IResponse = func(self, *args, **kwargs)
 
             # If user wants the deserialized payload only, produce it
-            if getattr(self, "_config", None) and getattr(self._config, "return_data_only", False):
+            if getattr(self, "config", None) and getattr(self.config, "return_data_only", False):
                 try:
                     data = response_instance.data  # already deserialized to Python via Response.data
                     # pick child if requested
