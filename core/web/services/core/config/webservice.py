@@ -27,4 +27,4 @@ class AppConfigWSClient(BaseAppConfigModel):
         "logging": None
     })
     headers: Optional[Dict[str, str]] = None
-    return_data_only: bool = True
+    return_data_only: bool = False
