@@ -1,12 +1,10 @@
 import functools
 import time
-
-from typing import Any, get_origin, get_args, List
-from typing import TypeVar, Type, Optional
+from typing import Any, get_origin, get_args, List, TypeVar, Type, Optional
 from dataclasses import is_dataclass
 
 from core.web.services.core.contracts.response import IResponse
-from core.web.services.core.json import  JsonObject
+from core.web.services.core.json import JsonObject
 from core.utilities.data.strings import convert_object_keys_to_snake
 from core.utilities.logging.custom_logger import create_logger
 
@@ -14,18 +12,25 @@ TResponse = TypeVar("TResponse")
 TTypeHook = TypeVar("TTypeHook")
 
 
-def deserialized(type_hook: Type[TTypeHook], child: str = None, wait=None):
+def deserialized(type_hook: Type[TTypeHook], child: str | None = None, wait: float | None = None, many: bool | None = None):
     """
-    Deserializes a response into the specified DTO type or list[DTO] when
-    self._config.return_data_only is True, Otherwise returns the response instance.
+    Deserialize a response into DTO(s) when return_data_only is True; otherwise return the raw response.
 
-    - type_hook can be:
-        * A DTO class (e.g., DtoAccountProperties) -> returns that DTO instance
-        * A typing list of DTOs (e.g., list[DtoAccountProperties]) -> returns list[DTO]
-        * dict -> returns a plain dict (with snake_case keys)
-    - child: optional key/attribute to select from response.data BEFORE conversion
-    - wait: optional sleep (seconds) before performing the call
+    Usage (auto-detect list vs single by the JSON at `child`):
+        @deserialized(DtoAccountProperties, child="accounts")
+        @deserialized(DtoAccountDetails,   child="account")
+
+    You can still pass typing list syntax if you like:
+        @deserialized(list[DtoAccountProperties], child="accounts")
+
+    Or force behavior:
+        @deserialized(DtoAccountProperties, child="accounts", many=True)
+
+    Notes:
+    - If type_hook is `dict`, a (snake-cased) dict/list is returned.
+    - DTO can be a dataclass, have `from_dict`, or accept `__init__(**kwargs)`.
     """
+
     def _is_list_type(tp: Any) -> bool:
         return get_origin(tp) in (list, List)
 
@@ -36,15 +41,11 @@ def deserialized(type_hook: Type[TTypeHook], child: str = None, wait=None):
         return args[0] if args else None
 
     def _to_dict(obj: Any) -> Any:
-        # Convert JsonObject -> dict; pass through dicts/lists; otherwise return as-is
-        if isinstance(obj, JsonObject):
-            return dict(obj)
-        return obj
+        return dict(obj) if isinstance(obj, JsonObject) else obj
 
     def _access_child(container: Any, key: Optional[str]) -> Any:
         if not key:
             return container
-        # Try attribute access first (for JsonObject / typed objects), then dict key
         if hasattr(container, key):
             return getattr(container, key)
         if isinstance(container, dict):
@@ -52,83 +53,71 @@ def deserialized(type_hook: Type[TTypeHook], child: str = None, wait=None):
         raise KeyError(f"Child '{key}' not found in response data.")
 
     def _construct_one(d: Any, cls: Type[Any]) -> Any:
-        """
-        Build a single DTO instance from dict-like data,
-        supporting dataclasses, .from_dict(), or **kwargs constructors.
-        """
         d = _to_dict(d)
         if isinstance(d, JsonObject):
             d = dict(d)
         if not isinstance(d, dict):
-            # If the API already returns a proper instance, just return it
             if isinstance(d, cls):
                 return d
             raise TypeError(f"Cannot construct {cls.__name__} from non-dict: {type(d)}")
-
         if is_dataclass(cls):
             return cls(**d)
         if hasattr(cls, "from_dict") and callable(getattr(cls, "from_dict")):
             return cls.from_dict(d)
         return cls(**d)
 
-    def _coerce_to_type(value: Any, hook: Type[Any]) -> Any:
-        """
-        Coerce `value` into `hook`, supporting:
-        - dict -> dict (snake_case keys)
-        - DTO class
-        - list[DTO]
-        """
-        # If the hook is dict-like request, just return snake-cased dict/list
+    def _coerce(value: Any, hook: Type[Any], *, force_many: bool | None) -> Any:
+        # dict passthrough (snake-cased)
         if hook is dict:
             return convert_object_keys_to_snake(_to_dict(value))
 
-        # list[DTO]?
-        if _is_list_type(hook):
-            elem_type = _list_item_type(hook)
-            if elem_type is None:
-                raise TypeError("List type_hook must specify an item type, e.g. list[MyDto]")
-            # Ensure we have a list to map over
-            seq = value
-            if isinstance(seq, JsonObject):
-                seq = list(seq)  # unlikely, but for safety
+        # Old style support: if user passed list[DTO], honor it
+        elem = _list_item_type(hook)
+        if elem is not None:
+            seq = value if not isinstance(value, JsonObject) else list(value)
             if not isinstance(seq, list):
                 raise TypeError(f"Expected list payload for {hook}, got {type(seq)}")
-            return [ _construct_one(item, elem_type) for item in seq ]
+            return [_construct_one(item, elem) for item in seq]
 
-        # Single DTO class
-        return _construct_one(value, hook)
+        # New style: hook is a DTO class; decide many/single
+        if force_many is True:
+            seq = value if not isinstance(value, JsonObject) else list(value)
+            if not isinstance(seq, list):
+                raise TypeError(f"Expected list payload for many=True, got {type(seq)}")
+            return [_construct_one(item, hook) for item in seq]
+
+        if force_many is False:
+            return _construct_one(value, hook)
+
+        # Auto-infer from runtime payload
+        payload = value if not isinstance(value, JsonObject) else list(value)
+        if isinstance(payload, list):
+            return [_construct_one(item, hook) for item in payload]
+        return _construct_one(payload, hook)
 
     def decorator(func):
         @functools.wraps(func)
         def wrapper(self, *args, **kwargs):
-            log = create_logger('JSON Deserialization decorator for response')
+            log = create_logger('JSON Deserialization decorator')
 
             if wait is not None:
                 time.sleep(wait)
 
             response_instance: IResponse = func(self, *args, **kwargs)
 
-            # If user wants the deserialized payload only, produce it
-            if getattr(self, "config", None) and getattr(self.config, "return_data_only", False):
+            # Accept either self.config.return_data_only or self._config.return_data_only
+            cfg = getattr(self, "config", None) or getattr(self, "_config", None)
+            if getattr(cfg, "return_data_only", False):
                 try:
-                    data = response_instance.data  # already deserialized to Python via Response.data
-                    # pick child if requested
+                    data = response_instance.data
                     data = _access_child(data, child)
-
-                    # Now coerce into the desired type (DTO or list[DTO] or dict)
-                    coerced = _coerce_to_type(data, type_hook)
-
-                    # Finally, snake-case keys if it’s dicts (deeply) to be consistent with your original intent
-                    if type_hook is dict:
-                        return convert_object_keys_to_snake(coerced)
-                    # If coerced is a list of dicts (rare if DTOs are dataclasses), you can optionally normalize here
-                    return coerced
-
+                    result = _coerce(data, type_hook, force_many=many)
+                    # Extra snake-casing only for dict hook (already handled in _coerce)
+                    return result
                 except Exception as e:
                     log.warning(f"Cannot deserialize into requested type. Returning full response. ERROR: {e}")
                     return response_instance
 
-            # Otherwise, return the response wrapper (raw mode)
             return response_instance
 
         return wrapper
