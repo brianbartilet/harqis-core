@@ -1,7 +1,11 @@
 # deserializer.py
 import functools
 import time
+import inspect
+
 from dataclasses import is_dataclass
+from dataclasses import fields as dc_fields
+
 from typing import (
     Any, Callable, Optional, Type, TypeVar, List, get_args, get_origin, overload, Literal, Union
 )
@@ -10,6 +14,7 @@ from core.web.services.core.contracts.response import IResponse
 from core.web.services.core.json import JsonObject
 from core.utilities.data.strings import convert_object_keys_to_snake
 from core.utilities.logging.custom_logger import create_logger
+
 
 T = TypeVar("T")  # DTO type
 R = TypeVar("R")  # raw response type
@@ -92,18 +97,41 @@ def deserialized(
         raise KeyError(f"Child '{key}' not found in response data.")
 
     def _construct_one(d: Any, cls: Type[Any]) -> Any:
+        # Normalize JsonObject → dict
         d = _to_dict(d)
         if isinstance(d, JsonObject):
             d = dict(d)
+
+        # If it's already the right instance, just return it
         if not isinstance(d, dict):
             if isinstance(d, cls):
                 return d
             raise TypeError(f"Cannot construct {cls.__name__} from non-dict: {type(d)}")
-        if is_dataclass(cls):
-            return cls(**d)
+
+        # 1) If DTO exposes from_dict, use it (lets the DTO own mapping/validation)
         if hasattr(cls, "from_dict") and callable(getattr(cls, "from_dict")):
             return cls.from_dict(d)
-        return cls(**d)
+
+        # 2) Dataclass: filter to declared field names
+        if is_dataclass(cls):
+            field_names = {f.name for f in dc_fields(cls)}
+            filtered = {k: v for k, v in d.items() if k in field_names}
+            return cls(**filtered)
+
+        # 3) Generic class: filter using __init__ signature
+        try:
+            sig = inspect.signature(cls)  # usually __init__ of the class
+            param_names = {
+                name for name, p in sig.parameters.items()
+                if name != "self" and p.kind in (p.POSITIONAL_OR_KEYWORD, p.KEYWORD_ONLY)
+            }
+            # If **kwargs is accepted, we can pass all
+            accepts_kwargs = any(p.kind == p.VAR_KEYWORD for p in sig.parameters.values())
+            filtered = d if accepts_kwargs else {k: v for k, v in d.items() if k in param_names}
+            return cls(**filtered)
+        except Exception:
+            # Last resort: try full dict (may still fail, but keeps prior behavior)
+            return cls(**d)
 
     def _coerce(value: Any, hook: Type[Any], *, force_many: Optional[bool]) -> Any:
         # dict passthrough (snake-cased)
