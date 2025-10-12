@@ -1,34 +1,51 @@
+# deserializer.py
 import functools
 import time
-from typing import Any, get_origin, get_args, List, TypeVar, Type, Optional
 from dataclasses import is_dataclass
+from typing import (
+    Any, Callable, Optional, Type, TypeVar, List, get_args, get_origin, overload
+)
 
 from core.web.services.core.contracts.response import IResponse
 from core.web.services.core.json import JsonObject
 from core.utilities.data.strings import convert_object_keys_to_snake
 from core.utilities.logging.custom_logger import create_logger
 
-TResponse = TypeVar("TResponse")
-TTypeHook = TypeVar("TTypeHook")
+T = TypeVar("T")  # DTO type
+R = TypeVar("R")  # raw response type
 
+# ---------- Overload stubs (for IDE/type checkers) ----------
+@overload
+def deserialized(
+    type_hook: Type[T],
+    child: str | None = ...,
+    wait: float | None = ...,
+    many: bool | None = ...,
+) -> Callable[[Callable[..., R]], Callable[..., T]]: ...
+@overload
+def deserialized(
+    type_hook: list[T],
+    child: str | None = ...,
+    wait: float | None = ...,
+    many: bool | None = ...,
+) -> Callable[[Callable[..., R]], Callable[..., list[T]]]: ...
+@overload
+def deserialized(
+    type_hook: Type[dict],
+    child: str | None = ...,
+    wait: float | None = ...,
+    many: bool | None = ...,
+) -> Callable[[Callable[..., R]], Callable[..., dict]]: ...
 
-def deserialized(type_hook: Type[TTypeHook], child: str | None = None, wait: float | None = None, many: bool | None = None):
+# ---------- Runtime implementation ----------
+def deserialized(
+    type_hook: Type[Any] | Any,
+    child: Optional[str] = None,
+    wait: Optional[float] = None,
+    many: Optional[bool] = None,
+) -> Callable[[Callable[..., R]], Callable[..., Any]]:
     """
     Deserialize a response into DTO(s) when return_data_only is True; otherwise return the raw response.
-
-    Usage (auto-detect list vs single by the JSON at `child`):
-        @deserialized(DtoAccountProperties, child="accounts")
-        @deserialized(DtoAccountDetails,   child="account")
-
-    You can still pass typing list syntax if you like:
-        @deserialized(list[DtoAccountProperties], child="accounts")
-
-    Or force behavior:
-        @deserialized(DtoAccountProperties, child="accounts", many=True)
-
-    Notes:
-    - If type_hook is `dict`, a (snake-cased) dict/list is returned.
-    - DTO can be a dataclass, have `from_dict`, or accept `__init__(**kwargs)`.
     """
 
     def _is_list_type(tp: Any) -> bool:
@@ -66,12 +83,12 @@ def deserialized(type_hook: Type[TTypeHook], child: str | None = None, wait: flo
             return cls.from_dict(d)
         return cls(**d)
 
-    def _coerce(value: Any, hook: Type[Any], *, force_many: bool | None) -> Any:
+    def _coerce(value: Any, hook: Type[Any], *, force_many: Optional[bool]) -> Any:
         # dict passthrough (snake-cased)
         if hook is dict:
             return convert_object_keys_to_snake(_to_dict(value))
 
-        # Old style support: if user passed list[DTO], honor it
+        # If user passed list[DTO], honor it
         elem = _list_item_type(hook)
         if elem is not None:
             seq = value if not isinstance(value, JsonObject) else list(value)
@@ -79,7 +96,7 @@ def deserialized(type_hook: Type[TTypeHook], child: str | None = None, wait: flo
                 raise TypeError(f"Expected list payload for {hook}, got {type(seq)}")
             return [_construct_one(item, elem) for item in seq]
 
-        # New style: hook is a DTO class; decide many/single
+        # Hook is DTO class; decide many/single
         if force_many is True:
             seq = value if not isinstance(value, JsonObject) else list(value)
             if not isinstance(seq, list):
@@ -95,10 +112,10 @@ def deserialized(type_hook: Type[TTypeHook], child: str | None = None, wait: flo
             return [_construct_one(item, hook) for item in payload]
         return _construct_one(payload, hook)
 
-    def decorator(func):
+    def decorator(func: Callable[..., R]) -> Callable[..., Any]:
         @functools.wraps(func)
-        def wrapper(self, *args, **kwargs):
-            log = create_logger('JSON Deserialization decorator')
+        def wrapper(self, *args, **kwargs) -> Any:
+            log = create_logger("JSON Deserialization decorator")
 
             if wait is not None:
                 time.sleep(wait)
@@ -111,11 +128,12 @@ def deserialized(type_hook: Type[TTypeHook], child: str | None = None, wait: flo
                 try:
                     data = response_instance.data
                     data = _access_child(data, child)
-                    result = _coerce(data, type_hook, force_many=many)
-                    # Extra snake-casing only for dict hook (already handled in _coerce)
-                    return result
+                    return _coerce(data, type_hook, force_many=many)
                 except Exception as e:
-                    log.warning(f"Cannot deserialize into requested type. Returning full response. ERROR: {e}")
+                    log.warning(
+                        "Cannot deserialize into requested type. "
+                        "Returning full response. ERROR: %s", e
+                    )
                     return response_instance
 
             return response_instance
