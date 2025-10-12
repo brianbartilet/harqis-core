@@ -3,7 +3,7 @@ import functools
 import time
 from dataclasses import is_dataclass
 from typing import (
-    Any, Callable, Optional, Type, TypeVar, List, get_args, get_origin, overload
+    Any, Callable, Optional, Type, TypeVar, List, get_args, get_origin, overload, Literal, Union
 )
 
 from core.web.services.core.contracts.response import IResponse
@@ -14,14 +14,34 @@ from core.utilities.logging.custom_logger import create_logger
 T = TypeVar("T")  # DTO type
 R = TypeVar("R")  # raw response type
 
-# ---------- Overload stubs (for IDE/type checkers) ----------
+# 1) Single DTO type, force list via many=True
 @overload
 def deserialized(
     type_hook: Type[T],
     child: str | None = ...,
     wait: float | None = ...,
-    many: bool | None = ...,
+    many: Literal[True] = ...,
+) -> Callable[[Callable[..., R]], Callable[..., list[T]]]: ...
+
+# 2) Single DTO type, force single via many=False
+@overload
+def deserialized(
+    type_hook: Type[T],
+    child: str | None = ...,
+    wait: float | None = ...,
+    many: Literal[False] = ...,
 ) -> Callable[[Callable[..., R]], Callable[..., T]]: ...
+
+# 3) Single DTO type, many unspecified -> could be T or list[T]
+@overload
+def deserialized(
+    type_hook: Type[T],
+    child: str | None = ...,
+    wait: float | None = ...,
+    many: None = ...,
+) -> Callable[[Callable[..., R]], Callable[..., Union[T, list[T]]]]: ...
+
+# 4) list[DTO] type explicitly -> list[T]
 @overload
 def deserialized(
     type_hook: list[T],
@@ -29,6 +49,8 @@ def deserialized(
     wait: float | None = ...,
     many: bool | None = ...,
 ) -> Callable[[Callable[..., R]], Callable[..., list[T]]]: ...
+
+# 5) dict case (returns dict; you could widen to Union[dict, list[dict]] if you want)
 @overload
 def deserialized(
     type_hook: Type[dict],
