@@ -17,6 +17,9 @@ dynamic = ["dependencies"]
 [tool.setuptools.dynamic]
 dependencies = { file = ["requirements.txt"] }
 
+[tool.setuptools.package-data]
+"core.web.services.core.decorators" = ["py.typed", "*.pyi"]
+
 [project.urls]
 Homepage = "https://github.com/brianbartilet/harqis-core"
 
