@@ -13,10 +13,11 @@ class AppNames(Enum):
     Attributes:
         API_GPT (str): ChatGPT integration.
         TASKS_CLIENT (str): Celery tasks client.
+        TASKS_CLIENT (str): Elastic integration.
     """
     API_GPT = 'HARQIS_GPT'
     TASKS_CLIENT = 'CELERY_TASKS'
-
+    ELASTIC_LOGGING = 'ELASTIC_LOGGING'
 
 class AppConfigLoader(AppConfig):
     """
@@ -28,12 +29,16 @@ class AppConfigLoader(AppConfig):
                     the values are the client classes.
     """
     map = {
-        AppNames.API_GPT.value: AppConfigWSClient
+        AppNames.API_GPT.value: AppConfigWSClient,
+        AppNames.ELASTIC_LOGGING.value: AppConfigWSClient
 
     }
 
     def __init__(self, name: AppNames):
-        super().__init__(name, self.map[name.value])
+        try:
+            super().__init__(name, self.map[name.value])
+        except KeyError:
+            raise ValueError(f"Unsupported app name: {name}. Add to the map if needed.")
 
 
 

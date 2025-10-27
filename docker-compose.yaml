@@ -1,24 +1,117 @@
 services:
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.15.2
+    container_name: elasticsearch
+    restart: unless-stopped
+    ports:
+      - "${HOST_PORT_ELASTICSEARCH_HTTP:-9200}:9200"
+      - "${HOST_PORT_ELASTICSEARCH_TRANSPORT:-9300}:9300"
+    env_file:
+      - apps.env
+    environment:
+      discovery.type: single-node
+      xpack.security.enabled: "true"
+      ES_JAVA_OPTS: "-Xms1g -Xmx1g"
+      path.repo: /usr/share/elasticsearch/snapshots
+    ulimits:
+      memlock: { soft: -1, hard: -1 }
+    volumes:
+      - ../backups/es_data:/usr/share/elasticsearch/data
+      - ../backups/es_snapshots:/usr/share/elasticsearch/snapshots
+    healthcheck:
+      test: ["CMD-SHELL","curl -fsS -u elastic:${ELASTIC_PASSWORD} http://localhost:9200/_cluster/health?wait_for_status=yellow&timeout=1s >/dev/null"]
+      interval: 15s
+      timeout: 5s
+      retries: 20
+      start_period: 30s
+
+  es-setup:
+    image: curlimages/curl:8.10.1
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    env_file:
+      - apps.env
+    entrypoint: ["/bin/sh","-c"]
+    command: |
+      set -Eeuo pipefail
+      sleep 20
+      echo "Waiting for Elasticsearch auth endpoint..."
+      for i in $(seq 1 90); do
+        if curl --fail -sS -u "elastic:${ELASTIC_PASSWORD}" http://elasticsearch:9200/_security/_authenticate >/dev/null; then
+          break
+        fi
+        echo "  not ready ($i)"; sleep 2
+      done
+
+      echo "Setting kibana_system password..."
+      curl --fail -sS -u "elastic:${ELASTIC_PASSWORD}" -X POST \
+        "http://elasticsearch:9200/_security/user/kibana_system/_password" \
+        -H "Content-Type: application/json" \
+        --data "{\"password\":\"${KIBANA_SYSTEM_PASSWORD}\"}"
+
+      echo "Creating/updating kbn_anon superuser..."
+      curl --fail -sS -u "elastic:${ELASTIC_PASSWORD}" -X PUT \
+        "http://elasticsearch:9200/_security/user/kbn_anon" \
+        -H "Content-Type: application/json" \
+        --data "{\"password\":\"${KIBANA_ANON_PASSWORD}\",\"roles\":[\"superuser\"],\"enabled\":true}"
+
+      echo "Verifying kibana_system can authenticate..."
+      curl --fail -sS -u "kibana_system:${KIBANA_SYSTEM_PASSWORD}" \
+        "http://elasticsearch:9200/_security/_authenticate" >/dev/null
+
+      echo "✅ es-setup complete."
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.15.2
+    container_name: kibana
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+      es-setup:
+        condition: service_completed_successfully
+    ports:
+      - "${HOST_PORT_KIBANA:-5601}:5601"
+    restart: unless-stopped
+    env_file:
+      - apps.env
+    environment:
+      SERVER_PUBLICBASEURL: "http://localhost:${HOST_PORT_KIBANA:-5601}"
+      SERVER_HOST: "0.0.0.0"
+      ELASTICSEARCH_HOSTS: '["http://elasticsearch:9200"]'
+      ELASTICSEARCH_USERNAME: "kibana_system"
+      ELASTICSEARCH_PASSWORD: "${KIBANA_SYSTEM_PASSWORD}"
+      XPACK_SECURITY_AUTHC_PROVIDERS: '["basic"]'
+      XPACK_SECURITY_AUTHC_ANONYMOUS_ENABLED: "false"
+      XPACK_ENCRYPTEDSAVEDOBJECTS_ENCRYPTIONKEY: "abc45678901234567890123456789012"
+      XPACK_SECURITY_ENCRYPTIONKEY: "abcdef0123456789abcdef0123456789"
+      XPACK_REPORTING_ENCRYPTIONKEY: "fedcba9876543210fedcba9876543210"
+
   rabbitmq:
     image: rabbitmq:3.8-management
     ports:
       - "${HOST_PORT_RABBIT_MQ:-5672}:5672"
 
   sprout-scheduler:
-    build: ./            # scheduler image built from repo root
+    build: ./
     volumes:
       - ./workflows:/app
     depends_on:
       - rabbitmq
-    command: [ "python", "run_tests.py", "scheduler" ]
+    environment:
+      CELERY_BROKER: amqp://guest:guest@rabbitmq:5672//
+    command: ["python", "run_tests.py", "scheduler"]
 
   sprout-runner:
-    build: ./            # worker image built from ./workflows
+    build: ./
     volumes:
       - ./workflows:/app
     depends_on:
       - rabbitmq
-    command: [ "python", "run_tests.py", "worker" ]
+    environment:
+      CELERY_BROKER: amqp://guest:guest@rabbitmq:5672//
+    command: ["python", "run_tests.py", "worker"]
 
   n8n:
     image: docker.n8n.io/n8nio/n8n:latest
@@ -29,53 +122,9 @@ services:
     volumes:
       - ../backups/n8n:/home/node/.n8n
     environment:
-      - TZ=Asia/Singapore
-      # - N8N_HOST=localhost
-      # - N8N_PORT=5678
-      # - N8N_BASIC_AUTH_ACTIVE=true
-      # - N8N_BASIC_AUTH_USER=admin
-      # - N8N_BASIC_AUTH_PASSWORD=change-me
-      # - N8N_ENCRYPTION_KEY=${N8N_ENCRYPTION_KEY}
-
-  elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.15.2
-    container_name: elasticsearch
-    restart: unless-stopped
-    ports:
-      - "${HOST_PORT_ELASTICSEARCH_HTTP:-9200}:9200"
-      - "${HOST_PORT_ELASTICSEARCH_TRANSPORT:-9300}:9300"
-    environment:
-      - discovery.type=single-node
-      - xpack.security.enabled=false
-      - ES_JAVA_OPTS=-Xms1g -Xmx1g
-      - path.repo=/usr/share/elasticsearch/snapshots
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-    volumes:
-      - ../backups/es_data:/usr/share/elasticsearch/data
-      - ../backups/es_snapshots:/usr/share/elasticsearch/snapshots
-    healthcheck:
-      test: ["CMD-SHELL","curl -fsS http://localhost:9200/_cluster/health?wait_for_status=yellow&timeout=1s >/dev/null"]
-      interval: 20s
-      timeout: 5s
-      retries: 15
-      start_period: 40s
-
-  kibana:
-    image: docker.elastic.co/kibana/kibana:8.15.2
-    container_name: kibana
-    depends_on:
-      elasticsearch:
-        condition: service_healthy
-    ports:
-      - "${HOST_PORT_KIBANA:-5601}:5601"
-    environment:
-      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
-      - SERVER_PUBLICBASEURL=http://localhost:${HOST_PORT_KIBANA:-5601}
+      TZ: Asia/Singapore
 
 volumes:
-  n8n_data:
   es_data:
-  es_snapshots_vol:
+  es_snapshots:
+  n8n_data:
