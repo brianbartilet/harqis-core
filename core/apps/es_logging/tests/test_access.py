@@ -18,7 +18,7 @@ index_name = '{0}'.format("harqis-testing").lower()
 
 class TestsElastic(TestCase):
 
-    @pytest.mark.skip(reason="just for manual testing")
+    #@pytest.mark.skip(reason="just for manual testing")
     def test_data(self):
         test_id = '{0}'.format(uuid4())
         json_dump = TestData(borg="help", blur="test", mulch="orly")

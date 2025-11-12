@@ -23,8 +23,8 @@ ELASTIC_LOGGING:
     url: http://localhost:9200
   app_data:
     update_interval: "DAILY"
-    #xpack.security.enabled=true enable this if security is enabled on ES
     api_key: ${ELASTIC_API_KEY}
-    username: ${ELASTIC_USERNAME}
+    username: ${ELASTIC_USER}
     password: ${ELASTIC_PASSWORD}
     use_basic_auth: False
+    auth_type: basic

@@ -147,10 +147,18 @@ def deserialized(
             return [_construct_one(item, elem) for item in seq]
 
         # Hook is DTO class; decide many/single
-        if force_many is True:
-            seq = value if not isinstance(value, JsonObject) else list(value)
+        if force_many:
+            seq = value
+            if isinstance(seq, JsonObject):
+                seq = _to_dict(seq)
+
+            # If we got the common wrapper {"message": "...", "data": [...]}, unwrap it
+            if isinstance(seq, dict) and "data" in seq and isinstance(seq["data"], list):
+                seq = seq["data"]
+
             if not isinstance(seq, list):
                 raise TypeError(f"Expected list payload for many=True, got {type(seq)}")
+
             return [_construct_one(item, hook) for item in seq]
 
         if force_many is False:
