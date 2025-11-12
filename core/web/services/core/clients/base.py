@@ -82,27 +82,33 @@ class BaseWebClient(IWebClient, ABC):
         """
         self.proxies = proxies
 
-    def execute_request(self, r: IWebServiceRequest, response_hook: Type[TResponseData] = dict, **kwargs) \
-            -> IResponse[TResponseData]:
+    def execute_request(
+            self,
+            r: IWebServiceRequest,
+            response_hook: Type[TResponseData] = dict,
+            **kwargs
+    ) -> IResponse[TResponseData]:
         """
         Executes a web service request and returns the response.
 
-        Args:
-            r: The web service request to be executed.
-            response_hook: The type to deserialize the response data into.
-            **kwargs: Additional keyword arguments to be passed to the request method.
-
-        Return:
-            An instance of IResponse containing the response data.
+        Kwargs:
+            base_uri: Optional[List[str] | Tuple[str, ...]] of segments to restore after the call,
+                      e.g. ["product"]. If provided, the URI path is reset to this base in finally.
+            reset_uri: Optional[bool] (default: True). If True, clear/restore URI after the call.
         """
         session = self.session or requests
+        base_uri = kwargs.pop("base_uri", None)  # e.g. ("product",) or ["product"]
+        reset_uri = kwargs.pop("reset_uri", True)  # opt-out if needed
+
         raw_url = self.__get_raw_url__(r.get_full_url(), strip_right=r.get_url_strip_right())
 
         try:
-            self.log.debug(f"\nREQUEST:\n"
-                           f"\tmethod: {r.get_request_method().value.upper()}\n"
-                           f"\turl: {raw_url}\n"
-                           f"\tbody: {r.get_body()}\n")
+            self.log.debug(
+                "\nREQUEST:\n"
+                f"\tmethod: {r.get_request_method().value.upper()}\n"
+                f"\turl: {raw_url}\n"
+                f"\tbody: {r.get_body()}\n"
+            )
 
             self.response = session.request(
                 r.get_request_method().value,
@@ -117,9 +123,28 @@ class BaseWebClient(IWebClient, ABC):
                 **r.get_body(),
                 **kwargs
             )
+
         except Exception as e:
             self.log.error("Error sending %s request: %s", r.get_request_method().value, e)
-            raise e
+            raise
+        finally:
+            # --- IMPORTANT: reset the shared builder's URI so segments don't leak across calls ---
+            if reset_uri:
+                try:
+                    # Prefer a dedicated reset method if your builder provides one
+                    if hasattr(r, "reset_uri_to_base") and callable(getattr(r, "reset_uri_to_base")):
+                        r.reset_uri_to_base()
+                    else:
+                        # Fallback: clear and optionally re-apply provided base segments
+                        if hasattr(r, "clear_uri_parameters"):
+                            r.clear_uri_parameters()
+                        if base_uri and hasattr(r, "add_uri_parameter"):
+                            for seg in base_uri:
+                                r.add_uri_parameter(seg)
+                except Exception as re:
+                    self.log.debug("Failed to reset URI on request builder: %s", re)
+
+            raw_url = None  # avoid accidental reuse in logs
 
         return self.get_response(self.response, response_hook)
 
