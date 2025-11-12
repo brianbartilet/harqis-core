@@ -397,7 +397,7 @@ class RequestBuilder(IWebRequestBuilder):
 
         # CRUCIAL: restore path to base (so next call starts clean at /product)
         if self._base_segments:
-            self.reset_uri_to_base()
+            self._reset_uri_to_base()
         else:
             # if no base set, leave URI params as-is or clear them (choose behavior)
             # safer default: clear so callers must always add segments explicitly
