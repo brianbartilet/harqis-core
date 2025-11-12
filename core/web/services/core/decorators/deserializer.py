@@ -88,13 +88,18 @@ def deserialized(
         return dict(obj) if isinstance(obj, JsonObject) else obj
 
     def _access_child(container: Any, key: Optional[str]) -> Any:
+        """Support nested child paths like 'data.data.data'."""
         if not key:
             return container
-        if hasattr(container, key):
-            return getattr(container, key)
-        if isinstance(container, dict):
-            return container[key]
-        raise KeyError(f"Child '{key}' not found in response data.")
+
+        for part in key.split('.'):
+            if isinstance(container, dict):
+                container = container.get(part)
+            elif hasattr(container, part):
+                container = getattr(container, part)
+            else:
+                raise KeyError(f"Child path '{key}' not found in response data.")
+        return container
 
     def _construct_one(d: Any, cls: Type[Any]) -> Any:
         # Normalize JsonObject → dict
