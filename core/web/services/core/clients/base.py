@@ -86,17 +86,23 @@ class BaseWebClient(IWebClient, ABC):
             -> IResponse[TResponseData]:
         """
         Executes a web service request and returns the response.
+
+        Args:
+            r: The web service request to be executed.
+            response_hook: The type to deserialize the response data into.
+            **kwargs: Additional keyword arguments to be passed to the request method.
+
+        Return:
+            An instance of IResponse containing the response data.
         """
         session = self.session or requests
         raw_url = self.__get_raw_url__(r.get_full_url(), strip_right=r.get_url_strip_right())
 
         try:
-            self.log.debug(
-                f"\nREQUEST:\n"
-                f"\tmethod: {r.get_request_method().value.upper()}\n"
-                f"\turl: {raw_url}\n"
-                f"\tbody: {r.get_body()}\n"
-            )
+            self.log.debug(f"\nREQUEST:\n"
+                           f"\tmethod: {r.get_request_method().value.upper()}\n"
+                           f"\turl: {raw_url}\n"
+                           f"\tbody: {r.get_body()}\n")
 
             self.response = session.request(
                 r.get_request_method().value,
@@ -113,31 +119,7 @@ class BaseWebClient(IWebClient, ABC):
             )
         except Exception as e:
             self.log.error("Error sending %s request: %s", r.get_request_method().value, e)
-            raise
-        finally:
-            # --- ALWAYS reset/cleanup the shared request builder to avoid path bleed ---
-            try:
-                # Prefer explicit base reset if your builder supports it
-                if hasattr(r, "reset_uri_to_base") and callable(getattr(r, "reset_uri_to_base")):
-                    r.reset_uri_to_base()
-                # Otherwise at least clear the URI segments
-                elif hasattr(r, "clear_uri_parameters") and callable(getattr(r, "clear_uri_parameters")):
-                    r.clear_uri_parameters()
-
-                # Optional: clear other mutable state if your builder provides these
-                if hasattr(r, "clear_body") and callable(getattr(r, "clear_body")):
-                    r.clear_body()
-                if hasattr(r, "clear_query_strings") and callable(getattr(r, "clear_query_strings")):
-                    r.clear_query_strings()
-                if hasattr(r, "clear_headers") and callable(getattr(r, "clear_headers")):
-                    r.clear_headers()
-                if hasattr(r, "set_authorization") and callable(getattr(r, "set_authorization")):
-                    # Null out transient auth if you set it per-call
-                    r.set_authorization(None)
-            except Exception as cleanup_err:
-                self.log.debug("Request cleanup skipped: %s", cleanup_err)
-
-            raw_url = None  # ensure it can't be reused accidentally
+            raise e
 
         return self.get_response(self.response, response_hook)
 

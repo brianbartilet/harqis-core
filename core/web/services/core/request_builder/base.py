@@ -12,7 +12,7 @@ from core.web.services.core.json import JsonObject
 from core.utilities.logging.custom_logger import create_logger
 
 from enum import Enum
-from typing import TypeVar
+from typing import TypeVar, List
 
 THeader = TypeVar("THeader")
 
@@ -34,14 +34,20 @@ class RequestBuilder(IWebRequestBuilder):
 
         self._header = CaseInsensitiveDict()
         self._query_strings = {}
-        self._uri_params = []
+        self._uri_params: List[tuple[str, str]] = []
         self._body = None
         self._method = None
+
+        # NEW: remember base path segments, e.g. ["product"]
+        self._base_segments: List[str] = []
 
         self.strip_right_url_path = True
 
         self.kwargs = kwargs
 
+    # ─────────────────────────────────────────────────────────────
+    # HTTP Methods
+    # ─────────────────────────────────────────────────────────────
     def get(self):
         """
         Sets the HTTP method to GET.
@@ -84,7 +90,6 @@ class RequestBuilder(IWebRequestBuilder):
         """
         return self.set_method(HttpMethod.OPTIONS)
 
-
     def set_method(self, method: HttpMethod) -> IWebRequestBuilder:
         """
         Sets the HTTP method for the request.
@@ -98,6 +103,9 @@ class RequestBuilder(IWebRequestBuilder):
         self._method = method
         return self
 
+    # ─────────────────────────────────────────────────────────────
+    # Headers
+    # ─────────────────────────────────────────────────────────────
     def add_header(self, header_key: THeader, header_value: str) -> IWebRequestBuilder:
         """
         Adds a single header to the request.
@@ -116,10 +124,11 @@ class RequestBuilder(IWebRequestBuilder):
             key = header_key
 
         if key in self._header:
-            self.log.debug(f"Header {header_key} already exists. Old value: {self._header[key]}, "
-                           f"New Value: {header_value}")
+            self.log.debug(
+                f"Header {header_key} already exists. "
+                f"Old value: {self._header[key]}, New Value: {header_value}"
+            )
         self._header[key] = header_value
-
         return self
 
     def add_headers(self, headers: dict) -> IWebRequestBuilder:
@@ -133,9 +142,16 @@ class RequestBuilder(IWebRequestBuilder):
             The builder instance for chaining.
         """
         self._header.update(headers)
-
         return self
 
+    # NEW: optional clearers to play nice with client cleanup (no-op if you don’t use them)
+    def clear_headers(self) -> IWebRequestBuilder:
+        self._header = CaseInsensitiveDict()
+        return self
+
+    # ─────────────────────────────────────────────────────────────
+    # Payload
+    # ─────────────────────────────────────────────────────────────
     def add_payload(self, payload, payload_type: PayloadType) -> IWebRequestBuilder:
         """
         Adds a payload to the request with a specified type.
@@ -213,32 +229,14 @@ class RequestBuilder(IWebRequestBuilder):
 
         return self
 
-    def build(self, clear_all=False) -> IWebServiceRequest:
-        """
-        Builds the web service request.
+    # NEW: optional clearer
+    def clear_body(self) -> IWebRequestBuilder:
+        self._body = None
+        return self
 
-        Returns:
-            The constructed IWebServiceRequest instance.
-        """
-        request = Request()
-
-        if self._method:
-            request.set_request_method(self._method)
-        if self._header:
-            request.set_header(self._header)
-        if self._body:
-            request.set_body(self._body)
-        if self._query_strings:
-            request.set_query_string(self._query_strings)
-
-        uri_string = self.__get_uri_param__()
-        request.set_full_url(uri_string)
-        request.set_url_strip_right(self.strip_right_url_path)
-
-        self.__initialize__(clear_all)
-
-        return request
-
+    # ─────────────────────────────────────────────────────────────
+    # Query strings
+    # ─────────────────────────────────────────────────────────────
     def add_query_string(self, query_name, query_value) -> IWebRequestBuilder:
         """
         Adds a query string to the request.
@@ -285,9 +283,16 @@ class RequestBuilder(IWebRequestBuilder):
         queries = target.__dict__
         for query in queries:
             self.add_query_string(query, queries[query])
-
         return self
 
+    # NEW: optional clearer
+    def clear_query_strings(self) -> IWebRequestBuilder:
+        self._query_strings = {}
+        return self
+
+    # ─────────────────────────────────────────────────────────────
+    # URI
+    # ─────────────────────────────────────────────────────────────
     def add_uri_parameter(self, url_param_name, url_param_value=None, order: int = None) -> IWebRequestBuilder:
         """
         Adds a URI parameter to the request.
@@ -305,8 +310,12 @@ class RequestBuilder(IWebRequestBuilder):
 
         if url_param_name in parameter_dict.keys():
             old_value = parameter_dict[url_param_name]
-            self.log.warning("URI parameter already exists. Old value(order): %s(%s), New Value(order): %s(%s)",
-                              old_value, self._uri_params.index((url_param_name, old_value)), url_param_value, new_order)
+            self.log.warning(
+                "URI parameter already exists. "
+                "Old value(order): %s(%s), New Value(order): %s(%s)",
+                old_value, self._uri_params.index((url_param_name, old_value)),
+                url_param_value, new_order
+            )
             self._uri_params.remove((url_param_name, old_value))
 
         if url_param_value is None:
@@ -325,21 +334,76 @@ class RequestBuilder(IWebRequestBuilder):
         """
         self.strip_right_url_path = toggle
 
+    # NEW: define a base path like ["product"] and apply it
+    def set_base_uri(self, *segments: str) -> IWebRequestBuilder:
+        self._base_segments = [str(s).strip("/") for s in segments if s]
+        self._reset_uri_to_base()
+        return self
+
+    # NEW: clear all URI segments
+    def _clear_uri_parameters(self) -> IWebRequestBuilder:
+        self._uri_params = []
+        return self
+
+    # NEW: reset URI segments back to the configured base
+    def _reset_uri_to_base(self) -> IWebRequestBuilder:
+        self._clear_uri_parameters()
+        for seg in self._base_segments:
+            self.add_uri_parameter(seg)
+        return self
+
+    # ─────────────────────────────────────────────────────────────
+    # Build
+    # ─────────────────────────────────────────────────────────────
+    def build(self, clear_all=False) -> IWebServiceRequest:
+        """
+        Builds the web service request.
+        """
+        request = Request()
+
+        if self._method:
+            request.set_request_method(self._method)
+        if self._header:
+            request.set_header(self._header)
+        if self._body:
+            request.set_body(self._body)
+        if self._query_strings:
+            request.set_query_string(self._query_strings)
+
+        uri_string = self.__get_uri_param__()
+        request.set_full_url(uri_string)
+        request.set_url_strip_right(self.strip_right_url_path)
+
+        # IMPORTANT: after we build, reset this builder for next use:
+        self.__initialize__(clear_all)
+
+        return request
+
     def __initialize__(self, clear_all: bool):
         """
         Re-initializes the builder instance to its default state.
+        - Always clears method, query strings, and body (per-call state).
+        - Keeps headers by default.
+        - Resets the URI path back to base segments (prevents path bleed).
         """
-
-        #  reset properties for function re-usability in service
+        # reset per-call properties
         self._method = None
         self._query_strings = {}
         self._body = None
 
-        #  keep properties
+        # keep headers by default; allow full clear if requested
         if clear_all:
-            self._header = None
-            self._uri_params = None
+            self._header = CaseInsensitiveDict()
 
+        # CRUCIAL: restore path to base (so next call starts clean at /product)
+        if self._base_segments:
+            self.reset_uri_to_base()
+        else:
+            # if no base set, leave URI params as-is or clear them (choose behavior)
+            # safer default: clear so callers must always add segments explicitly
+            self._uri_params = []
+
+    # utility
     def __get_uri_param__(self):
         """
         Constructs the URI parameter string.
