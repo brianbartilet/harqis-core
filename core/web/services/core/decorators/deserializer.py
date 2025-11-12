@@ -133,6 +133,12 @@ def deserialized(
             # Last resort: try full dict (may still fail, but keeps prior behavior)
             return cls(**d)
 
+    def _as_sequence(x: Any) -> Any:
+        x = _to_dict(x)
+        if isinstance(x, dict) and "data" in x and isinstance(x["data"], list):
+            return x["data"]
+        return x
+
     def _coerce(value: Any, hook: Type[Any], *, force_many: Optional[bool]) -> Any:
         # dict passthrough (snake-cased)
         if hook is dict:
@@ -141,31 +147,23 @@ def deserialized(
         # If user passed list[DTO], honor it
         elem = _list_item_type(hook)
         if elem is not None:
-            seq = value if not isinstance(value, JsonObject) else list(value)
+            seq = _as_sequence(value)
             if not isinstance(seq, list):
                 raise TypeError(f"Expected list payload for {hook}, got {type(seq)}")
             return [_construct_one(item, elem) for item in seq]
 
         # Hook is DTO class; decide many/single
-        if force_many:
-            seq = value
-            if isinstance(seq, JsonObject):
-                seq = _to_dict(seq)
-
-            # If we got the common wrapper {"message": "...", "data": [...]}, unwrap it
-            if isinstance(seq, dict) and "data" in seq and isinstance(seq["data"], list):
-                seq = seq["data"]
-
+        if force_many is True:
+            seq = _as_sequence(value)
             if not isinstance(seq, list):
                 raise TypeError(f"Expected list payload for many=True, got {type(seq)}")
-
             return [_construct_one(item, hook) for item in seq]
 
         if force_many is False:
-            return _construct_one(value, hook)
+            return _construct_one(_to_dict(value), hook)
 
         # Auto-infer from runtime payload
-        payload = value if not isinstance(value, JsonObject) else list(value)
+        payload = _as_sequence(value)
         if isinstance(payload, list):
             return [_construct_one(item, hook) for item in payload]
         return _construct_one(payload, hook)
