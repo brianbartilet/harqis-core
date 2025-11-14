@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import MagicMock
 
-from core.config.app_config import AppConfigManager
+from core.config.app_config_manager import AppConfigManager
 
 
 class TestAppConfigManager(unittest.TestCase):
@@ -41,7 +41,7 @@ class TestAppConfigManager(unittest.TestCase):
         self.mock_service.config = self.configurations
         self.manager.load('app1')
 
-        result = self.manager.get(dict, 'configuration_1')
+        result = self.manager.get('configuration_1')
         self.assertEqual(result['app_id'], 'app1')
         self.assertEqual(result['id'], 'config1')
 
