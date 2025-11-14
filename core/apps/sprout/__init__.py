@@ -20,8 +20,12 @@ import importlib
 # Read the environment variable to determine which tasks module to import
 from core.config.env_variables import ENV_WORKFLOW_CONFIG, get_env_variable_value
 
-# Dynamically import the tasks module based on the environment variable
-tasks_module = importlib.import_module(get_env_variable_value(ENV_WORKFLOW_CONFIG))
+try:
+    # Dynamically import the tasks module based on the environment variable
+    tasks_module = importlib.import_module(get_env_variable_value(ENV_WORKFLOW_CONFIG))
+except AttributeError:
+    raise ImportError(f"Environment variable ENV_WORKFLOW_CONFIG is not set or invalid.")
+
 
 # Import the SPROUT configuration from the dynamically imported tasks module
 # Ensure your tasks modules have a consistent interface/structure for SPROUT
