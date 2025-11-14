@@ -160,7 +160,7 @@ class AppConfigManager:
 
         self._current_app_configs = filtered
 
-    def get(self, loader_class: Type[TAppConfig], config_id: str) -> TAppConfig:
+    def get(self, config_id: str, loader_class: Type[TAppConfig] = dict) -> TAppConfig:
         """
         Retrieve a section by its key (e.g., 'N8N', 'HARQIS_GPT').
 
