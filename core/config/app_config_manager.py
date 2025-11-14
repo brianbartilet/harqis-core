@@ -22,6 +22,7 @@ Type variable for application configuration objects,
 unrestricted in type to allow flexibility in configuration structure.
 """
 
+
 class AppConfigManager:
     """
     Loads and retrieves application configuration sections.
@@ -55,6 +56,24 @@ class AppConfigManager:
             if section_app == app_id:
                 filtered[section_key] = section_val
         return filtered
+
+    def _infer_loader_class(self, raw: Dict[str, Any]) -> Optional[Type[Any]]:
+        """
+        Inspect the raw config dict and decide which config class to use.
+
+        You can extend this logic to support more types.
+        """
+        # Example 1: if the section has a "client" key, treat it as a WS client config
+        if "client" in raw:
+            from core.web.services.core.config.webservice import AppConfigWSClient  # adjust import
+            return AppConfigWSClient
+
+        if "browser" in raw:
+            from core.web.browser.core.config.web_driver import  AppConfigWebDriver  # adjust import
+            return AppConfigWebDriver
+
+        # No special type detected → return None, meaning "just give dict"
+        return None
 
     def load(self, app_id: str, *, from_path: Optional[str | Path] = None) -> None:
         """
