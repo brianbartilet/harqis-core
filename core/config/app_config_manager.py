@@ -114,27 +114,45 @@ class AppConfigManager:
 
         self._current_app_configs = filtered
 
-    def get(self, config_id: str, loader_class: Type[TAppConfig] = dict) -> TAppConfig:
+    def get(self, config_id: str, loader_class: Optional[Type[TAppConfig]] = None) -> TAppConfig:
         """
-        Retrieve a section by its key (e.g., 'N8N', 'HARQIS_GPT').
+        Retrieve a section by its key (e.g., 'OANDA', 'SCRYFALL').
 
-        If loader_class is `dict`, returns the raw dict.
-        If it's a dataclass or a **kwargs-constructible class (e.g., Pydantic), returns an instance.
+        Behavior:
+        - If loader_class is given:
+            * if loader_class is dict -> return raw dict
+            * if dataclass          -> loader_class(**raw)
+            * else                  -> loader_class(**raw)
+        - If loader_class is None:
+            * try to infer a config class from the raw dict (e.g. based on 'client' key)
+            * if a class is inferred, construct it
+            * otherwise, return the raw dict.
         """
         if config_id not in self._current_app_configs:
             available = ", ".join(self._current_app_configs.keys()) or "(none loaded)"
             raise KeyError(f"Config section '{config_id}' not found. Available: {available}")
 
-        raw = self._current_app_configs[config_id]
+        raw: Dict[str, Any] = self._current_app_configs[config_id]
 
+        # 1) If no loader_class specified, try to infer one from the raw config
+        if loader_class is None:
+            inferred = self._infer_loader_class(raw)
+            if inferred is None:
+                # Fall back to returning the raw dict
+                return raw  # type: ignore[return-value]
+            loader_class = inferred  # type: ignore[assignment]
+
+        # 2) If caller explicitly requested dict, just return the raw section
         if loader_class is dict:  # type: ignore[comparison-overlap]
             return raw  # type: ignore[return-value]
 
+        # 3) If it's a dataclass, instantiate via **kwargs
         if is_dataclass(loader_class):
-            return loader_class(**raw)  # type: ignore[misc]
+            return loader_class(**raw)  # type: ignore[misc,return-value]
 
+        # 4) Generic kwargs-constructible class (e.g. Pydantic model, simple config class)
         try:
-            return loader_class(**raw)  # type: ignore[misc]
+            return loader_class(**raw)  # type: ignore[misc,return-value]
         except TypeError as e:
             raise TypeError(
                 f"Failed to construct {loader_class.__name__} from section '{config_id}'. "
