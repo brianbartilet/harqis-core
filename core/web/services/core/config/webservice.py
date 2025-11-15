@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import Optional, Dict
+from typing import Optional, Dict, Any
 
 from core.config.app_config import BaseAppConfigModel
 
@@ -8,23 +8,33 @@ from core.config.app_config import BaseAppConfigModel
 class AppConfigWSClient(BaseAppConfigModel):
     """
     Base configuration object for web services.
-
-    Attributes:
-        client (str): Specifies the type of service to be used (e.g., REST, cURL, gRPC, GraphQL).
-        parameters (Dict[str, Optional[any]]): Keyword arguments to pass to service, including
-            base_url, response_encoding, verify, timeout, stream, and logging.
-        headers (Optional[Dict[str, str]]): Default headers to initialize the requests. Use carefully,
-            especially for authorization.
-        return_data_only (bool): If True, only the deserialized data is returned from service calls.
+    Tracks which attributes were changed.
     """
+
     client: Optional[str] = None
-    parameters: Dict[str, Optional[any]] = field(default_factory=lambda: {
+    parameters: Dict[str, Optional[Any]] = field(default_factory=lambda: {
         "base_url": None,
         "response_encoding": None,
         "verify": None,
         "timeout": None,
         "stream": False,
-        "logging": None
+        "logging": None,
     })
     headers: Optional[Dict[str, str]] = None
     return_data_only: bool = False
+
+    # internal field to track updated attributes
+    changed: set = field(default_factory=set, init=False, repr=False)
+
+    def __setattr__(self, key, value):
+        # let the dataclass initialize without tracking initial assignments
+        if "_initialized" in self.__dict__:
+            # track changes only for real fields
+            if key in self.__dataclass_fields__ and key != "changed":
+                self.changed.add(key)
+
+        super().__setattr__(key, value)
+
+    def __post_init__(self):
+        # mark class as initialized so further __setattr__ calls are tracked
+        self._initialized = True
