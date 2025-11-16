@@ -1,4 +1,4 @@
-import requests
+import requests, time
 import urllib.parse as url_helper
 
 from abc import ABC
@@ -98,6 +98,8 @@ class BaseWebClient(IWebClient, ABC):
         session = self.session or requests
         raw_url = self.__get_raw_url__(r.get_full_url(), strip_right=r.get_url_strip_right())
 
+        rate_limit_delay = kwargs.get('rate_limit_delay', 0)
+
         try:
             self.log.debug(f"\nREQUEST:\n"
                            f"\tmethod: {r.get_request_method().value.upper()}\n"
@@ -117,6 +119,9 @@ class BaseWebClient(IWebClient, ABC):
                 **r.get_body(),
                 **kwargs
             )
+            if rate_limit_delay > 0:
+                time.sleep(rate_limit_delay)
+
         except Exception as e:
             self.log.error("Error sending %s request: %s", r.get_request_method().value, e)
             raise e
