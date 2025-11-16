@@ -82,7 +82,8 @@ class BaseWebClient(IWebClient, ABC):
         """
         self.proxies = proxies
 
-    def execute_request(self, r: IWebServiceRequest, response_hook: Type[TResponseData] = dict, **kwargs) \
+    def execute_request(self, r: IWebServiceRequest, response_hook: Type[TResponseData] = dict, rate_limit_delay = 0,
+                        **kwargs) \
             -> IResponse[TResponseData]:
         """
         Executes a web service request and returns the response.
@@ -90,6 +91,7 @@ class BaseWebClient(IWebClient, ABC):
         Args:
             r: The web service request to be executed.
             response_hook: The type to deserialize the response data into.
+            rate_limit_delay: Optional delay in seconds to respect rate limiting.
             **kwargs: Additional keyword arguments to be passed to the request method.
 
         Return:
@@ -97,8 +99,6 @@ class BaseWebClient(IWebClient, ABC):
         """
         session = self.session or requests
         raw_url = self.__get_raw_url__(r.get_full_url(), strip_right=r.get_url_strip_right())
-
-        rate_limit_delay = kwargs.get('rate_limit_delay', 0)
 
         try:
             self.log.debug(f"\nREQUEST:\n"
