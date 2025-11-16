@@ -156,9 +156,17 @@ def deserialized(
         return x
 
     def _coerce(value: Any, hook: Type[Any], *, force_many: Optional[bool]) -> Any:
-        # dict passthrough (snake-cased)
+        # dict passthrough (optionally snake-cased)
         if hook is dict:
-            return convert_object_keys_to_snake(_to_dict(value))
+            # If it's a JsonObject, let convert_object_keys_to_snake handle it
+            if isinstance(value, JsonObject):
+                return convert_object_keys_to_snake(value)
+
+            # Otherwise just normalize to a plain dict and return as-is
+            v = _to_dict(value)
+            if isinstance(v, JsonObject):
+                v = dict(v)
+            return v
 
         # If user passed list[DTO], honor it
         elem = _list_item_type(hook)
