@@ -56,12 +56,12 @@ class IFixtureWebService(Generic[TFixture]):
             config: The AppConfigWSClient object containing the configuration for the web service client.
         """
         self._config = config
-        self._client = WSClientClass.map[config.client](**config.parameters)
+        # allow custom client to be processed e.g. google python client
+        self._client = kwargs.get('client', WSClientClass.map[config.client](**config.parameters))
         self._request = None
 
         self.kwargs = kwargs
 
-    @abstractmethod
     def get_request_builder(self) -> IWebRequestBuilder:
         """
         Returns the request builder component of the testing fixture.
@@ -73,7 +73,6 @@ class IFixtureWebService(Generic[TFixture]):
         """
         ...
 
-    @abstractmethod
     def send_request(self, request: IWebServiceRequest, response_hook: Type[TResponse] = dict,
                      **kwargs) -> IResponse[TFixture]:
         """
