@@ -1,6 +1,7 @@
 import time
 import glob
 
+from pathlib import Path
 from tqdm import tqdm
 from typing import Iterable
 from core.web.services.manager import WebServiceManager
@@ -116,17 +117,23 @@ class BaseAssistant(IAssistant):
     def prepare_files(self, files: list[str], **kwargs) -> dict:
         pass
 
-    def upload_files(self, base_directory: str, file_patterns: list = None, **kwargs):
-        file_patterns = file_patterns if file_patterns is not None else ['*.py', '*.json', '*.yaml']
-        matching_files = []
+    def upload_files(self, base_directory: str, file_patterns: list[str] = None):
+        base_path = Path(base_directory)
+        file_patterns = file_patterns or ['*.py', '*.json', '*.yaml']
+        matching_files: list[str] = []
 
-        # Iterate over the patterns, using glob.glob to find matching files
+        # Option 1: patterns relative to base_directory (non-recursive)
         for pattern in file_patterns:
-            matching_files.extend(glob.glob(pattern))
+            search_pattern = str(base_path / pattern)
+            matching_files.extend(glob.glob(search_pattern))
 
-        files = self.manager.get(ServiceFiles).upload_files(file_names=matching_files, base_path=base_directory)
+        # If ServiceFiles expects full paths and doesn't need base_path:
+        files = self.manager.get(ServiceFiles).upload_files(
+            file_names=matching_files,
+            base_path=str(base_path),  # or drop this if unused
+        )
+
         self.files = {file.id: file for file in files}
-
         return files
 
     def download_file(self, file_id, file_name, **kwargs):
