@@ -1,4 +1,3 @@
-from abc import abstractmethod
 from typing import TypeVar, Generic, Type
 
 from core.web.services.core.contracts.request_builder import IWebRequestBuilder
