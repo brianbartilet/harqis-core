@@ -21,7 +21,7 @@ class BaseFixtureServiceRest(IFixtureWebService[TWebService]):
     """
 
     def __init__(self, config: AppConfigWSClient, **kwargs):
-        super(BaseFixtureServiceRest, self).__init__(config=config)
+        super(BaseFixtureServiceRest, self).__init__(config=config, **kwargs)
 
     def send_request(self, request: IWebServiceRequest, response_hook=dict, **kwargs) -> IResponse[TWebService]:
         """
