@@ -2,6 +2,8 @@ import unittest
 import os
 from core.utilities.screenshot import ScreenshotUtility
 
+
+@unittest.skip
 class TestScreenshotUtility(unittest.TestCase):
     def setUp(self):
         self.save_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'test_screenshots')

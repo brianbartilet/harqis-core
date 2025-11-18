@@ -137,8 +137,9 @@ class BaseAssistant(IAssistant):
 
         self.attachments = [
             {"file_id": file_id, "tools": ["file_search"]}
-            for file_id in files.keys()
+            for file_id in self.files.keys()
         ]
+
         return files
 
     def download_file(self, file_id, file_name, **kwargs):
