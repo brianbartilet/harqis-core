@@ -202,7 +202,7 @@ class IWebRequestBuilder(ABC):
         ...
 
     @abstractmethod
-    def set_base_uri(self, **kwargs) -> IWebServiceRequest:
+    def set_base_uri(self, *segments: str) -> IWebServiceRequest:
         """
         Sets the base URI for the request.
         """

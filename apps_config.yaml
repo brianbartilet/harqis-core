@@ -12,7 +12,7 @@ HARQIS_GPT:
     stream: True
   app_data:
     api_key: ${OPENAI_API_KEY}
-    model: 'davinci-002'
+    model: 'GPT-5 mini'
     max_tokens: 1000
     default_assistant_id: ${OPENAI_ASSISTANT_ID}
 

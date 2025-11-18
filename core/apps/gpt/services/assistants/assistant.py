@@ -22,8 +22,8 @@ class ServiceAssistants(BaseServiceHarqisGPT):
         super(ServiceAssistants, self).__init__(config)
 
         self.request\
-            .add_header(HttpHeadersGPT.OPEN_API_BETA, "assistants=v1")\
-            .add_uri_parameter('assistants')
+            .add_header(HttpHeadersGPT.OPEN_API_BETA, "assistants=v2")\
+            .set_base_uri('assistants')
 
     def create_assistant(self, payload: Assistant):
         """

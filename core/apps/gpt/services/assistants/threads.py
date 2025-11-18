@@ -20,8 +20,8 @@ class ServiceThreads(BaseServiceHarqisGPT):
         """
         super(ServiceThreads, self).__init__(config)
         self.request\
-            .add_header(HttpHeadersGPT.OPEN_API_BETA, "assistants=v1")\
-            .add_uri_parameter('threads')
+            .add_header(HttpHeadersGPT.OPEN_API_BETA, "assistants=v2")\
+            .set_base_uri('threads')
 
     def create_thread(self, payload: ThreadCreate):
         """

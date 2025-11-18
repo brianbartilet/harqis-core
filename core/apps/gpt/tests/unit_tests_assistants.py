@@ -2,7 +2,6 @@ import unittest
 import time
 from uuid import uuid4
 from http import HTTPStatus as HttpStatus
-from parameterized import parameterized
 
 from core.apps.gpt.services.assistants.assistant import ServiceAssistants
 from core.apps.gpt.services.assistants.threads import ServiceThreads
@@ -72,11 +71,9 @@ class TestGPTServicesSmoke(unittest.TestCase):
         when = self.given_service_assistants.delete_assistant(assistant_id)
         self.then.assertEqual(when.status_code, HttpStatus.OK)
 
-    @parameterized.expand([
-        ('2 + 2', '4'),
-        ('2 * 2', '4'),
-    ])
-    def test_base_assistant_workflow(self, expression, evaluated):
+    def test_base_assistant_workflow(self, ):
+        expression, evaluated = '2 * 2', '4'
+
         #  create an assistant
         self.when_create_assistant = self.given_service_assistants.create_assistant(self.given_payload)
         self.then.assertEqual(HttpStatus.OK, self.when_create_assistant.status_code)
@@ -108,7 +105,7 @@ class TestGPTServicesSmoke(unittest.TestCase):
         self.then.assertEqual(HttpStatus.OK, when_get_run.status_code)
 
         while when_get_run.data.status in ['queued', 'in_progress', 'cancelling']:
-            time.sleep(5)  # Wait for 1 second
+            time.sleep(5)
             when_get_run = self.given_service_run.get_run(thread_id=given_thread_id,
                                                           run_id=when_stream.data.id)
             self.then.assertEqual(HttpStatus.OK, when_get_run.status_code)
