@@ -5,13 +5,14 @@ import os
 from datetime import datetime
 from pathlib import Path
 
+
 class ScreenshotUtility:
     """
     Utility class for taking screenshots and saving them to disk.
     """
 
     @staticmethod
-    def take_screenshot(save_dir: str = '.', prefix: str = 'screenshot') -> str:
+    def take_screenshot(save_dir: str = 'screenshots', prefix: str = 'screenshot') -> str:
         """
         Takes a screenshot and saves it to the specified directory.
 
@@ -30,7 +31,7 @@ class ScreenshotUtility:
         return str(file_path)
 
     @staticmethod
-    def take_screenshot_all_monitors(save_dir: str = '.', prefix: str = 'screenshot') -> list:
+    def take_screenshot_all_monitors(save_dir: str = 'screenshots', prefix: str = 'screenshot') -> list:
         """
         Takes screenshots of all monitors and saves them separately.
 
@@ -51,7 +52,7 @@ class ScreenshotUtility:
     # ... (existing methods)
 
     @staticmethod
-    def cleanup_screenshots(save_dir: str = '.', prefix: str = 'screenshot') -> list:
+    def cleanup_screenshots(save_dir: str = 'screenshots', prefix: str = 'screenshot') -> list:
         """
         Removes all screenshot files in the specified directory matching the prefix.
 
