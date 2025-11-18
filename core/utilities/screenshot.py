@@ -6,6 +6,17 @@ from datetime import datetime
 from pathlib import Path
 
 
+HAS_DISPLAY = os.environ.get("DISPLAY") is not None
+
+try:
+    if HAS_DISPLAY:
+        import pyautogui
+    else:
+        pyautogui = None
+except Exception:
+    pyautogui = None
+
+
 class ScreenshotUtility:
     """
     Utility class for taking screenshots and saving them to disk.
