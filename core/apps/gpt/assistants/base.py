@@ -134,11 +134,7 @@ class BaseAssistant(IAssistant):
         )
 
         self.files = {file.id: file for file in files}
-
-        self.attachments = [
-            {"file_id": file_id, "tools": ["file_search"]}
-            for file_id in self.files.keys()
-        ]
+        self.attachments = list(self.files.keys())
 
         return files
 
