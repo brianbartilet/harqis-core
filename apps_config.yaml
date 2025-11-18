@@ -13,7 +13,7 @@ HARQIS_GPT:
   app_data:
     api_key: ${OPENAI_API_KEY}
     model: 'GPT-5 mini'
-    max_tokens: 1000
+    max_tokens: 250
     default_assistant_id: ${OPENAI_ASSISTANT_ID}
 
 ELASTIC_LOGGING:
