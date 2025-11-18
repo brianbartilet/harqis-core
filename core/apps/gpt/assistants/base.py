@@ -119,7 +119,7 @@ class BaseAssistant(IAssistant):
 
     def upload_files(self, base_directory: str, file_patterns: list[str] = None):
         base_path = Path(base_directory)
-        file_patterns = file_patterns or ['*.py', '*.json', '*.yaml']
+        file_patterns = file_patterns or ['*.py', '*.json', '*.yaml', '*.png', '*.jpg', '*.txt']
         matching_files: list[str] = []
 
         # Option 1: patterns relative to base_directory (non-recursive)
