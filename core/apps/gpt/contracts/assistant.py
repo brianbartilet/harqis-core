@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Any, Dict, Iterable
+from typing import Any, Dict, Iterable, List
 
 from core.web.services.core.config.webservice import AppConfigWSClient
 from core.web.services.manager import WebServiceManager
@@ -36,7 +36,7 @@ class IAssistant(ABC):
         self.runs: Dict[str, Any] = {}
         self.messages: Dict[str, Any] = {}
         self.files: Dict[str, Any] = {}
-
+        self.attachments = List[dict]
         self.manager: WebServiceManager
 
         self._assistant = None
