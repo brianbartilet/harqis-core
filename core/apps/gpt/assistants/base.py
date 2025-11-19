@@ -48,8 +48,9 @@ class BaseAssistant(IAssistant):
 
         self.kwargs = kwargs
 
-    def load(self, create: bool = True, **kwargs):
-        assistant_id = self.config.app_data['default_assistant_id']
+    def load(self, assistant_id = None, create: bool = True,  **kwargs):
+        assistant_id = assistant_id if assistant_id is not None else self.config.app_data['default_assistant_id']
+
         response = self.manager.get(ServiceAssistants).get_assistant(assistant_id)
         self._assistant = response.data
 
