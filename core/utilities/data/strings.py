@@ -111,13 +111,29 @@ def remove_special_chars(input_string):
     return re.sub(r'[^a-zA-Z0-9]', '', input_string)
 
 
-def wrap_text(strings, width=65):
+def wrap_text(strings: list, width=65):
     """
-    Wraps a list of strings into lines of specified width without breaking words.
+    Manually wraps a list of strings into lines of specified width
+    without breaking words and without using textwrap.
     """
-
     # Combine list of strings into one large string
-    combined = " ".join(strings)
+    text = " ".join(strings).strip()
 
-    # Use textwrap to wrap without breaking words
-    return "\n".join(textwrap.wrap(combined, width=width, break_long_words=False))
+    words = text.split()
+    lines = []
+    current_line = ""
+
+    for word in words:
+        # If adding this word exceeds the width, start a new line
+        if len(current_line) + len(word) + (1 if current_line else 0) > width:
+            lines.append(current_line)
+            current_line = word
+        else:
+            # Add word to current line
+            current_line = word if not current_line else f"{current_line} {word}"
+
+    # Append the final line
+    if current_line:
+        lines.append(current_line)
+
+    return "\n".join(lines)
