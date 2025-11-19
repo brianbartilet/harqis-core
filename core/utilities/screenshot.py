@@ -131,7 +131,7 @@ class ScreenshotUtility:
                 except Exception:
                     pass
                 # Give it a short moment to redraw
-                time.sleep(0.3)
+                time.sleep(0.1)
 
             # Get window rectangle (screen coordinates)
             left, top, right, bottom = win32gui.GetWindowRect(hwnd)
