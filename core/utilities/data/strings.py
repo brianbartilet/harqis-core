@@ -1,5 +1,6 @@
 import re
 from typing import Type, TypeVar, List
+import textwrap
 
 TObject = TypeVar('TObject')
 
@@ -108,3 +109,15 @@ def remove_special_chars(input_string):
     """
     # This regular expression matches anything that is NOT a letter or number.
     return re.sub(r'[^a-zA-Z0-9]', '', input_string)
+
+
+def wrap_text(strings, width=65):
+    """
+    Wraps a list of strings into lines of specified width without breaking words.
+    """
+
+    # Combine list of strings into one large string
+    combined = " ".join(strings)
+
+    # Use textwrap to wrap without breaking words
+    return "\n".join(textwrap.wrap(combined, width=width, break_long_words=False))
