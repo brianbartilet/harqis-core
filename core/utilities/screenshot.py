@@ -184,8 +184,8 @@ class ScreenshotUtility:
             win32gui.ReleaseDC(desktop_hwnd, desktop_dc)
             win32gui.DeleteObject(save_bitmap.GetHandle())
 
-            print(f"Saved window: {title} -> {filename}")
-            return filename
+            print(f"Saved window: {title}")
+            return title
 
         finally:
             # Re-minimize window if it was minimized before
