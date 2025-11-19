@@ -111,28 +111,36 @@ def remove_special_chars(input_string):
     return re.sub(r'[^a-zA-Z0-9]', '', input_string)
 
 
-def wrap_text(strings: list, width=65):
+def wrap_text(strings: list, width=65, line_breaks=True) -> str:
     """
     Manually wraps a list of strings into lines of specified width
-    without breaking words and without using textwrap.
+    without breaking words, and optionally inserts line breaks when
+    a sentence ends (after '.', '?', or '!').
     """
-    # Combine list of strings into one large string
+    # Combine into one large string
     text = " ".join(strings).strip()
 
     words = text.split()
     lines = []
     current_line = ""
 
+    def sentence_ended(w):
+        return w.endswith(('.', '!', '?'))
+
     for word in words:
-        # If adding this word exceeds the width, start a new line
+        # Check if adding the word exceeds the width
         if len(current_line) + len(word) + (1 if current_line else 0) > width:
             lines.append(current_line)
             current_line = word
         else:
-            # Add word to current line
             current_line = word if not current_line else f"{current_line} {word}"
 
-    # Append the final line
+        # If line_breaks is enabled and the word ends a sentence → force newline
+        if line_breaks and sentence_ended(word):
+            lines.append(current_line)
+            current_line = ""
+
+    # Append final line
     if current_line:
         lines.append(current_line)
 
