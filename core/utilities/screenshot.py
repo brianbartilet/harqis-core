@@ -4,26 +4,19 @@ import os
 from datetime import datetime
 from pathlib import Path
 
+import win32gui
+import win32ui
+import win32con
 
 HAS_DISPLAY = os.environ.get("DISPLAY") is not None
 
 try:
     if HAS_DISPLAY:
         import pyautogui
-        import win32gui
-        import win32ui
-        import win32con
     else:
         pyautogui = None
-        win32gui = None
-        win32ui = None
-        win32con = None
 except Exception:
     pyautogui = None
-    win32gui = None
-    win32ui = None
-    win32con = None
-
 
 class ScreenshotUtility:
     """
