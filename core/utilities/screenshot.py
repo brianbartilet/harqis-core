@@ -1,6 +1,7 @@
 import mss
 
 import os
+import time
 from datetime import datetime
 from pathlib import Path
 
@@ -17,6 +18,7 @@ try:
         pyautogui = None
 except Exception:
     pyautogui = None
+
 
 class ScreenshotUtility:
     """
@@ -61,8 +63,6 @@ class ScreenshotUtility:
                 file_paths.append(str(file_path))
         return file_paths
 
-    # ... (existing methods)
-
     @staticmethod
     def cleanup_screenshots(save_dir: str = 'screenshots', prefix: str = 'screenshot') -> list:
         """
@@ -76,6 +76,9 @@ class ScreenshotUtility:
             list: Paths to the removed screenshot files.
         """
         removed_files = []
+        if not os.path.isdir(save_dir):
+            return removed_files
+
         for file in os.listdir(save_dir):
             if file.startswith(prefix) and file.endswith('.png'):
                 file_path = os.path.join(save_dir, file)
@@ -107,47 +110,85 @@ class ScreenshotUtility:
 
     @staticmethod
     def take_screenshot_window(hwnd, title, save_dir="screenshots"):
-        """Capture a single window to a PNG file."""
+        """
+        Capture a single window to an image file.
+
+        - If the window is minimized, it will be temporarily restored.
+        - Capture is taken from the screen region where the window is.
+        - Minimized windows are re-minimized after capture.
+        """
         os.makedirs(save_dir, exist_ok=True)
-        # Get window rectangle
-        left, top, right, bottom = win32gui.GetWindowRect(hwnd)
-        width = right - left
-        height = bottom - top
-        if width == 0 or height == 0:
-            return None  # skip invisible / zero-size windows
 
-        # Get the window device context
-        hwnd_dc = win32gui.GetWindowDC(hwnd)
-        mfc_dc = win32ui.CreateDCFromHandle(hwnd_dc)
-        save_dc = mfc_dc.CreateCompatibleDC()
+        # Detect minimized state so we can restore / re-minimize
+        was_minimized = win32gui.IsIconic(hwnd)
 
-        # Create a bitmap object
-        save_bitmap = win32ui.CreateBitmap()
-        save_bitmap.CreateCompatibleBitmap(mfc_dc, width, height)
-        save_dc.SelectObject(save_bitmap)
+        try:
+            if was_minimized:
+                # Restore window
+                win32gui.ShowWindow(hwnd, win32con.SW_RESTORE)
+                try:
+                    win32gui.SetForegroundWindow(hwnd)
+                except Exception:
+                    pass
+                # Give it a short moment to redraw
+                time.sleep(0.3)
 
-        # Copy from screen into our bitmap
-        save_dc.BitBlt((0, 0), (width, height), mfc_dc, (0, 0), win32con.SRCCOPY)
+            # Get window rectangle (screen coordinates)
+            left, top, right, bottom = win32gui.GetWindowRect(hwnd)
+            width = right - left
+            height = bottom - top
+            if width <= 0 or height <= 0:
+                return None  # skip invisible / zero-size windows
 
-        # Build filename
-        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-        safe_title = ScreenshotUtility.sanitize_filename(title)
-        filename = os.path.join(save_dir, f"{safe_title}_{timestamp}.bmp")
+            # Capture from the desktop (screen) DC at the window's location
+            desktop_hwnd = win32gui.GetDesktopWindow()
+            desktop_dc = win32gui.GetWindowDC(desktop_hwnd)
+            mfc_dc = win32ui.CreateDCFromHandle(desktop_dc)
+            save_dc = mfc_dc.CreateCompatibleDC()
 
-        # Save as BMP (quickest with win32ui)
-        save_bitmap.SaveBitmapFile(save_dc, filename)
+            save_bitmap = win32ui.CreateBitmap()
+            save_bitmap.CreateCompatibleBitmap(mfc_dc, width, height)
+            save_dc.SelectObject(save_bitmap)
 
-        # Cleanup
-        save_dc.DeleteDC()
-        mfc_dc.DeleteDC()
-        win32gui.ReleaseDC(hwnd, hwnd_dc)
-        win32gui.DeleteObject(save_bitmap.GetHandle())
+            # Copy the screen region corresponding to the window
+            save_dc.BitBlt(
+                (0, 0),
+                (width, height),
+                mfc_dc,
+                (left, top),
+                win32con.SRCCOPY
+            )
 
-        print(f"Saved window: {title} -> {filename}")
-        return filename
+            # Build filename
+            timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+            safe_title = ScreenshotUtility.sanitize_filename(title)
+            filename = os.path.join(save_dir, f"{safe_title}_{timestamp}.bmp")
+
+            # Save as BMP (fast with win32ui)
+            save_bitmap.SaveBitmapFile(save_dc, filename)
+
+            # Cleanup
+            save_dc.DeleteDC()
+            mfc_dc.DeleteDC()
+            win32gui.ReleaseDC(desktop_hwnd, desktop_dc)
+            win32gui.DeleteObject(save_bitmap.GetHandle())
+
+            print(f"Saved window: {title} -> {filename}")
+            return filename
+
+        finally:
+            # Re-minimize window if it was minimized before
+            if was_minimized:
+                win32gui.ShowWindow(hwnd, win32con.SW_MINIMIZE)
 
     @staticmethod
     def take_screenshot_all_windows(save_dir="screenshots"):
+        """
+        Capture screenshots for all visible top-level windows.
+
+        Minimized windows will be temporarily restored for capture
+        and then minimized again.
+        """
         windows = ScreenshotUtility.list_visible_windows()
         for hwnd, title in windows:
             try:
