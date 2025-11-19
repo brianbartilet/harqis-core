@@ -1,6 +1,7 @@
 import mss
 
-import os, datetime
+import os
+from datetime import datetime
 from pathlib import Path
 
 
@@ -112,7 +113,7 @@ class ScreenshotUtility:
         return name[:80]  # keep it from getting absurdly long
 
     @staticmethod
-    def screenshot_window(hwnd, title, save_dir="screenshots"):
+    def take_screenshot_window(hwnd, title, save_dir="screenshots"):
         """Capture a single window to a PNG file."""
         os.makedirs(save_dir, exist_ok=True)
         # Get window rectangle
@@ -136,7 +137,7 @@ class ScreenshotUtility:
         save_dc.BitBlt((0, 0), (width, height), mfc_dc, (0, 0), win32con.SRCCOPY)
 
         # Build filename
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
         safe_title = ScreenshotUtility.sanitize_filename(title)
         filename = os.path.join(save_dir, f"{safe_title}_{timestamp}.bmp")
 
@@ -153,10 +154,10 @@ class ScreenshotUtility:
         return filename
 
     @staticmethod
-    def screenshot_all_windows(save_dir="screenshots"):
+    def take_screenshot_all_windows(save_dir="screenshots"):
         windows = ScreenshotUtility.list_visible_windows()
         for hwnd, title in windows:
             try:
-                ScreenshotUtility.screenshot_window(hwnd, title, save_dir=save_dir)
+                ScreenshotUtility.take_screenshot_window(hwnd, title, save_dir=save_dir)
             except Exception as e:
                 print(f"Failed to capture '{title}': {e}")
