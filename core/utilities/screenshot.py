@@ -1,8 +1,6 @@
-import pyautogui
 import mss
 
-import os
-from datetime import datetime
+import os, datetime
 from pathlib import Path
 
 
@@ -11,10 +9,19 @@ HAS_DISPLAY = os.environ.get("DISPLAY") is not None
 try:
     if HAS_DISPLAY:
         import pyautogui
+        import win32gui
+        import win32ui
+        import win32con
     else:
         pyautogui = None
+        win32gui = None
+        win32ui = None
+        win32con = None
 except Exception:
     pyautogui = None
+    win32gui = None
+    win32ui = None
+    win32con = None
 
 
 class ScreenshotUtility:
@@ -81,3 +88,75 @@ class ScreenshotUtility:
                 os.remove(file_path)
                 removed_files.append(file_path)
         return removed_files
+
+    @staticmethod
+    def list_visible_windows():
+        """Return a list of (hwnd, title) for visible top-level windows with a title."""
+        windows = []
+
+        def callback(hwnd, extra):
+            if win32gui.IsWindowVisible(hwnd):
+                title = win32gui.GetWindowText(hwnd)
+                if title:  # ignore untitled / hidden windows
+                    windows.append((hwnd, title))
+
+        win32gui.EnumWindows(callback, None)
+        return windows
+
+    @staticmethod
+    def sanitize_filename(name: str) -> str:
+        """Remove characters not allowed in Windows filenames."""
+        forbidden = '<>:"/\\|?*'
+        for ch in forbidden:
+            name = name.replace(ch, "_")
+        return name[:80]  # keep it from getting absurdly long
+
+    @staticmethod
+    def screenshot_window(hwnd, title, output_dir="screenshots"):
+        """Capture a single window to a PNG file."""
+        os.makedirs(output_dir, exist_ok=True)
+        # Get window rectangle
+        left, top, right, bottom = win32gui.GetWindowRect(hwnd)
+        width = right - left
+        height = bottom - top
+        if width == 0 or height == 0:
+            return None  # skip invisible / zero-size windows
+
+        # Get the window device context
+        hwnd_dc = win32gui.GetWindowDC(hwnd)
+        mfc_dc = win32ui.CreateDCFromHandle(hwnd_dc)
+        save_dc = mfc_dc.CreateCompatibleDC()
+
+        # Create a bitmap object
+        save_bitmap = win32ui.CreateBitmap()
+        save_bitmap.CreateCompatibleBitmap(mfc_dc, width, height)
+        save_dc.SelectObject(save_bitmap)
+
+        # Copy from screen into our bitmap
+        save_dc.BitBlt((0, 0), (width, height), mfc_dc, (0, 0), win32con.SRCCOPY)
+
+        # Build filename
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        safe_title = ScreenshotUtility.sanitize_filename(title)
+        filename = os.path.join(output_dir, f"{safe_title}_{timestamp}.bmp")
+
+        # Save as BMP (quickest with win32ui)
+        save_bitmap.SaveBitmapFile(save_dc, filename)
+
+        # Cleanup
+        save_dc.DeleteDC()
+        mfc_dc.DeleteDC()
+        win32gui.ReleaseDC(hwnd, hwnd_dc)
+        win32gui.DeleteObject(save_bitmap.GetHandle())
+
+        print(f"Saved window: {title} -> {filename}")
+        return filename
+
+    @staticmethod
+    def screenshot_all_windows(output_dir="screenshots"):
+        windows = ScreenshotUtility.list_visible_windows()
+        for hwnd, title in windows:
+            try:
+                ScreenshotUtility.screenshot_window(hwnd, title, output_dir=output_dir)
+            except Exception as e:
+                print(f"Failed to capture '{title}': {e}")
