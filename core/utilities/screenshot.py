@@ -9,6 +9,9 @@ import win32gui
 import win32ui
 import win32con
 
+from PIL import Image
+
+
 HAS_DISPLAY = os.environ.get("DISPLAY") is not None
 
 try:
@@ -162,10 +165,18 @@ class ScreenshotUtility:
             # Build filename
             timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
             safe_title = ScreenshotUtility.sanitize_filename(title)
-            filename = os.path.join(save_dir, f"{safe_title}_{timestamp}.bmp")
 
-            # Save as BMP (fast with win32ui)
-            save_bitmap.SaveBitmapFile(save_dc, filename)
+            bmp_path = os.path.join(save_dir, f"{safe_title}_{timestamp}.bmp")
+            png_path = os.path.join(save_dir, f"{safe_title}_{timestamp}.png")
+
+            # Save as BMP (fast)
+            save_bitmap.SaveBitmapFile(save_dc, bmp_path)
+
+            # Convert BMP to PNG
+            Image.open(bmp_path).save(png_path, "PNG")
+
+            # Delete BMP
+            os.remove(bmp_path)
 
             # Cleanup
             save_dc.DeleteDC()
