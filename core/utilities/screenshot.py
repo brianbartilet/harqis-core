@@ -112,9 +112,9 @@ class ScreenshotUtility:
         return name[:80]  # keep it from getting absurdly long
 
     @staticmethod
-    def screenshot_window(hwnd, title, output_dir="screenshots"):
+    def screenshot_window(hwnd, title, save_dir="screenshots"):
         """Capture a single window to a PNG file."""
-        os.makedirs(output_dir, exist_ok=True)
+        os.makedirs(save_dir, exist_ok=True)
         # Get window rectangle
         left, top, right, bottom = win32gui.GetWindowRect(hwnd)
         width = right - left
@@ -138,7 +138,7 @@ class ScreenshotUtility:
         # Build filename
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         safe_title = ScreenshotUtility.sanitize_filename(title)
-        filename = os.path.join(output_dir, f"{safe_title}_{timestamp}.bmp")
+        filename = os.path.join(save_dir, f"{safe_title}_{timestamp}.bmp")
 
         # Save as BMP (quickest with win32ui)
         save_bitmap.SaveBitmapFile(save_dc, filename)
@@ -153,10 +153,10 @@ class ScreenshotUtility:
         return filename
 
     @staticmethod
-    def screenshot_all_windows(output_dir="screenshots"):
+    def screenshot_all_windows(save_dir="screenshots"):
         windows = ScreenshotUtility.list_visible_windows()
         for hwnd, title in windows:
             try:
-                ScreenshotUtility.screenshot_window(hwnd, title, output_dir=output_dir)
+                ScreenshotUtility.screenshot_window(hwnd, title, save_dir=save_dir)
             except Exception as e:
                 print(f"Failed to capture '{title}': {e}")
