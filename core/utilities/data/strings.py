@@ -145,3 +145,11 @@ def wrap_text(strings: list, width=65, line_breaks=True) -> str:
         lines.append(current_line)
 
     return "\n".join(lines)
+
+def make_separator(count=100):
+    """
+    Creates a string separator consisting of a specified number of '=' characters."""
+    s = ""
+    for _ in range(count):
+        s += "="
+    return s
