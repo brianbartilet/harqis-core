@@ -104,7 +104,7 @@ class ScreenshotUtility:
             return removed_files
 
         for file in os.listdir(save_dir):
-            if file.startswith(prefix) and file.endswith('.png'):
+            if file.startswith(prefix):
                 file_path = os.path.join(save_dir, file)
                 os.remove(file_path)
                 removed_files.append(file_path)
