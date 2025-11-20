@@ -50,7 +50,7 @@ class ScreenshotUtility:
     @staticmethod
     def take_screenshot_all_monitors(save_dir: str = 'screenshots', prefix: str = 'screenshot') -> list:
         """
-        Takes screenshots of all monitors and saves them separately.
+        Takes screenshots of all monitors and saves them separately as compressed JPEGs.
 
         Returns:
             list: Paths to the saved screenshot files.
@@ -58,12 +58,33 @@ class ScreenshotUtility:
         Path(save_dir).mkdir(parents=True, exist_ok=True)
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
         file_paths = []
+
+        # tweak these if you want
+        scale_factor = 0.75   # 1.0 = full size, <1.0 = smaller image
+        jpeg_quality = 80     # 1–95 (higher = better quality, bigger file)
+
         with mss.mss() as sct:
             for i, monitor in enumerate(sct.monitors[1:], start=1):
-                file_path = Path(save_dir) / f"{prefix}_monitor{i}_{timestamp}.png"
+                # grab raw screenshot
                 sct_img = sct.grab(monitor)
-                mss.tools.to_png(sct_img.rgb, sct_img.size, output=str(file_path))
+
+                # build a Pillow image from MSS buffer
+                img = Image.frombytes("RGB", sct_img.size, sct_img.rgb)
+
+                # optional downscale to shrink file size further
+                if scale_factor != 1.0:
+                    new_size = (
+                        int(img.width * scale_factor),
+                        int(img.height * scale_factor),
+                    )
+                    img = img.resize(new_size, Image.LANCZOS)
+
+                # save as JPEG instead of PNG
+                file_path = Path(save_dir) / f"{prefix}_monitor{i}_{timestamp}.jpg"
+                img.save(file_path, format="JPEG", quality=jpeg_quality, optimize=True)
+
                 file_paths.append(str(file_path))
+
         return file_paths
 
     @staticmethod
