@@ -113,52 +113,46 @@ def remove_special_chars(input_string):
 
 def wrap_text(strings: list, width=65, line_breaks=True, indent_paragraphs=True, indent="\t") -> str:
     """
-    Wraps text to a specific width, optionally inserting paragraph breaks
-    after sentence-ending punctuation AND applying paragraph indentation.
-
-    Args:
-        strings (list): List of text parts to combine.
-        width (int): Maximum characters per line before wrapping.
-        line_breaks (bool): Insert line breaks after sentences.
-        indent_paragraphs (bool): Indent new paragraphs.
-        indent (str): The indent string (default: 4 spaces).
+    Wraps text to a specific width with paragraph indentation applied
+    ONLY after a sentence-ending punctuation.
     """
-    # Combine into one large string
     text = " ".join(strings).strip()
-
     words = text.split()
+
     lines = []
     current_line = ""
-    new_paragraph = True  # First line should be indented
+    new_paragraph = True  # Only indent paragraph starts
 
     def sentence_ended(w):
         return w.endswith(('.', '!', '?'))
 
     for word in words:
-        # If starting new paragraph, ensure indent is applied
+
+        # Start a new paragraph → apply indent
         if new_paragraph:
-            current_line = indent
+            current_line = indent if indent_paragraphs else ""
             new_paragraph = False
 
-        # Check if adding the word exceeds width
-        if len(current_line) + len(word) + (1 if current_line.strip() else 0) > width:
-            lines.append(current_line)
-            current_line = indent + word if indent_paragraphs else word
+        # Proposed line content if word added
+        test_line = (current_line + " " + word).rstrip() if current_line.strip() else (current_line + word)
+
+        # Wrap if too long
+        if len(test_line) > width:
+            lines.append(current_line.rstrip())
+            # Continuation lines should NOT be indented
+            current_line = word
         else:
-            if current_line.strip():  # If not empty except indent
-                current_line += " " + word
-            else:
-                current_line += word
+            current_line = test_line
 
-        # If sentence ends → force paragraph break
+        # If sentence ends → force paragraph break on next line
         if line_breaks and sentence_ended(word):
-            lines.append(current_line)
+            lines.append(current_line.rstrip())
             current_line = ""
-            new_paragraph = indent_paragraphs  # Next line begins a paragraph
+            new_paragraph = True
 
-    # Append final line
+    # Final line
     if current_line:
-        lines.append(current_line)
+        lines.append(current_line.rstrip())
 
     return "\n".join(lines)
 
