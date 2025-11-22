@@ -7,7 +7,6 @@ from core.apps.config import AppNames, AppConfigLoader
 from core.apps.es_logging.models.document import DtoFunctionLogger, update_interval_map
 from core.config.env_variables import ENV_ENABLE_PROXY
 from core.utilities.data.qlist import QList
-from core.config.app_config_manager import AppConfigManager
 
 from datetime import datetime
 from http import HTTPStatus
@@ -22,7 +21,7 @@ config = AppConfigLoader(AppNames.ELASTIC_LOGGING).config
 app_data = config.app_data
 
 LOGGING_INDEX = app_data.get('default_index', "harqis-elastic-logging")
-ELASTIC_TIME_FORMAT = app_data.get('time_format', "%Y-%m-%dT%H:%")
+ELASTIC_TIME_FORMAT = app_data.get('time_format', "%Y-%m-%dT%H:%M")
 
 
 def log_result(logging_index=LOGGING_INDEX):
