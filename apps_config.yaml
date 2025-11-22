@@ -29,4 +29,3 @@ ELASTIC_LOGGING:
     use_basic_auth: False
     auth_type: basic
     default_index: harqis-elastic-logging
-    time_format: "%Y-%m-%dT%H:%"
