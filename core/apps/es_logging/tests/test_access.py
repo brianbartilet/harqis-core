@@ -3,7 +3,7 @@ from hamcrest import assert_that, greater_than_or_equal_to
 from core.apps.es_logging.app.elasticsearch import (
     post,
     get_index_data,
-    log_es)
+    )
 from unittest import TestCase
 from uuid import uuid4
 

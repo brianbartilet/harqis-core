@@ -5,10 +5,9 @@ import base64
 
 from core.apps.config import AppNames, AppConfigLoader
 from core.apps.es_logging.models.document import DtoFunctionLogger, update_interval_map
-from core.config.constants.environment import Environment
-from core.config.env_variables import ENV, ENV_ENABLE_PROXY
+from core.config.env_variables import ENV_ENABLE_PROXY
 from core.utilities.data.qlist import QList
-
+from core.config.app_config_manager import AppConfigManager
 
 from datetime import datetime
 from http import HTTPStatus
@@ -18,21 +17,22 @@ from urllib.parse import urljoin
 from hamcrest import assert_that, any_of, equal_to
 
 APP_NAME = AppNames.ELASTIC_LOGGING
-LOGGING_INDEX = 'harqis-elastic-logging'
-ELASTIC_TIME_FORMAT = '%Y-%m-%dT%H:%M'
 
 config = AppConfigLoader(AppNames.ELASTIC_LOGGING).config
 app_data = config.app_data
 
-def log_es(source_id=APP_NAME, override=False):
+LOGGING_INDEX = app_data.get('default_index', "harqis-elastic-logging")
+ELASTIC_TIME_FORMAT = app_data.get('time_format', "%Y-%m-%dT%H:%")
+
+
+def log_result(logging_index=LOGGING_INDEX):
     def decorator(func):
         @functools.wraps(func)
         def wrapper(*args, **kwargs):
-            if ENV == Environment.DEV.value and override is False:
-                return func(*args, **kwargs)
+
             path = "{0}.{1}".format(func.__module__, func.__qualname__)
             try:
-                logs = QList(get_index_data(LOGGING_INDEX, source_id, DtoFunctionLogger))
+                logs = QList(get_index_data(logging_index, type_hook=DtoFunctionLogger))
 
                 target = logs.where(lambda x: x.name == path).first() if len(logs) > 0 else None
             except Exception:
@@ -63,7 +63,7 @@ def log_es(source_id=APP_NAME, override=False):
                 index_dto.compute_stat()
 
                 post(json_dump=index_dto.get_dict(),
-                     index_name=LOGGING_INDEX,
+                     index_name=logging_index,
                      use_interval_map=False,
                      location_key=path)
                 if error:
