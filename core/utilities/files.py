@@ -36,23 +36,50 @@ def zip_folder(folder_path, zip_filename):
                 zipf.write(file_path, arcname=relative_path)
 
 
-def remove_files_with_patterns(patterns: list[str]):
-    """
-    Deletes files matching any of the given patterns using Unix shell-style wildcards.
+import os
+import glob
+from pathlib import Path
+from typing import List
 
-    This function iterates through each pattern provided in the list and deletes all files
-    that match the pattern. It uses the `glob` module to resolve patterns to file paths.
+
+def remove_files_with_patterns(path: str, patterns: List[str]):
+    """
+    Deletes files inside a given directory that match any of the patterns.
 
     Args:
-        patterns (list[str]): A list of string patterns that specify which files to delete.
-                              Patterns should follow Unix shell-style wildcards.
+        path (str): The directory to search in.
+        patterns (list[str]): List of wildcard patterns (e.g. '*.tmp', '*.bak', '**/*.log').
 
-    Example:
-        >>> remove_files_with_patterns(['*.tmp', '*.bak'])
+    Returns:
+        dict: { "deleted": [...], "skipped": [...] }
     """
+    base = Path(path).expanduser().resolve()
+    deleted = []
+    skipped = []
+
+    if not base.exists() or not base.is_dir():
+        raise NotADirectoryError(f"Invalid path: {base}")
+
     for pattern in patterns:
-        for file in glob.glob(pattern):
-            os.remove(file)
+        # Support nested glob, e.g. **/*.log
+        full_pattern = str(base / pattern)
+
+        for file in glob.glob(full_pattern, recursive=True):
+            file_path = Path(file)
+
+            if not file_path.is_file():
+                skipped.append(file_path)
+                continue
+
+            try:
+                os.remove(file_path)
+                deleted.append(file_path)
+                print(f"🗑️ Removed: {file_path}")
+            except Exception as e:
+                print(f"❌ Error deleting {file_path}: {e}")
+                skipped.append(file_path)
+
+    return {"deleted": deleted, "skipped": skipped}
 
 
 def move_files_any(
