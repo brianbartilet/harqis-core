@@ -51,6 +51,8 @@ def log_result(logging_index=LOGGING_INDEX):
             try:
                 f = func(*args, **kwargs)
                 index_dto.passed += 1
+                # reset the initial date
+                index_dto.last_failed = '2000-01-01T00:00'
             except Exception as e:
                 error = e
                 index_dto.failed += 1
