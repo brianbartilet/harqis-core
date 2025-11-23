@@ -1,6 +1,9 @@
 import zipfile
-import os
 import glob
+import os
+import shutil
+from pathlib import Path
+from typing import Union, List, Tuple, Dict
 
 
 def zip_folder(folder_path, zip_filename):
@@ -50,3 +53,115 @@ def remove_files_with_patterns(patterns: list[str]):
     for pattern in patterns:
         for file in glob.glob(pattern):
             os.remove(file)
+
+
+def move_files_any(
+    file_map: Union[List[Tuple[str, str]], Dict[str, str]],
+    skip_missing: bool = True
+):
+    """
+    Move files where each source has its own destination directory.
+
+    Args:
+        file_map:
+            - list of (src, dest_dir) tuples, OR
+            - dict { src: dest_dir }
+        skip_missing (bool):
+            Whether to skip missing files (True) or raise an error.
+
+    Returns:
+        dict: { "moved": [...], "skipped": [...] }
+    """
+
+    # Normalize to list of tuples
+    if isinstance(file_map, dict):
+        items = [(src, dest) for src, dest in file_map.items()]
+    else:
+        items = file_map
+
+    moved = []
+    skipped = []
+
+    for src, dest_dir in items:
+        src_path = Path(src).expanduser().resolve()
+        dest_dir_path = Path(dest_dir).expanduser().resolve()
+
+        # Handle missing files
+        if not src_path.exists():
+            if skip_missing:
+                print(f"⚠️ Skipped missing file: {src_path}")
+                skipped.append(src_path)
+                continue
+            else:
+                raise FileNotFoundError(f"File not found: {src_path}")
+
+        # Create target directory if needed
+        dest_dir_path.mkdir(parents=True, exist_ok=True)
+        target = dest_dir_path / src_path.name
+
+        # Move
+        try:
+            shutil.move(str(src_path), str(target))
+            print(f"✅ Moved: {src_path} → {target}")
+            moved.append(target)
+        except Exception as e:
+            print(f"❌ ERROR moving {src_path}: {e}")
+            skipped.append(src_path)
+
+    return {"moved": moved, "skipped": skipped}
+
+
+def copy_files_any(
+    file_map: Union[List[Tuple[str, str]], Dict[str, str]],
+    skip_missing: bool = True
+):
+    """
+    Copy files where each source has its own destination directory.
+
+    Args:
+        file_map:
+            - list of (src, dest_dir) tuples, OR
+            - dict { src: dest_dir }
+        skip_missing (bool):
+            Whether to skip missing files (True) or raise an error.
+
+    Returns:
+        dict: { "copied": [...], "skipped": [...] }
+    """
+
+    # Normalize to list of tuples
+    if isinstance(file_map, dict):
+        items = [(src, dest) for src, dest in file_map.items()]
+    else:
+        items = file_map
+
+    copied = []
+    skipped = []
+
+    for src, dest_dir in items:
+        src_path = Path(src).expanduser().resolve()
+        dest_dir_path = Path(dest_dir).expanduser().resolve()
+
+        # Handle missing files
+        if not src_path.exists():
+            if skip_missing:
+                print(f"⚠️ Skipped missing file: {src_path}")
+                skipped.append(src_path)
+                continue
+            else:
+                raise FileNotFoundError(f"File not found: {src_path}")
+
+        # Create target directory if needed
+        dest_dir_path.mkdir(parents=True, exist_ok=True)
+        target = dest_dir_path / src_path.name
+
+        # Copy instead of move
+        try:
+            shutil.copy2(str(src_path), str(target))
+            print(f"📄 Copied: {src_path} → {target}")
+            copied.append(target)
+        except Exception as e:
+            print(f"❌ ERROR copying {src_path}: {e}")
+            skipped.append(src_path)
+
+    return {"copied": copied, "skipped": skipped}
