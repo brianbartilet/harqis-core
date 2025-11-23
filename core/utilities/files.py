@@ -1,12 +1,42 @@
 import zipfile
 import glob
 import os
+import re
 import shutil
 from pathlib import Path
 from typing import Union, List, Tuple, Dict
 
 
-def zip_folder(folder_path, zip_filename):
+# ---------------------------------------------------------------------------
+# Filename sanitization
+# ---------------------------------------------------------------------------
+
+def sanitize_filename(name: str) -> str:
+    """
+    Sanitize a filename by replacing special characters with '-'.
+
+    - Keeps letters, digits, dot, underscore and dash.
+    - Replaces all other characters with '-'.
+    - Collapses multiple dashes into one.
+    - Strips leading/trailing dashes and whitespace.
+    """
+    name = str(name).strip()
+
+    # Replace any char that's NOT a-z, A-Z, 0-9, dot, underscore, dash with '-'
+    name = re.sub(r'[^A-Za-z0-9._-]+', '-', name)
+
+    # Collapse multiple dashes
+    name = re.sub(r'-{2,}', '-', name)
+
+    # Strip leading/trailing dashes
+    return name.strip('-')
+
+
+# ---------------------------------------------------------------------------
+# ZIP utilities
+# ---------------------------------------------------------------------------
+
+def zip_folder(folder_path: str, zip_filename: str) -> None:
     """
     Compresses an entire directory (folder) into a ZIP file.
 
@@ -21,26 +51,20 @@ def zip_folder(folder_path, zip_filename):
     Example:
         >>> zip_folder('/path/to/folder', '/path/to/output.zip')
     """
-    # Create a ZIP file
+    folder_path = str(folder_path)
+    zip_filename = str(zip_filename)
+
     with zipfile.ZipFile(zip_filename, 'w', zipfile.ZIP_DEFLATED) as zipf:
-        # The os.walk() function generates the file names in a directory tree
-        # by walking either top-down or bottom-up.
-        for root, dirs, files in os.walk(folder_path):
+        for root, _, files in os.walk(folder_path):
             for file in files:
-                # Create the full file path
                 file_path = os.path.join(root, file)
-                # Create the relative path of the file inside the folder to maintain
-                # the folder structure in the ZIP file
                 relative_path = os.path.relpath(file_path, folder_path)
-                # Add the file to the ZIP file
                 zipf.write(file_path, arcname=relative_path)
 
 
-import os
-import glob
-from pathlib import Path
-from typing import List
-
+# ---------------------------------------------------------------------------
+# File removal utilities
+# ---------------------------------------------------------------------------
 
 def remove_files_with_patterns(path: str, patterns: List[str]):
     """
@@ -82,9 +106,13 @@ def remove_files_with_patterns(path: str, patterns: List[str]):
     return {"deleted": deleted, "skipped": skipped}
 
 
+# ---------------------------------------------------------------------------
+# Move / copy utilities
+# ---------------------------------------------------------------------------
+
 def move_files_any(
     file_map: Union[List[Tuple[str, str]], Dict[str, str]],
-    skip_missing: bool = True
+    skip_missing: bool = True,
 ):
     """
     Move files where each source has its own destination directory.
@@ -140,7 +168,7 @@ def move_files_any(
 
 def copy_files_any(
     file_map: Union[List[Tuple[str, str]], Dict[str, str]],
-    skip_missing: bool = True
+    skip_missing: bool = True,
 ):
     """
     Copy files where each source has its own destination directory.
