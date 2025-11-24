@@ -2,6 +2,7 @@ import os
 import inspect
 import re
 import subprocess
+from pathlib import Path
 
 from core.config.constants.environment import Environment
 
@@ -87,6 +88,16 @@ def get_env_variable_value(env):
 
 #  region Default Environment Variables
 
+
+# Git repo root if available
+# Fallback: current working dir
+try:
+    from subprocess import check_output
+    REPO_ROOT = Path(check_output(["git", "rev-parse", "--show-toplevel"]).decode().strip())
+except Exception:
+    REPO_ROOT = Path(os.getcwd())
+
+
 # Environment setting, default is development environment
 ENV = os.environ.get("ENV", Environment.DEV.value)
 
@@ -103,9 +114,29 @@ ENV_CURRENT_USER_PROFILE = os.environ.get("USERPROFILE", None)
 ENV_ENABLE_PROXY = os.environ.get("ENABLE_PROXY", False)
 
 # Path to the application configuration, default is the current working directory
-ENV_APP_CONFIG = os.environ.get("PATH_APP_CONFIG", os.getcwd())
-ENV_APP_CONFIG_FILE = os.environ.get("APP_CONFIG_FILE", "apps_config_{0}.yaml".format(ENV).lower())
-ENV_APP_SECRETS = os.environ.get("PATH_APP_CONFIG_SECRETS", os.path.join(os.getcwd(), '.env'))
+# Application configuration directory
+ENV_APP_CONFIG = os.environ.get(
+    "PATH_APP_CONFIG",
+    str(REPO_ROOT)   # default: repo root
+)
+
+# Application configuration file
+ENV_APP_CONFIG_FILE = os.environ.get(
+    "APP_CONFIG_FILE",
+    f"apps_config_{ENV.lower()}.yaml"
+)
+
+# Secrets directory: .env folder inside repo
+ENV_APP_SECRETS = os.environ.get(
+    "PATH_APP_CONFIG_SECRETS",
+    str(REPO_ROOT / ".env")
+)
+
+# Dynamic import module for Celery task registration
+ENV_WORKFLOW_CONFIG = os.environ.get(
+    "WORKFLOW_CONFIG",
+    "workflows.config"   # default
+)
 
 # Root directory of the application, default is the root directory of the repository, unless specified
 ENV_ROOT_DIRECTORY = os.environ.get('ROOT_DIRECTORY', os.path.dirname(os.path.abspath(__file__)))
@@ -113,10 +144,7 @@ ENV_ROOT_DIRECTORY = os.environ.get('ROOT_DIRECTORY', os.path.dirname(os.path.ab
 # Local application data path, default is None
 ENV_LOCAL_APP_DATA = os.environ.get("LOCALAPPDATA", None)
 
-
-# Performs dynamic import to connect the sprout task application to any task module
-ENV_WORKFLOW_CONFIG = os.environ.get('WORKFLOW_CONFIG', None)
-
 ENV_PYTHON_PATH = os.environ.get('PYTHONPATH', os.getcwd())
 
 #  endregion
+
