@@ -113,18 +113,6 @@ services:
       CELERY_BROKER: amqp://guest:guest@rabbitmq:5672//
     command: ["python", "run_tests.py", "worker"]
 
-  n8n:
-    image: docker.n8n.io/n8nio/n8n:latest
-    container_name: n8n
-    restart: unless-stopped
-    ports:
-      - "${HOST_PORT_N8N:-5678}:5678"
-    volumes:
-      - ../backups/n8n:/home/node/.n8n
-    environment:
-      TZ: Asia/Singapore
-
 volumes:
   es_data:
   es_snapshots:
-  n8n_data:
