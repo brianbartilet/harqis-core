@@ -58,7 +58,7 @@ import time
 import re
 from datetime import datetime
 from pathlib import Path
-from typing import Tuple, Optional, List, Tuple as Tup
+from typing import Tuple, Optional, List, Tuple as Tup, Union
 
 import uiautomation as auto
 import mss
@@ -414,6 +414,17 @@ def mask_sensitive(text: str, enabled: bool = True) -> str:
 def _ocr_bbox(left: int, top: int, right: int, bottom: int) -> str:
     """
     Capture a given bounding box on the virtual desktop and run Tesseract OCR.
+
+    Parameters
+    ----------
+    left, top, right, bottom : int
+        Bounding box coordinates for the capture region.
+
+    Returns
+    -------
+    str
+        Recognized text (stripped, normalized line endings),
+        or a special string of the form "<OCR error: ...>" if something fails.
     """
     try:
         width = right - left
@@ -454,6 +465,7 @@ def _ocr_bbox(left: int, top: int, right: int, bottom: int) -> str:
         # Capture full traceback in the string so we see what broke
         tb = traceback.format_exc()
         return f"<OCR error: {e} | {tb}>"
+
 
 def get_focus_ocr_text(control: Optional[object]) -> str:
     """
@@ -515,14 +527,13 @@ def get_click_ocr_text(
 # --- Main loop --------------------------------------------------------------
 
 
-
 def run_capture(
     rotation: str = "hourly",
     log_clipboard_text: bool = True,
     log_clipboard_images: bool = True,
     log_open_apps: bool = True,
     mask_secrets_enabled: bool = True,
-    log_dir:  str = "."
+    log_dir: Union[str, Path] = ".",
 ) -> None:
     """
     Main event loop that logs focus changes and click context to rotating log files.
@@ -557,7 +568,7 @@ def run_capture(
     mask_secrets_enabled : bool
         If True, applies simple masking to clipboard & OCR text to reduce
         exposure of sensitive content (emails, long tokens, etc.)
-    log_dir: Path
+    log_dir: str | Path
         Where to write the logs.
 
     Notes
@@ -565,7 +576,7 @@ def run_capture(
     - The loop runs indefinitely until interrupted with Ctrl+C.
     - Any unexpected exception during the click-handling block is caught
       and logged as INTERNAL_ERROR, so the loop keeps running.
-    - Log files are written under LOG_DIR (`activity_logs/` by default).
+    - Log files are written under LOG_DIR.
     """
     global LOG_DIR
 
@@ -644,8 +655,6 @@ def run_capture(
                         log_file = None
 
                     try:
-                        # Everything inside here was already in your try block
-                        # I just moved it under `if log_file is not None`
                         if log_file is not None:
                             try:
                                 ocr_text = get_click_ocr_text(
@@ -778,9 +787,9 @@ def run_capture(
 
 if __name__ == "__main__":
     import sys
-    import traceback
 
-    # 1. Get log_dir from command line if provided by `-m core.utilities.capture.actions <log_dir> ...`
+    # Get log_dir from command line if provided by:
+    #   python -m core.utilities.capture.actions <log_dir> ...
     if len(sys.argv) > 1:
         log_dir = sys.argv[1]
     else:
@@ -801,7 +810,7 @@ if __name__ == "__main__":
         print("\nStopped by user.")
 
     except Exception as e:
-        # 2. Log crash to a dedicated file in the same log dir
+        # Log crash to a dedicated file in the same log dir
         crash_file = Path(log_dir) / "actions_crash.log"
         try:
             with crash_file.open("a", encoding="utf-8") as f:
@@ -812,17 +821,12 @@ if __name__ == "__main__":
             # If we can't write the crash file, at least say so
             print("Failed to write actions_crash.log")
 
-        # 3. Print traceback so you can SEE it in the console before it closes
+        # Print traceback so you can SEE it in the console before it closes
         print("UNHANDLED EXCEPTION IN run_capture():", e)
         traceback.print_exc()
 
-        # 4. Keep the console open long enough to read the error
+        # Keep the console open long enough to read the error (when visible)
         try:
             input("Press Enter to close this window...")
         except EOFError:
-            # If stdin isn't interactive (hidden window), just exit
             pass
-
-        # Re-raise if you want non-zero exit code (optional)
-        # raise
-
