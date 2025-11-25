@@ -4,8 +4,16 @@ from pathlib import Path
 from datetime import datetime
 
 
-def main():
-    # Read log_dir from CLI
+def main() -> None:
+    """
+    Entry-point wrapper for the desktop activity logger.
+
+    This exists so that:
+    - Import-time errors in core.utilities.capture.actions are captured.
+    - Any unhandled exceptions inside run_capture are logged to actions_crash.log.
+    """
+
+    # Read log_dir from CLI, default to current working directory
     if len(sys.argv) > 1:
         log_dir = sys.argv[1]
     else:
@@ -16,10 +24,27 @@ def main():
 
     crash_file = log_dir_path / "actions_crash.log"
 
+    # Tiny boot log so we can see that the entry actually ran
     try:
-        # Import inside try so import errors are captured
+        with (log_dir_path / "actions_bootstrap.log").open("a", encoding="utf-8") as f:
+            f.write(f"{datetime.now().isoformat()} - actions_entry.main started\n")
+            f.write(f"  sys.argv = {sys.argv!r}\n")
+    except Exception:
+        # If we can't write this, just ignore
+        pass
+
+    try:
+        # Import inside try so ANY import error is captured here
         from core.utilities.capture.actions import run_capture
 
+        # Extra marker so we know we got past import
+        try:
+            with (log_dir_path / "actions_bootstrap.log").open("a", encoding="utf-8") as f:
+                f.write(f"{datetime.now().isoformat()} - imported run_capture OK\n")
+        except Exception:
+            pass
+
+        # Now run the main loop
         run_capture(
             rotation="hourly",
             log_clipboard_text=True,
