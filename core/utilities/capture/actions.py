@@ -1,10 +1,66 @@
+"""
+Desktop activity logger with OCR, clipboard capture, and open-application snapshot.
+
+Overview
+--------
+This script continuously runs a lightweight event loop that:
+
+1. Tracks **UI focus changes** using `uiautomation` and logs:
+       [timestamp] FOCUS [active_window_title]: control_name
+
+2. On **left mouse clicks** (transition from “up” to “down”), it:
+   - Captures a screenshot of a rectangle around the mouse cursor (across all monitors)
+   - Runs **Tesseract OCR** on that region
+   - Reads the current **clipboard text** (optional)
+   - Reads basic **clipboard image info** (optional)
+   - Enumerates all **top-level visible windows** (optional)
+
+3. Writes structured, tag-based log lines such as:
+       [timestamp] CLICK_OCR [window_title]: text line from OCR
+       [timestamp] CLIPBOARD_TEXT: copied text line
+       [timestamp] CLIPBOARD_IMAGE: image 1920x1080 RGB
+       [timestamp] OPEN_APP: pid=1234, proc=chrome.exe, title=Gmail - ...
+
+To avoid exploding log size, the script:
+- Only logs **clipboard text** when it changes.
+- Only logs **clipboard image info** when it changes.
+- Only logs **OPEN_APP** when the set of open windows changes.
+- Supports **daily/hourly log rotation**.
+
+It also supports a basic **“sensitivity mode”** which masks likely secrets
+(e.g. emails, long tokens) in OCR and clipboard text before writing to disk.
+
+Dependencies
+------------
+- uiautomation
+- mss
+- pillow (PIL)
+- pytesseract
+- psutil
+
+You also need Tesseract installed and (optionally) configured via:
+    pytesseract.pytesseract.tesseract_cmd = r"C:\\Program Files\\Tesseract-OCR\\tesseract.exe"
+
+Usage
+-----
+Run directly:
+
+    python actions_logging.py
+
+By default, logs will rotate **hourly** into the `activity_logs/` directory:
+    activity_logs/actions-YYYYMMDD_HH.log
+
+Press Ctrl+C to stop.
+"""
+
+import os
 import time
+import re
 from datetime import datetime
 from pathlib import Path
 from typing import Tuple, Optional, List, Tuple as Tup
 
 import uiautomation as auto
-import pyttsx3
 import mss
 from PIL import Image, ImageGrab
 import pytesseract
@@ -16,29 +72,73 @@ import psutil
 # If needed, explicitly set the tesseract.exe path, e.g.:
 # pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
 
-LOG_FILE = Path("actions.log")
+# Directory where log files will be stored
+LOG_DIR = Path(os.getcwd())
 
+# Base name for log files (rotation appends timestamp)
+LOG_BASENAME = "actions"
+
+# Mouse-centered OCR capture box size (in pixels)
 MOUSE_OCR_WIDTH = 800
 MOUSE_OCR_HEIGHT = 400
 
-# --- Win32 helpers ---------------------------------------------------------
+# --- Win32 / OS-level helpers ----------------------------------------------
 
+# Windows user32 / kernel32 handles for various win32 APIs
 _user32 = ctypes.windll.user32
 _kernel32 = ctypes.windll.kernel32
 
+# Virtual-key code for the left mouse button
 VK_LBUTTON = 0x01
 
-# Virtual screen metrics (all monitors)
+# System metrics indices for the "virtual screen" (all monitors)
 SM_XVIRTUALSCREEN = 76
 SM_YVIRTUALSCREEN = 77
 SM_CXVIRTUALSCREEN = 78
 SM_CYVIRTUALSCREEN = 79
 
-CF_UNICODETEXT = 13  # clipboard text format
+# Clipboard format constant for Unicode text
+CF_UNICODETEXT = 13
+
+
+def _current_log_file(rotation: str = "hourly") -> Path:
+    """
+    Compute the current log file path based on the rotation policy.
+
+    Parameters
+    ----------
+    rotation : {"hourly", "daily", "none"}
+        - "hourly":   actions-YYYYMMDD_HH.log
+        - "daily":    actions-YYYYMMDD.log
+        - "none":     actions.log
+
+    Returns
+    -------
+    Path
+        Path to the log file for "now" in LOG_DIR.
+    """
+    if rotation == "hourly":
+        ts = datetime.now().strftime("%Y%m%d_%H")
+        name = f"{LOG_BASENAME}-{ts}.log"
+    elif rotation == "daily":
+        ts = datetime.now().strftime("%Y%m%d")
+        name = f"{LOG_BASENAME}-{ts}.log"
+    else:
+        name = f"{LOG_BASENAME}.log"
+
+    return LOG_DIR / name
 
 
 def _get_mouse_pos() -> Tuple[int, int]:
-    """Return current mouse position in virtual screen coordinates."""
+    """
+    Get the current mouse position in *virtual screen* coordinates.
+
+    Returns
+    -------
+    (x, y) : tuple[int, int]
+        Mouse coordinates which may be negative if you have monitors to the left/top
+        of the primary display.
+    """
     pt = wintypes.POINT()
     _user32.GetCursorPos(ctypes.byref(pt))
     return pt.x, pt.y
@@ -46,9 +146,13 @@ def _get_mouse_pos() -> Tuple[int, int]:
 
 def _get_virtual_screen_bounds() -> Tuple[int, int, int, int]:
     """
-    Return the virtual desktop bounds that include all monitors:
-    (left, top, right, bottom).
-    These can be negative if you have monitors left/above the primary.
+    Return the virtual desktop bounds that include all monitors.
+
+    Returns
+    -------
+    (left, top, right, bottom) : tuple[int, int, int, int]
+        Coordinates may be negative if there are monitors to the left or above
+        the primary monitor.
     """
     left = _user32.GetSystemMetrics(SM_XVIRTUALSCREEN)
     top = _user32.GetSystemMetrics(SM_YVIRTUALSCREEN)
@@ -62,8 +166,19 @@ def _get_mouse_rect(
     height: int = MOUSE_OCR_HEIGHT,
 ) -> Tuple[int, int, int, int]:
     """
-    Build a rectangle centered on the mouse pointer, clamped to virtual screen
-    bounds across all monitors. Returns (left, top, right, bottom).
+    Build a rectangle centered on the mouse cursor, clamped to the virtual desktop.
+
+    Parameters
+    ----------
+    width : int
+        Desired width of the OCR capture region.
+    height : int
+        Desired height of the OCR capture region.
+
+    Returns
+    -------
+    (left, top, right, bottom) : tuple[int, int, int, int]
+        A valid bounding box for use with MSS and Tesseract.
     """
     x, y = _get_mouse_pos()
     half_w = width // 2
@@ -76,7 +191,7 @@ def _get_mouse_rect(
 
     v_left, v_top, v_right, v_bottom = _get_virtual_screen_bounds()
 
-    # Clamp against full virtual desktop, not just primary monitor
+    # Clamp against full virtual desktop (all monitors)
     if left < v_left:
         left = v_left
     if top < v_top:
@@ -86,8 +201,8 @@ def _get_mouse_rect(
     if bottom > v_bottom:
         bottom = v_bottom
 
+    # Fallback to a tiny rectangle if something goes weird
     if right <= left or bottom <= top:
-        # Fallback to tiny rect if something weird happens
         right = left + 1
         bottom = top + 1
 
@@ -95,16 +210,28 @@ def _get_mouse_rect(
 
 
 def _is_left_button_down() -> bool:
-    """Return True if the left mouse button is currently pressed."""
+    """
+    Check whether the left mouse button is currently pressed.
+
+    Returns
+    -------
+    bool
+        True if the left mouse button is down, False otherwise.
+    """
     state = _user32.GetAsyncKeyState(VK_LBUTTON)
     return bool(state & 0x8000)
 
 
-# --- Window Info Helpers ---------------------------------------------------
+# --- Window info helpers ----------------------------------------------------
 
 def get_active_window_title() -> str:
     """
-    Returns the title of the active (foreground) window.
+    Get the title of the currently active (foreground) window.
+
+    Returns
+    -------
+    str
+        The active window title, or empty string if none / no title.
     """
     hwnd = _user32.GetForegroundWindow()
     if not hwnd:
@@ -121,15 +248,20 @@ def get_active_window_title() -> str:
 
 def get_open_applications() -> List[Tup[str, int, str]]:
     """
-    Enumerate all visible top-level windows and return a list of:
-      (window_title, pid, process_name)
+    Enumerate all visible top-level windows and return basic app info.
+
+    Returns
+    -------
+    list[tuple[str, int, str]]
+        A list of (window_title, pid, process_name) for each visible top-level window.
+        Windows without a title are skipped.
     """
     results: List[Tup[str, int, str]] = []
 
     EnumWindowsProc = ctypes.WINFUNCTYPE(ctypes.c_bool, wintypes.HWND, wintypes.LPARAM)
 
     def callback(hwnd, lparam):
-        # Skip invisible or cloaked windows
+        # Skip invisible windows
         if not _user32.IsWindowVisible(hwnd):
             return True
 
@@ -143,11 +275,12 @@ def get_open_applications() -> List[Tup[str, int, str]]:
         if not title:
             return True
 
-        # Get PID
+        # Get process ID
         pid = wintypes.DWORD()
         _user32.GetWindowThreadProcessId(hwnd, ctypes.byref(pid))
         pid_int = pid.value
 
+        # Try to resolve process executable name
         proc_name = ""
         try:
             proc = psutil.Process(pid_int)
@@ -162,12 +295,19 @@ def get_open_applications() -> List[Tup[str, int, str]]:
     return results
 
 
-# --- Clipboard Helpers -----------------------------------------------------
+# --- Clipboard helpers ------------------------------------------------------
 
 def get_clipboard_text() -> str:
     """
-    Get Unicode text content from the Windows clipboard (if any).
-    Returns empty string if there's no text or clipboard is unavailable.
+    Get Unicode text content from the Windows clipboard, if present.
+
+    Returns
+    -------
+    str
+        Clipboard text (stripped), or empty string if:
+        - no clipboard, or
+        - no Unicode text in the clipboard, or
+        - an error occurred.
     """
     text = ""
     if not _user32.OpenClipboard(None):
@@ -177,6 +317,7 @@ def get_clipboard_text() -> str:
         handle = _user32.GetClipboardData(CF_UNICODETEXT)
         if not handle:
             return ""
+
         _kernel32.GlobalLock.argtypes = [wintypes.HGLOBAL]
         _kernel32.GlobalLock.restype = wintypes.LPVOID
         _kernel32.GlobalUnlock.argtypes = [wintypes.HGLOBAL]
@@ -195,8 +336,20 @@ def get_clipboard_text() -> str:
 
 def get_clipboard_image_info() -> str:
     """
-    Try to get basic image info from the clipboard.
-    Returns empty string if no image / file-based image is present.
+    Get basic info about image data currently in the clipboard.
+
+    This uses PIL's ImageGrab.grabclipboard() which returns either:
+    - a PIL.Image.Image,
+    - a list of file paths (if image files are copied), or
+    - None if no image-like content is present.
+
+    Returns
+    -------
+    str
+        A short description string such as:
+          "image 1920x1080 RGB"
+          "image_files [C:\\path\\to\\img1.png, C:\\path\\to\\img2.jpg]"
+        or empty string if no image-related data is present.
     """
     try:
         data = ImageGrab.grabclipboard()
@@ -206,18 +359,69 @@ def get_clipboard_image_info() -> str:
     if isinstance(data, Image.Image):
         return f"image {data.width}x{data.height} {data.mode}"
     elif isinstance(data, list):
-        # file paths copied to clipboard
+        # Typically list of file paths
         paths = ", ".join(str(p) for p in data)
         return f"image_files [{paths}]"
     return ""
 
 
-# --- OCR core --------------------------------------------------------------
+# --- Sensitivity / masking helpers -----------------------------------------
+
+_EMAIL_RE = re.compile(
+    r"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}",
+    re.UNICODE,
+)
+
+_LONG_TOKEN_RE = re.compile(
+    r"\b[A-Za-z0-9]{20,}\b",  # long alphanumeric strings (tokens, IDs, etc.)
+    re.UNICODE,
+)
+
+
+def mask_sensitive(text: str, enabled: bool = True) -> str:
+    """
+    Mask potentially sensitive content in a line of text.
+
+    Currently masks:
+    - Email addresses → "[EMAIL]"
+    - Long alphanumeric tokens (>= 20 chars) → "[TOKEN]"
+
+    Parameters
+    ----------
+    text : str
+        The text to scan and mask.
+    enabled : bool
+        If False, returns the text unchanged.
+
+    Returns
+    -------
+    str
+        Masked text if enabled, otherwise the original text.
+    """
+    if not enabled or not text:
+        return text
+
+    masked = _EMAIL_RE.sub("[EMAIL]", text)
+    masked = _LONG_TOKEN_RE.sub("[TOKEN]", masked)
+    return masked
+
+
+# --- OCR core ---------------------------------------------------------------
 
 def _ocr_bbox(left: int, top: int, right: int, bottom: int) -> str:
     """
-    Run OCR on a given bounding box.
-    Uses MSS, which understands virtual desktop coordinates across monitors.
+    Capture a given bounding box on the virtual desktop and run Tesseract OCR.
+
+    Parameters
+    ----------
+    left, top, right, bottom : int
+        Bounding box coordinates for the capture region.
+
+    Returns
+    -------
+    str
+        Recognized text (stripped, normalized line endings),
+        or a special string of the form "<OCR error: ...>" if something fails.
     """
     try:
         width = right - left
@@ -249,8 +453,20 @@ def _ocr_bbox(left: int, top: int, right: int, bottom: int) -> str:
 
 def get_focus_ocr_text(control: Optional[object]) -> str:
     """
-    OCR for the focused control's bounding rectangle ONLY.
-    (Kept here if you want to re-enable focus-based OCR later.)
+    Run OCR over the bounding rectangle of a UI Automation control.
+
+    This is not used in the main loop for now but is kept for potential
+    future use (e.g., focus-based OCR).
+
+    Parameters
+    ----------
+    control : Any
+        A UI Automation control with a BoundingRectangle attribute.
+
+    Returns
+    -------
+    str
+        Recognized text, or empty string if no valid rectangle or on error.
     """
     if control is None:
         return ""
@@ -271,29 +487,106 @@ def get_click_ocr_text(
     mouse_height: int = MOUSE_OCR_HEIGHT,
 ) -> str:
     """
-    OCR for a rectangle around the current mouse position.
-    This is used for mouse click events so it's independent of focus.
+    Run OCR on a rectangle centered around the current mouse cursor.
+
+    This is used for *click events*, independent of focus.
+
+    Parameters
+    ----------
+    mouse_width : int
+        Width of the capture rectangle around the mouse.
+    mouse_height : int
+        Height of the capture rectangle around the mouse.
+
+    Returns
+    -------
+    str
+        Recognized text from the region, or an "<OCR error: ...>" string if
+        something goes wrong.
     """
     left, top, right, bottom = _get_mouse_rect(mouse_width, mouse_height)
     return _ocr_bbox(left, top, right, bottom)
 
 
-# --- Main loop -------------------------------------------------------------
+# --- Main loop --------------------------------------------------------------
 
-def run_capture(file: Path = LOG_FILE):
-    engine = pyttsx3.init()
-    # keep engine but mute it
-    engine.setProperty("volume", 0.0)
 
-    last_name = None
-    last_mouse_down = False
 
-    print(f"Logging focus changes and click OCR to: {file.resolve()}")
+def run_capture(
+    rotation: str = "hourly",
+    log_clipboard_text: bool = True,
+    log_clipboard_images: bool = True,
+    log_open_apps: bool = True,
+    mask_secrets_enabled: bool = True,
+    log_dir:  str = "."
+) -> None:
+    """
+    Main event loop that logs focus changes and click context to rotating log files.
+
+    What it does
+    ------------
+    - On **focus change**, logs:
+          [timestamp] FOCUS [window_title]: control_name
+
+    - On **left mouse button down** (edge from up → down), logs:
+        * CLICK_OCR lines for any OCR text detected around the mouse cursor
+        * CLIPBOARD_TEXT lines, only when clipboard text changes (optional)
+        * CLIPBOARD_IMAGE line, only when clipboard image info changes (optional)
+        * OPEN_APP lines for each visible top-level window, only when the
+          overall open-app snapshot has changed since the last log (optional)
+
+    All logs are tagged so they can be easily parsed later.
+
+    Parameters
+    ----------
+    rotation : {"hourly", "daily", "none"}
+        Controls log file rotation:
+        - "hourly": actions-YYYYMMDD_HH.log
+        - "daily":  actions-YYYYMMDD.log
+        - "none":   actions.log (single file)
+    log_clipboard_text : bool
+        If True, clipboard text is captured and logged (with optional masking).
+    log_clipboard_images : bool
+        If True, clipboard image info is captured and logged.
+    log_open_apps : bool
+        If True, open application snapshots (top-level windows) are logged.
+    mask_secrets_enabled : bool
+        If True, applies simple masking to clipboard & OCR text to reduce
+        exposure of sensitive content (emails, long tokens, etc.)
+    log_dir: Path
+        Where to write the logs.
+
+    Notes
+    -----
+    - The loop runs indefinitely until interrupted with Ctrl+C.
+    - Any unexpected exception during the click-handling block is caught
+      and logged as INTERNAL_ERROR, so the loop keeps running.
+    - Log files are written under LOG_DIR (`activity_logs/` by default).
+    """
+    global LOG_DIR
+
+    if log_dir is not None:
+        LOG_DIR = Path(log_dir)   # normalize string → Path
+
+    LOG_DIR.mkdir(parents=True, exist_ok=True)
+
+    last_name: Optional[str] = None
+    last_mouse_down: bool = False
+
+    # Track last clipboard contents so we only log when they change
+    last_clip_text: Optional[str] = None
+    last_clip_img_info: Optional[str] = None
+
+    # Track last open app snapshot (as a signature string)
+    last_open_apps_sig: Optional[str] = None
+
+    print(f"Logging focus changes and click OCR to: {LOG_DIR.resolve()}")
+    print(f"Rotation: {rotation}")
     print("Press Ctrl+C to stop.\n")
 
     try:
         while True:
-            # -------- FOCUS HANDLING (name, silent) --------
+            # -------- FOCUS HANDLING (name only) --------
             try:
                 focused = auto.GetFocusedControl()
             except Exception:
@@ -309,79 +602,114 @@ def run_capture(file: Path = LOG_FILE):
             else:
                 name = ""
 
+            # Only log when the focus name actually changes
             if name and name != last_name:
-                engine.runAndWait()
-
                 timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                 window_title = get_active_window_title()
+                log_file = _current_log_file(rotation)
 
-                with file.open("a", encoding="utf-8") as f:
-                    focus = f"[{timestamp}] FOCUS [{window_title}]: {name}\n"
-                    f.write(focus)
+                line = f"[{timestamp}] FOCUS [{window_title}]: {name}\n"
+                with log_file.open("a", encoding="utf-8") as f:
+                    f.write(line)
 
                 last_name = name
 
             # -------- CLICK HANDLING (mouse-based OCR + clipboard + apps) --------
             mouse_down = _is_left_button_down()
+            # Detect the rising edge: was up, now down = new click
             if mouse_down and not last_mouse_down:
                 timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                 window_title = get_active_window_title()
+                log_file = _current_log_file(rotation)
 
-                # OCR around mouse
-                ocr_text = get_click_ocr_text(
-                    mouse_width=MOUSE_OCR_WIDTH,
-                    mouse_height=MOUSE_OCR_HEIGHT,
-                )
+                try:
+                    # Capture OCR around the mouse cursor
+                    ocr_text = get_click_ocr_text(
+                        mouse_width=MOUSE_OCR_WIDTH,
+                        mouse_height=MOUSE_OCR_HEIGHT,
+                    )
 
-                # Clipboard snapshot
-                clip_text = get_clipboard_text()
-                clip_img_info = get_clipboard_image_info()
+                    # Snapshot of clipboard text + image info
+                    clip_text = get_clipboard_text() if log_clipboard_text else ""
+                    clip_img_info = (
+                        get_clipboard_image_info() if log_clipboard_images else ""
+                    )
 
-                # Open applications snapshot
-                open_apps = get_open_applications()
+                    # Snapshot of all open top-level visible windows
+                    open_apps: List[Tup[str, int, str]] = (
+                        get_open_applications() if log_open_apps else []
+                    )
 
-                with file.open("a", encoding="utf-8") as f:
-                    # OCR logging
-                    if ocr_text and not ocr_text.startswith("<OCR error:"):
-                        for line in ocr_text.split("\n"):
-                            line = line.strip()
-                            if line:
-                                ocr_line = (
-                                    f"[{timestamp}] CLICK_OCR "
-                                    f"[{window_title}]: {line}\n"
-                                )
-                                print(ocr_line, end="")
-                                f.write(ocr_line)
-                    else:
-                        ocr_error = (
-                            f"[{timestamp}] CLICK_OCR "
-                            f"[{window_title}]: (none or error)\n"
-                        )
-                        f.write(ocr_error)
+                    # Build a stable signature of open apps so we can detect changes
+                    sorted_apps = sorted(
+                        open_apps,
+                        key=lambda t: (t[1], t[2], t[0]),  # (pid, proc_name, title)
+                    )
+                    open_apps_sig = "|".join(
+                        f"{pid}:{proc_name}:{title}"
+                        for (title, pid, proc_name) in sorted_apps
+                    )
 
-                    # Clipboard text logging
-                    if clip_text:
-                        for line in clip_text.splitlines():
-                            line = line.strip()
-                            if line:
+                    with log_file.open("a", encoding="utf-8") as f:
+                        # OCR logging (if successful)
+                        if ocr_text and not ocr_text.startswith("<OCR error:"):
+                            for raw_line in ocr_text.split("\n"):
+                                raw_line = raw_line.strip()
+                                if raw_line:
+                                    line_text = mask_sensitive(
+                                        raw_line, enabled=mask_secrets_enabled
+                                    )
+                                    log_line = (
+                                        f"[{timestamp}] CLICK_OCR "
+                                        f"[{window_title}]: {line_text}\n"
+                                    )
+                                    f.write(log_line)
+                        else:
+                            ocr_error = (
+                                f"[{timestamp}] CLICK_OCR "
+                                f"[{window_title}]: (none or error)\n"
+                            )
+                            f.write(ocr_error)
+
+                        # Clipboard text logging (only if changed & non-empty)
+                        if clip_text and clip_text != last_clip_text:
+                            for raw_line in clip_text.splitlines():
+                                raw_line = raw_line.strip()
+                                if raw_line:
+                                    safe_text = mask_sensitive(
+                                        raw_line, enabled=mask_secrets_enabled
+                                    )
+                                    f.write(
+                                        f"[{timestamp}] CLIPBOARD_TEXT: {safe_text}\n"
+                                    )
+                            last_clip_text = clip_text
+
+                        # Clipboard image info logging (only if changed & non-empty)
+                        if clip_img_info and clip_img_info != last_clip_img_info:
+                            f.write(
+                                f"[{timestamp}] CLIPBOARD_IMAGE: {clip_img_info}\n"
+                            )
+                            last_clip_img_info = clip_img_info
+
+                        # Open applications logging (only if snapshot changed)
+                        if log_open_apps and open_apps_sig and open_apps_sig != last_open_apps_sig:
+                            for title, pid, proc_name in sorted_apps:
                                 f.write(
-                                    f"[{timestamp}] CLIPBOARD_TEXT: {line}\n"
+                                    f"[{timestamp}] OPEN_APP: "
+                                    f"pid={pid}, proc={proc_name}, title={title}\n"
                                 )
+                            last_open_apps_sig = open_apps_sig
 
-                    # Clipboard image info logging
-                    if clip_img_info:
+                except Exception as e:
+                    # Catch ANY unexpected internal error so the main loop survives
+                    log_file = _current_log_file(rotation)
+                    with log_file.open("a", encoding="utf-8") as f:
                         f.write(
-                            f"[{timestamp}] CLIPBOARD_IMAGE: {clip_img_info}\n"
-                        )
-
-                    # Open applications logging
-                    for title, pid, proc_name in open_apps:
-                        f.write(
-                            f"[{timestamp}] OPEN_APP: "
-                            f"pid={pid}, proc={proc_name}, title={title}\n"
+                            f"[{timestamp}] INTERNAL_ERROR: {repr(e)}\n"
                         )
 
             last_mouse_down = mouse_down
+            # Small sleep to avoid hammering the CPU
             time.sleep(0.05)
 
     except KeyboardInterrupt:
@@ -389,4 +717,12 @@ def run_capture(file: Path = LOG_FILE):
 
 
 if __name__ == "__main__":
-    run_capture()
+    # Example: hourly rotation, full logging, masking enabled
+    run_capture(
+        rotation="hourly",
+        log_clipboard_text=True,
+        log_clipboard_images=True,
+        log_open_apps=True,
+        mask_secrets_enabled=True,
+        log_dir=os.getcwd(),
+    )
