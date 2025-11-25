@@ -1,30 +1,31 @@
 import time
 from datetime import datetime
 from pathlib import Path
-from typing import Tuple, Optional
+from typing import Tuple, Optional, List, Tuple as Tup
 
 import uiautomation as auto
 import pyttsx3
 import mss
-from PIL import Image
+from PIL import Image, ImageGrab
 import pytesseract
 from _ctypes import COMError  # to catch COM-related errors explicitly
 import ctypes
 from ctypes import wintypes
+import psutil
 
 # If needed, explicitly set the tesseract.exe path, e.g.:
 # pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
 
-# File where we append everything the "screen reader" says
 LOG_FILE = Path("actions.log")
 
-# Mouse-centered OCR region size (in pixels)
 MOUSE_OCR_WIDTH = 800
 MOUSE_OCR_HEIGHT = 400
 
 # --- Win32 helpers ---------------------------------------------------------
 
 _user32 = ctypes.windll.user32
+_kernel32 = ctypes.windll.kernel32
+
 VK_LBUTTON = 0x01
 
 # Virtual screen metrics (all monitors)
@@ -32,6 +33,8 @@ SM_XVIRTUALSCREEN = 76
 SM_YVIRTUALSCREEN = 77
 SM_CXVIRTUALSCREEN = 78
 SM_CYVIRTUALSCREEN = 79
+
+CF_UNICODETEXT = 13  # clipboard text format
 
 
 def _get_mouse_pos() -> Tuple[int, int]:
@@ -116,6 +119,99 @@ def get_active_window_title() -> str:
     return buf.value
 
 
+def get_open_applications() -> List[Tup[str, int, str]]:
+    """
+    Enumerate all visible top-level windows and return a list of:
+      (window_title, pid, process_name)
+    """
+    results: List[Tup[str, int, str]] = []
+
+    EnumWindowsProc = ctypes.WINFUNCTYPE(ctypes.c_bool, wintypes.HWND, wintypes.LPARAM)
+
+    def callback(hwnd, lparam):
+        # Skip invisible or cloaked windows
+        if not _user32.IsWindowVisible(hwnd):
+            return True
+
+        length = _user32.GetWindowTextLengthW(hwnd)
+        if length == 0:
+            return True
+
+        buf = ctypes.create_unicode_buffer(length + 1)
+        _user32.GetWindowTextW(hwnd, buf, length + 1)
+        title = buf.value.strip()
+        if not title:
+            return True
+
+        # Get PID
+        pid = wintypes.DWORD()
+        _user32.GetWindowThreadProcessId(hwnd, ctypes.byref(pid))
+        pid_int = pid.value
+
+        proc_name = ""
+        try:
+            proc = psutil.Process(pid_int)
+            proc_name = proc.name()
+        except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+            proc_name = "<unknown>"
+
+        results.append((title, pid_int, proc_name))
+        return True
+
+    _user32.EnumWindows(EnumWindowsProc(callback), 0)
+    return results
+
+
+# --- Clipboard Helpers -----------------------------------------------------
+
+def get_clipboard_text() -> str:
+    """
+    Get Unicode text content from the Windows clipboard (if any).
+    Returns empty string if there's no text or clipboard is unavailable.
+    """
+    text = ""
+    if not _user32.OpenClipboard(None):
+        return ""
+
+    try:
+        handle = _user32.GetClipboardData(CF_UNICODETEXT)
+        if not handle:
+            return ""
+        _kernel32.GlobalLock.argtypes = [wintypes.HGLOBAL]
+        _kernel32.GlobalLock.restype = wintypes.LPVOID
+        _kernel32.GlobalUnlock.argtypes = [wintypes.HGLOBAL]
+
+        ptr = _kernel32.GlobalLock(handle)
+        if ptr:
+            text = ctypes.wstring_at(ptr)
+            _kernel32.GlobalUnlock(handle)
+    except Exception:
+        text = ""
+    finally:
+        _user32.CloseClipboard()
+
+    return text.strip()
+
+
+def get_clipboard_image_info() -> str:
+    """
+    Try to get basic image info from the clipboard.
+    Returns empty string if no image / file-based image is present.
+    """
+    try:
+        data = ImageGrab.grabclipboard()
+    except Exception:
+        return ""
+
+    if isinstance(data, Image.Image):
+        return f"image {data.width}x{data.height} {data.mode}"
+    elif isinstance(data, list):
+        # file paths copied to clipboard
+        paths = ", ".join(str(p) for p in data)
+        return f"image_files [{paths}]"
+    return ""
+
+
 # --- OCR core --------------------------------------------------------------
 
 def _ocr_bbox(left: int, top: int, right: int, bottom: int) -> str:
@@ -144,7 +240,6 @@ def _ocr_bbox(left: int, top: int, right: int, bottom: int) -> str:
                 "BGRX",
             )
 
-        # Now run Tesseract
         text = pytesseract.image_to_string(img, config="--psm 6")
         return text.replace("\r\n", "\n").strip()
 
@@ -185,8 +280,10 @@ def get_click_ocr_text(
 
 # --- Main loop -------------------------------------------------------------
 
-def run_capture(file: Path=LOG_FILE):
+def run_capture(file: Path = LOG_FILE):
     engine = pyttsx3.init()
+    # keep engine but mute it
+    engine.setProperty("volume", 0.0)
 
     last_name = None
     last_mouse_down = False
@@ -196,7 +293,7 @@ def run_capture(file: Path=LOG_FILE):
 
     try:
         while True:
-            # -------- FOCUS HANDLING (name + speech, no OCR) --------
+            # -------- FOCUS HANDLING (name, silent) --------
             try:
                 focused = auto.GetFocusedControl()
             except Exception:
@@ -224,31 +321,67 @@ def run_capture(file: Path=LOG_FILE):
 
                 last_name = name
 
-            # -------- CLICK HANDLING (mouse-based OCR) --------
+            # -------- CLICK HANDLING (mouse-based OCR + clipboard + apps) --------
             mouse_down = _is_left_button_down()
-            # Detect edge: went from up -> down = new click
             if mouse_down and not last_mouse_down:
                 timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                window_title = get_active_window_title()
+
+                # OCR around mouse
                 ocr_text = get_click_ocr_text(
                     mouse_width=MOUSE_OCR_WIDTH,
                     mouse_height=MOUSE_OCR_HEIGHT,
                 )
-                window_title = get_active_window_title()
+
+                # Clipboard snapshot
+                clip_text = get_clipboard_text()
+                clip_img_info = get_clipboard_image_info()
+
+                # Open applications snapshot
+                open_apps = get_open_applications()
 
                 with file.open("a", encoding="utf-8") as f:
+                    # OCR logging
                     if ocr_text and not ocr_text.startswith("<OCR error:"):
                         for line in ocr_text.split("\n"):
                             line = line.strip()
                             if line:
-                                ocr_text = f"[{timestamp}] CLICK_OCR [{window_title}]: {line}\n"
-                                print(ocr_text)
-                                f.write(ocr_text)
+                                ocr_line = (
+                                    f"[{timestamp}] CLICK_OCR "
+                                    f"[{window_title}]: {line}\n"
+                                )
+                                print(ocr_line, end="")
+                                f.write(ocr_line)
                     else:
-                        ocr_error = f"[{timestamp}] CLICK_OCR [{window_title}]: (none or error)\n"
+                        ocr_error = (
+                            f"[{timestamp}] CLICK_OCR "
+                            f"[{window_title}]: (none or error)\n"
+                        )
                         f.write(ocr_error)
 
-            last_mouse_down = mouse_down
+                    # Clipboard text logging
+                    if clip_text:
+                        for line in clip_text.splitlines():
+                            line = line.strip()
+                            if line:
+                                f.write(
+                                    f"[{timestamp}] CLIPBOARD_TEXT: {line}\n"
+                                )
 
+                    # Clipboard image info logging
+                    if clip_img_info:
+                        f.write(
+                            f"[{timestamp}] CLIPBOARD_IMAGE: {clip_img_info}\n"
+                        )
+
+                    # Open applications logging
+                    for title, pid, proc_name in open_apps:
+                        f.write(
+                            f"[{timestamp}] OPEN_APP: "
+                            f"pid={pid}, proc={proc_name}, title={title}\n"
+                        )
+
+            last_mouse_down = mouse_down
             time.sleep(0.05)
 
     except KeyboardInterrupt:
