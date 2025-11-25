@@ -821,12 +821,6 @@ def run_capture(
 
 
 if __name__ == "__main__":
-    # Example: hourly rotation, full logging, masking enabled
-    run_capture(
-        rotation="hourly",
-        log_clipboard_text=True,
-        log_clipboard_images=True,
-        log_open_apps=True,
-        mask_secrets_enabled=True,
-        log_dir=os.getcwd(),
-    )
+    import sys
+    log_dir = sys.argv[1]
+    run_capture(log_dir=log_dir)
