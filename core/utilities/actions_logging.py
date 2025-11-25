@@ -144,10 +144,6 @@ def _ocr_bbox(left: int, top: int, right: int, bottom: int) -> str:
                 "BGRX",
             )
 
-        # Optional debug: see what we're actually capturing
-        # debug_path = Path("debug_click_ocr.png")
-        # img.save(debug_path)
-
         # Now run Tesseract
         text = pytesseract.image_to_string(img, config="--psm 6")
         return text.replace("\r\n", "\n").strip()
