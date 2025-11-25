@@ -219,7 +219,8 @@ def run_capture(file: Path=LOG_FILE):
                 window_title = get_active_window_title()
 
                 with file.open("a", encoding="utf-8") as f:
-                    f.write(f"[{timestamp}] FOCUS [{window_title}]: {name}\n")
+                    focus = f"[{timestamp}] FOCUS [{window_title}]: {name}\n"
+                    f.write(focus)
 
                 last_name = name
 
@@ -234,23 +235,17 @@ def run_capture(file: Path=LOG_FILE):
                 )
                 window_title = get_active_window_title()
 
-                if ocr_text and not ocr_text.startswith("<OCR error:"):
-                    print(f"CLICK OCR: {ocr_text}\n")
-                else:
-                    print("CLICK OCR: (none or error)\n")
-
                 with file.open("a", encoding="utf-8") as f:
                     if ocr_text and not ocr_text.startswith("<OCR error:"):
                         for line in ocr_text.split("\n"):
                             line = line.strip()
                             if line:
-                                f.write(
-                                    f"[{timestamp}] CLICK_OCR [{window_title}]: {line}\n"
-                                )
+                                ocr_text = f"[{timestamp}] CLICK_OCR [{window_title}]: {line}\n"
+                                print(ocr_text)
+                                f.write(ocr_text)
                     else:
-                        f.write(
-                            f"[{timestamp}] CLICK_OCR [{window_title}]: (none or error)\n"
-                        )
+                        ocr_error = f"[{timestamp}] CLICK_OCR [{window_title}]: (none or error)\n"
+                        f.write(ocr_error)
 
             last_mouse_down = mouse_down
 
