@@ -822,5 +822,51 @@ def run_capture(
 
 if __name__ == "__main__":
     import sys
-    log_dir = sys.argv[1]
-    run_capture(log_dir=log_dir)
+    import traceback
+
+    # 1. Get log_dir from command line if provided by `-m core.utilities.capture.actions <log_dir> ...`
+    if len(sys.argv) > 1:
+        log_dir = sys.argv[1]
+    else:
+        log_dir = os.getcwd()
+
+    try:
+        run_capture(
+            rotation="hourly",
+            log_clipboard_text=True,
+            log_clipboard_images=True,
+            log_open_apps=True,
+            mask_secrets_enabled=True,
+            log_dir=log_dir,
+        )
+
+    except KeyboardInterrupt:
+        # Normal stop
+        print("\nStopped by user.")
+
+    except Exception as e:
+        # 2. Log crash to a dedicated file in the same log dir
+        crash_file = Path(log_dir) / "actions_crash.log"
+        try:
+            with crash_file.open("a", encoding="utf-8") as f:
+                f.write(f"=== Crash at {datetime.now().isoformat()} ===\n")
+                traceback.print_exc(file=f)
+                f.write("\n")
+        except Exception:
+            # If we can't write the crash file, at least say so
+            print("Failed to write actions_crash.log")
+
+        # 3. Print traceback so you can SEE it in the console before it closes
+        print("UNHANDLED EXCEPTION IN run_capture():", e)
+        traceback.print_exc()
+
+        # 4. Keep the console open long enough to read the error
+        try:
+            input("Press Enter to close this window...")
+        except EOFError:
+            # If stdin isn't interactive (hidden window), just exit
+            pass
+
+        # Re-raise if you want non-zero exit code (optional)
+        # raise
+
