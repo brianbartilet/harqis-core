@@ -213,9 +213,6 @@ def run_capture(file: Path=LOG_FILE):
                 name = ""
 
             if name and name != last_name:
-                # Speak the control name
-                print(f"READER (FOCUS): {name}\n")
-                engine.say(name)
                 engine.runAndWait()
 
                 timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
