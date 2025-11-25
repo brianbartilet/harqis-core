@@ -63,7 +63,10 @@ from typing import Tuple, Optional, List, Tuple as Tup
 import uiautomation as auto
 import mss
 from PIL import Image, ImageGrab
+
+import traceback
 import pytesseract
+
 from _ctypes import COMError  # to catch COM-related errors explicitly
 import ctypes
 from ctypes import wintypes
@@ -99,6 +102,51 @@ SM_CYVIRTUALSCREEN = 79
 
 # Clipboard format constant for Unicode text
 CF_UNICODETEXT = 13
+
+
+def _ocr_bbox(left: int, top: int, right: int, bottom: int) -> str:
+    """
+    Capture a given bounding box on the virtual desktop and run Tesseract OCR.
+    """
+    try:
+        width = right - left
+        height = bottom - top
+
+        with mss.mss() as sct:
+            monitor = {
+                "left": left,
+                "top": top,
+                "width": width,
+                "height": height,
+            }
+
+            sct_img = sct.grab(monitor)
+            img = Image.frombytes(
+                "RGB",
+                sct_img.size,
+                sct_img.bgra,
+                "raw",
+                "BGRX",
+            )
+
+        # Add a timeout so a stuck Tesseract process doesn’t freeze the loop
+        try:
+            text = pytesseract.image_to_string(
+                img,
+                config="--psm 6",
+                timeout=3,  # seconds – tweak as you like
+            )
+        except pytesseract.TesseractError as te:
+            return f"<OCR error: {te}>"
+        except RuntimeError as te:  # pytesseract may wrap timeouts as RuntimeError
+            return f"<OCR error (timeout?): {te}>"
+
+        return text.replace("\r\n", "\n").strip()
+
+    except Exception as e:
+        # Capture full traceback in the string so we see what broke
+        tb = traceback.format_exc()
+        return f"<OCR error: {e} | {tb}>"
 
 
 def _current_log_file(rotation: str = "hourly") -> Path:
@@ -586,131 +634,187 @@ def run_capture(
 
     try:
         while True:
-            # -------- FOCUS HANDLING (name only) --------
             try:
-                focused = auto.GetFocusedControl()
-            except Exception:
-                focused = None
-
-            if focused:
+                # -------- FOCUS HANDLING (name only) --------
                 try:
-                    name = focused.Name or ""
-                except COMError:
-                    name = ""
+                    focused = auto.GetFocusedControl()
                 except Exception:
+                    focused = None
+
+                if focused:
+                    try:
+                        name = focused.Name or ""
+                    except COMError:
+                        name = ""
+                    except Exception:
+                        name = ""
+                else:
                     name = ""
-            else:
-                name = ""
 
-            # Only log when the focus name actually changes
-            if name and name != last_name:
-                timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                window_title = get_active_window_title()
-                log_file = _current_log_file(rotation)
+                if name and name != last_name:
+                    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-                line = f"[{timestamp}] FOCUS [{window_title}]: {name}\n"
-                with log_file.open("a", encoding="utf-8") as f:
-                    f.write(line)
+                    # These can throw – wrap them in try/except too
+                    try:
+                        window_title = get_active_window_title()
+                    except Exception:
+                        window_title = ""
 
-                last_name = name
+                    try:
+                        log_file = _current_log_file(rotation)
+                        with log_file.open("a", encoding="utf-8") as f:
+                            line = f"[{timestamp}] FOCUS [{window_title}]: {name}\n"
+                            f.write(line)
+                    except Exception as e:
+                        # If logging fails, at least print to console
+                        print(f"[{timestamp}] LOG_ERROR (FOCUS): {e}")
 
-            # -------- CLICK HANDLING (mouse-based OCR + clipboard + apps) --------
-            mouse_down = _is_left_button_down()
-            # Detect the rising edge: was up, now down = new click
-            if mouse_down and not last_mouse_down:
-                timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                window_title = get_active_window_title()
-                log_file = _current_log_file(rotation)
+                    last_name = name
 
-                try:
-                    # Capture OCR around the mouse cursor
-                    ocr_text = get_click_ocr_text(
-                        mouse_width=MOUSE_OCR_WIDTH,
-                        mouse_height=MOUSE_OCR_HEIGHT,
-                    )
+                # -------- CLICK HANDLING (mouse-based OCR + clipboard + apps) --------
+                mouse_down = _is_left_button_down()
 
-                    # Snapshot of clipboard text + image info
-                    clip_text = get_clipboard_text() if log_clipboard_text else ""
-                    clip_img_info = (
-                        get_clipboard_image_info() if log_clipboard_images else ""
-                    )
+                if mouse_down and not last_mouse_down:
+                    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                    try:
+                        window_title = get_active_window_title()
+                    except Exception:
+                        window_title = ""
 
-                    # Snapshot of all open top-level visible windows
-                    open_apps: List[Tup[str, int, str]] = (
-                        get_open_applications() if log_open_apps else []
-                    )
+                    try:
+                        log_file = _current_log_file(rotation)
+                    except Exception:
+                        # If we can't compute a log_file, skip this click
+                        log_file = None
 
-                    # Build a stable signature of open apps so we can detect changes
-                    sorted_apps = sorted(
-                        open_apps,
-                        key=lambda t: (t[1], t[2], t[0]),  # (pid, proc_name, title)
-                    )
-                    open_apps_sig = "|".join(
-                        f"{pid}:{proc_name}:{title}"
-                        for (title, pid, proc_name) in sorted_apps
-                    )
-
-                    with log_file.open("a", encoding="utf-8") as f:
-                        # OCR logging (if successful)
-                        if ocr_text and not ocr_text.startswith("<OCR error:"):
-                            for raw_line in ocr_text.split("\n"):
-                                raw_line = raw_line.strip()
-                                if raw_line:
-                                    line_text = mask_sensitive(
-                                        raw_line, enabled=mask_secrets_enabled
-                                    )
-                                    log_line = (
-                                        f"[{timestamp}] CLICK_OCR "
-                                        f"[{window_title}]: {line_text}\n"
-                                    )
-                                    f.write(log_line)
-                        else:
-                            ocr_error = (
-                                f"[{timestamp}] CLICK_OCR "
-                                f"[{window_title}]: (none or error)\n"
-                            )
-                            f.write(ocr_error)
-
-                        # Clipboard text logging (only if changed & non-empty)
-                        if clip_text and clip_text != last_clip_text:
-                            for raw_line in clip_text.splitlines():
-                                raw_line = raw_line.strip()
-                                if raw_line:
-                                    safe_text = mask_sensitive(
-                                        raw_line, enabled=mask_secrets_enabled
-                                    )
-                                    f.write(
-                                        f"[{timestamp}] CLIPBOARD_TEXT: {safe_text}\n"
-                                    )
-                            last_clip_text = clip_text
-
-                        # Clipboard image info logging (only if changed & non-empty)
-                        if clip_img_info and clip_img_info != last_clip_img_info:
-                            f.write(
-                                f"[{timestamp}] CLIPBOARD_IMAGE: {clip_img_info}\n"
-                            )
-                            last_clip_img_info = clip_img_info
-
-                        # Open applications logging (only if snapshot changed)
-                        if log_open_apps and open_apps_sig and open_apps_sig != last_open_apps_sig:
-                            for title, pid, proc_name in sorted_apps:
-                                f.write(
-                                    f"[{timestamp}] OPEN_APP: "
-                                    f"pid={pid}, proc={proc_name}, title={title}\n"
+                    try:
+                        # Everything inside here was already in your try block
+                        # I just moved it under `if log_file is not None`
+                        if log_file is not None:
+                            try:
+                                ocr_text = get_click_ocr_text(
+                                    mouse_width=MOUSE_OCR_WIDTH,
+                                    mouse_height=MOUSE_OCR_HEIGHT,
                                 )
-                            last_open_apps_sig = open_apps_sig
+                            except Exception as e:
+                                ocr_text = f"<OCR error: {e}>"
 
-                except Exception as e:
-                    # Catch ANY unexpected internal error so the main loop survives
+                            clip_text = ""
+                            clip_img_info = ""
+                            if log_clipboard_text:
+                                try:
+                                    clip_text = get_clipboard_text()
+                                except Exception:
+                                    clip_text = ""
+                            if log_clipboard_images:
+                                try:
+                                    clip_img_info = get_clipboard_image_info()
+                                except Exception:
+                                    clip_img_info = ""
+
+                            open_apps: List[Tup[str, int, str]] = []
+                            if log_open_apps:
+                                try:
+                                    open_apps = get_open_applications()
+                                except Exception:
+                                    open_apps = []
+
+                            sorted_apps = sorted(
+                                open_apps,
+                                key=lambda t: (t[1], t[2], t[0]),
+                            )
+                            open_apps_sig = "|".join(
+                                f"{pid}:{proc_name}:{title}"
+                                for (title, pid, proc_name) in sorted_apps
+                            )
+
+                            with log_file.open("a", encoding="utf-8") as f:
+                                # OCR log
+                                if ocr_text and not ocr_text.startswith("<OCR error:"):
+                                    for raw_line in ocr_text.split("\n"):
+                                        raw_line = raw_line.strip()
+                                        if raw_line:
+                                            line_text = mask_sensitive(
+                                                raw_line,
+                                                enabled=mask_secrets_enabled,
+                                            )
+                                            f.write(
+                                                f"[{timestamp}] CLICK_OCR "
+                                                f"[{window_title}]: {line_text}\n"
+                                            )
+                                else:
+                                    f.write(
+                                        f"[{timestamp}] CLICK_OCR "
+                                        f"[{window_title}]: (none or error)\n"
+                                    )
+
+                                # Clipboard text
+                                if clip_text and clip_text != last_clip_text:
+                                    for raw_line in clip_text.splitlines():
+                                        raw_line = raw_line.strip()
+                                        if raw_line:
+                                            safe_text = mask_sensitive(
+                                                raw_line,
+                                                enabled=mask_secrets_enabled,
+                                            )
+                                            f.write(
+                                                f"[{timestamp}] CLIPBOARD_TEXT: "
+                                                f"{safe_text}\n"
+                                            )
+                                    last_clip_text = clip_text
+
+                                # Clipboard image
+                                if clip_img_info and clip_img_info != last_clip_img_info:
+                                    f.write(
+                                        f"[{timestamp}] CLIPBOARD_IMAGE: "
+                                        f"{clip_img_info}\n"
+                                    )
+                                    last_clip_img_info = clip_img_info
+
+                                # Open apps
+                                if (
+                                    log_open_apps
+                                    and open_apps_sig
+                                    and open_apps_sig != last_open_apps_sig
+                                ):
+                                    for title, pid, proc_name in sorted_apps:
+                                        f.write(
+                                            f"[{timestamp}] OPEN_APP: "
+                                            f"pid={pid}, proc={proc_name}, "
+                                            f"title={title}\n"
+                                        )
+                                    last_open_apps_sig = open_apps_sig
+
+                    except Exception as e:
+                        # If anything goes wrong inside click handling, log it
+                        try:
+                            if log_file is not None:
+                                with log_file.open("a", encoding="utf-8") as f:
+                                    f.write(
+                                        f"[{timestamp}] INTERNAL_ERROR: "
+                                        f"{repr(e)}\n"
+                                    )
+                        except Exception:
+                            # Fall back to console
+                            print(f"[{timestamp}] INTERNAL_ERROR: {repr(e)}")
+
+                last_mouse_down = mouse_down
+                time.sleep(0.05)
+
+            except Exception as loop_error:
+                # This catches *any* unexpected error per iteration so the loop survives
+                ts = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                try:
                     log_file = _current_log_file(rotation)
                     with log_file.open("a", encoding="utf-8") as f:
                         f.write(
-                            f"[{timestamp}] INTERNAL_ERROR: {repr(e)}\n"
+                            f"[{ts}] LOOP_ERROR: {repr(loop_error)}\n"
                         )
+                except Exception:
+                    print(f"[{ts}] LOOP_ERROR (fallback to console): {loop_error}")
 
-            last_mouse_down = mouse_down
-            # Small sleep to avoid hammering the CPU
-            time.sleep(0.05)
+                # Small backoff so we don't spin if an error repeats rapidly
+                time.sleep(0.5)
 
     except KeyboardInterrupt:
         print("\nStopped by user.")
