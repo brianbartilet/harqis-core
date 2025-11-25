@@ -104,51 +104,6 @@ SM_CYVIRTUALSCREEN = 79
 CF_UNICODETEXT = 13
 
 
-def _ocr_bbox(left: int, top: int, right: int, bottom: int) -> str:
-    """
-    Capture a given bounding box on the virtual desktop and run Tesseract OCR.
-    """
-    try:
-        width = right - left
-        height = bottom - top
-
-        with mss.mss() as sct:
-            monitor = {
-                "left": left,
-                "top": top,
-                "width": width,
-                "height": height,
-            }
-
-            sct_img = sct.grab(monitor)
-            img = Image.frombytes(
-                "RGB",
-                sct_img.size,
-                sct_img.bgra,
-                "raw",
-                "BGRX",
-            )
-
-        # Add a timeout so a stuck Tesseract process doesn’t freeze the loop
-        try:
-            text = pytesseract.image_to_string(
-                img,
-                config="--psm 6",
-                timeout=3,  # seconds – tweak as you like
-            )
-        except pytesseract.TesseractError as te:
-            return f"<OCR error: {te}>"
-        except RuntimeError as te:  # pytesseract may wrap timeouts as RuntimeError
-            return f"<OCR error (timeout?): {te}>"
-
-        return text.replace("\r\n", "\n").strip()
-
-    except Exception as e:
-        # Capture full traceback in the string so we see what broke
-        tb = traceback.format_exc()
-        return f"<OCR error: {e} | {tb}>"
-
-
 def _current_log_file(rotation: str = "hourly") -> Path:
     """
     Compute the current log file path based on the rotation policy.
@@ -459,17 +414,6 @@ def mask_sensitive(text: str, enabled: bool = True) -> str:
 def _ocr_bbox(left: int, top: int, right: int, bottom: int) -> str:
     """
     Capture a given bounding box on the virtual desktop and run Tesseract OCR.
-
-    Parameters
-    ----------
-    left, top, right, bottom : int
-        Bounding box coordinates for the capture region.
-
-    Returns
-    -------
-    str
-        Recognized text (stripped, normalized line endings),
-        or a special string of the form "<OCR error: ...>" if something fails.
     """
     try:
         width = right - left
@@ -492,12 +436,24 @@ def _ocr_bbox(left: int, top: int, right: int, bottom: int) -> str:
                 "BGRX",
             )
 
-        text = pytesseract.image_to_string(img, config="--psm 6")
+        # Add a timeout so a stuck Tesseract process doesn’t freeze the loop
+        try:
+            text = pytesseract.image_to_string(
+                img,
+                config="--psm 6",
+                timeout=3,  # seconds – tweak as you like
+            )
+        except pytesseract.TesseractError as te:
+            return f"<OCR error: {te}>"
+        except RuntimeError as te:  # pytesseract may wrap timeouts as RuntimeError
+            return f"<OCR error (timeout?): {te}>"
+
         return text.replace("\r\n", "\n").strip()
 
     except Exception as e:
-        return f"<OCR error: {e}>"
-
+        # Capture full traceback in the string so we see what broke
+        tb = traceback.format_exc()
+        return f"<OCR error: {e} | {tb}>"
 
 def get_focus_ocr_text(control: Optional[object]) -> str:
     """
