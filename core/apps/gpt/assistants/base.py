@@ -1,10 +1,12 @@
 import time
 import glob
+import shutil
 
 from pathlib import Path
 from tqdm import tqdm
 from typing import Iterable
 from core.web.services.manager import WebServiceManager
+import openai
 
 from core.apps.gpt.contracts.assistant import IAssistant
 
@@ -123,17 +125,62 @@ class BaseAssistant(IAssistant):
         file_patterns = file_patterns or ['*.py', '*.json', '*.yaml', '*.png', '*.jpg', '*.txt']
         matching_files: list[str] = []
 
-        # Option 1: patterns relative to base_directory (non-recursive)
+        # Find matching files (non-recursive)
         for pattern in file_patterns:
             search_pattern = str(base_path / pattern)
             matching_files.extend(glob.glob(search_pattern))
 
-        # If ServiceFiles expects full paths and doesn't need base_path:
-        files = self.manager.get(ServiceFiles).upload_files(
-            file_names=matching_files,
-            base_path=str(base_path),  # or drop this if unused
-        )
+        # First attempt: upload as-is
+        try:
+            files = self.manager.get(ServiceFiles).upload_files(
+                file_names=matching_files,
+                base_path=str(base_path),
+            )
 
+        except openai.BadRequestError as e:
+            # Only handle the "invalid extension" case – re-raise everything else
+            if "Invalid extension" not in str(e):
+                raise
+
+            # Fallback: convert unsupported extensions to .txt and retry
+            converted_files: list[str] = []
+            for path_str in matching_files:
+                p = Path(path_str)
+
+                # If extension is already allowed, keep as-is
+                # (This list mirrors OpenAI's supported extensions)
+                allowed_exts = {
+                    ".c", ".cpp", ".cs", ".css", ".csv", ".doc", ".docx", ".gif",
+                    ".go", ".html", ".java", ".jpeg", ".jpg", ".js", ".json",
+                    ".md", ".pdf", ".php", ".pkl", ".png", ".pptx", ".py", ".rb",
+                    ".tar", ".tex", ".ts", ".txt", ".webp", ".xlsx", ".xml", ".zip",
+                }
+
+                if p.suffix.lower() in allowed_exts:
+                    converted_files.append(path_str)
+                    continue
+
+                # Unsupported extension (e.g. .log) → create a .txt copy
+                txt_path = p.with_suffix(".txt")
+
+                try:
+                    # Try to treat it as text; ignore decoding errors
+                    with p.open("r", encoding="utf-8", errors="ignore") as src, \
+                            txt_path.open("w", encoding="utf-8") as dst:
+                        dst.write(src.read())
+                except Exception:
+                    # As a last resort, copy raw bytes and let the model deal with it
+                    shutil.copy2(p, txt_path)
+
+                converted_files.append(str(txt_path))
+
+            # Second attempt: upload converted files
+            files = self.manager.get(ServiceFiles).upload_files(
+                file_names=converted_files,
+                base_path=str(base_path),
+            )
+
+        # Save handles for later use
         self.files = {file.id: file for file in files}
         self.attachments = list(self.files.keys())
 
