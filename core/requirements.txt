@@ -74,7 +74,6 @@ grpc_requests==0.1.16
 grpcio==1.76.0
 grpcio-reflection==1.62.1
 h11==0.14.0
-harqis-core @ git+https://github.com/brianbartilet/harqis-core.git@53574c09e2c676008c19101664946c1e54f6c380
 httpcore==1.0.4
 httplib2==0.31.0
 httptools==0.7.1
