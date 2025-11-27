@@ -1,36 +1,35 @@
 import functools
 from typing import Any, Dict
 
-
-def get_decorator_attrs(fn) -> Dict[str, Any]:
+def get_decorator_attrs(fn, prefix: str = "_hud_") -> Dict[str, Any]:
     """
-    Walk the decorator chain via __wrapped__ and collect
-    all attributes attached to decorators (e.g. _hud_item_name).
+    Walk the decorator chain and collect all attributes that look like
+    decorator parameters (e.g. _hud_item_name, _hud_config, ...).
 
-    Returns:
-        A dict mapping attribute_name -> value
+    - If `fn` is a Celery Task, start from `fn.run`.
+    - Only attributes starting with `prefix` are included.
     """
+    collected: Dict[str, Any] = {}
 
-    collected = {}
-    cur = fn
+    # If this is a Celery Task, the actual callable is on .run
+    cur = getattr(fn, "run", fn)
 
-    while cur is not None:
-        # Collect all custom attrs (non-dunder, non-callable, non-function attributes)
+    visited = set()
+    while cur is not None and cur not in visited:
+        visited.add(cur)
+
         for attr in dir(cur):
-            if attr.startswith("__"):
-                continue  # skip dunders
+            if not attr.startswith(prefix):
+                continue
             if attr in collected:
-                continue  # do not overwrite earlier values
+                continue
             try:
                 value = getattr(cur, attr)
             except AttributeError:
                 continue
-            # Keep only non-callable decorator metadata
-            # (func code, closures, and methods are excluded)
-            if not callable(value):
-                collected[attr] = value
+            collected[attr] = value
 
-        # Walk to next wrapped level
+        # Walk down the decorator chain via functools.wraps
         cur = getattr(cur, "__wrapped__", None)
 
     return collected
