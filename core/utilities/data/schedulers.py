@@ -6,21 +6,34 @@ from celery.schedules import crontab, schedule as celery_schedule
 
 def get_cron_string(celery_cron):
     """
-    Retrieve a standard cron expression from any Celery crontab() object.
-    Works across Celery versions (to_string, as_cron, _orig_entry).
+    Retrieve a cron expression from any Celery crontab object.
+    Supports Celery 4.x → 5.x+.
     """
+    # 1) Newer Celery
     if hasattr(celery_cron, "as_cron"):
         return celery_cron.as_cron()
 
+    # 2) Older Celery
     if hasattr(celery_cron, "to_string"):
-        # Celery's to_string() returns something like "*/10 * * * *"
         return celery_cron.to_string()
 
+    # 3) Some Celery versions store original entry
     if hasattr(celery_cron, "_orig_entry"):
-        # Backup: raw entry stored internally
         return celery_cron._orig_entry
 
-    raise TypeError(f"Unsupported Celery crontab format: {celery_cron!r}")
+    # 4) FINAL fallback — Celery crontab.__str__ gives '*/10 * * * *'
+    cron_str = str(celery_cron).strip()
+
+    # Example __str__:
+    # "<crontab: */10 * * * * (m/h/dM/MY/d)>"
+    # We need to extract just the schedule.
+    if cron_str.startswith("<crontab:"):
+        # extract inside part before "("
+        cron_inner = cron_str.split("<crontab:", 1)[1].split("(", 1)[0]
+        return cron_inner.strip()
+
+    # If __str__ is already clean, return it
+    return cron_str
 
 
 def _friendly_timedelta(td: timedelta) -> str:
