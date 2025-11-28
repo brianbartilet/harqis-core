@@ -13,22 +13,24 @@ from typing import Union, List, Tuple, Dict
 
 def sanitize_filename(name: str) -> str:
     """
-    Sanitize a filename by replacing special characters with '-'.
+    Sanitize a filename by replacing unsafe characters with '-'.
 
-    - Keeps letters, digits, dot, underscore and dash.
-    - Replaces all other characters with '-'.
-    - Collapses multiple dashes into one.
-    - Strips leading/trailing dashes and whitespace.
+    Rules:
+        - Allowed: letters, digits, dot, underscore, dash.
+        - Any other character becomes '-'.
+        - Consecutive dashes collapse into one.
+        - Leading/trailing dashes and whitespace are removed.
+
+    Args:
+        name (str): Filename to sanitize.
+
+    Returns:
+        str: Clean filename safe for filesystem use.
     """
     name = str(name).strip()
 
-    # Replace any char that's NOT a-z, A-Z, 0-9, dot, underscore, dash with '-'
     name = re.sub(r'[^A-Za-z0-9._-]+', '-', name)
-
-    # Collapse multiple dashes
     name = re.sub(r'-{2,}', '-', name)
-
-    # Strip leading/trailing dashes
     return name.strip('-')
 
 
@@ -38,18 +40,14 @@ def sanitize_filename(name: str) -> str:
 
 def zip_folder(folder_path: str, zip_filename: str) -> None:
     """
-    Compresses an entire directory (folder) into a ZIP file.
-
-    This function recursively traverses all directories and files within the specified
-    folder, compresses them, and stores them in a ZIP file while maintaining the original
-    directory structure.
+    Compress a folder and all of its contents recursively into a ZIP file.
 
     Args:
-        folder_path (str): The path of the folder to be zipped.
-        zip_filename (str): The full path of the resulting ZIP file.
+        folder_path (str): Folder to zip.
+        zip_filename (str): Output .zip file path.
 
-    Example:
-        >>> zip_folder('/path/to/folder', '/path/to/output.zip')
+    Returns:
+        None
     """
     folder_path = str(folder_path)
     zip_filename = str(zip_filename)
@@ -58,8 +56,8 @@ def zip_folder(folder_path: str, zip_filename: str) -> None:
         for root, _, files in os.walk(folder_path):
             for file in files:
                 file_path = os.path.join(root, file)
-                relative_path = os.path.relpath(file_path, folder_path)
-                zipf.write(file_path, arcname=relative_path)
+                rel = os.path.relpath(file_path, folder_path)
+                zipf.write(file_path, arcname=rel)
 
 
 # ---------------------------------------------------------------------------
@@ -68,14 +66,23 @@ def zip_folder(folder_path: str, zip_filename: str) -> None:
 
 def remove_files_with_patterns(path: str, patterns: List[str]):
     """
-    Deletes files inside a given directory that match any of the patterns.
+    Delete all files inside a directory that match wildcard patterns.
+
+    Supports:
+        - '*.tmp'
+        - '*.bak'
+        - '**/*.log'
+        - Any glob-compatible wildcard pattern.
 
     Args:
-        path (str): The directory to search in.
-        patterns (list[str]): List of wildcard patterns (e.g. '*.tmp', '*.bak', '**/*.log').
+        path (str): Directory to scan.
+        patterns (List[str]): Glob patterns to delete.
 
     Returns:
-        dict: { "deleted": [...], "skipped": [...] }
+        dict: {
+            "deleted": [Path],
+            "skipped": [Path]
+        }
     """
     base = Path(path).expanduser().resolve()
     deleted = []
@@ -85,10 +92,9 @@ def remove_files_with_patterns(path: str, patterns: List[str]):
         raise NotADirectoryError(f"Invalid path: {base}")
 
     for pattern in patterns:
-        # Support nested glob, e.g. **/*.log
-        full_pattern = str(base / pattern)
+        full = str(base / pattern)
 
-        for file in glob.glob(full_pattern, recursive=True):
+        for file in glob.glob(full, recursive=True):
             file_path = Path(file)
 
             if not file_path.is_file():
@@ -115,20 +121,21 @@ def move_files_any(
     skip_missing: bool = True,
 ):
     """
-    Move files where each source has its own destination directory.
+    Move multiple files to different destination directories.
 
     Args:
-        file_map:
-            - list of (src, dest_dir) tuples, OR
-            - dict { src: dest_dir }
+        file_map (List[Tuple[str,str]] | Dict[str,str]):
+            List of (src_file, dest_folder) OR dict src→dest.
         skip_missing (bool):
-            Whether to skip missing files (True) or raise an error.
+            If True, missing files are skipped (default).
+            If False, FileNotFoundError is raised.
 
     Returns:
-        dict: { "moved": [...], "skipped": [...] }
+        dict: {
+            "moved": [Path],
+            "skipped": [Path]
+        }
     """
-
-    # Normalize to list of tuples
     if isinstance(file_map, dict):
         items = [(src, dest) for src, dest in file_map.items()]
     else:
@@ -141,20 +148,16 @@ def move_files_any(
         src_path = Path(src).expanduser().resolve()
         dest_dir_path = Path(dest_dir).expanduser().resolve()
 
-        # Handle missing files
         if not src_path.exists():
             if skip_missing:
                 print(f"⚠️ Skipped missing file: {src_path}")
                 skipped.append(src_path)
                 continue
-            else:
-                raise FileNotFoundError(f"File not found: {src_path}")
+            raise FileNotFoundError(f"File not found: {src_path}")
 
-        # Create target directory if needed
         dest_dir_path.mkdir(parents=True, exist_ok=True)
         target = dest_dir_path / src_path.name
 
-        # Move
         try:
             shutil.move(str(src_path), str(target))
             print(f"✅ Moved: {src_path} → {target}")
@@ -171,20 +174,20 @@ def copy_files_any(
     skip_missing: bool = True,
 ):
     """
-    Copy files where each source has its own destination directory.
+    Copy multiple files to their respective destination directories.
 
     Args:
-        file_map:
-            - list of (src, dest_dir) tuples, OR
-            - dict { src: dest_dir }
+        file_map (List[Tuple[str,str]] | Dict[str,str]):
+            List of (src_file, dest_folder) OR dict src→dest.
         skip_missing (bool):
-            Whether to skip missing files (True) or raise an error.
+            Skip missing files if True, otherwise raise error.
 
     Returns:
-        dict: { "copied": [...], "skipped": [...] }
+        dict: {
+            "copied": [Path],
+            "skipped": [Path]
+        }
     """
-
-    # Normalize to list of tuples
     if isinstance(file_map, dict):
         items = [(src, dest) for src, dest in file_map.items()]
     else:
@@ -197,20 +200,16 @@ def copy_files_any(
         src_path = Path(src).expanduser().resolve()
         dest_dir_path = Path(dest_dir).expanduser().resolve()
 
-        # Handle missing files
         if not src_path.exists():
             if skip_missing:
                 print(f"⚠️ Skipped missing file: {src_path}")
                 skipped.append(src_path)
                 continue
-            else:
-                raise FileNotFoundError(f"File not found: {src_path}")
+            raise FileNotFoundError(src_path)
 
-        # Create target directory if needed
         dest_dir_path.mkdir(parents=True, exist_ok=True)
         target = dest_dir_path / src_path.name
 
-        # Copy instead of move
         try:
             shutil.copy2(str(src_path), str(target))
             print(f"📄 Copied: {src_path} → {target}")
@@ -220,3 +219,102 @@ def copy_files_any(
             skipped.append(src_path)
 
     return {"copied": copied, "skipped": skipped}
+
+
+# ---------------------------------------------------------------------------
+# NEW: General file listing + regex/substring search
+# ---------------------------------------------------------------------------
+
+def get_all_files(path: str, pattern_str: str) -> List[Path]:
+    """
+    Retrieve all files inside a directory that match a regex OR simple substring.
+
+    Behavior:
+        - If `pattern_str` is a valid regex (compiles), regex search is used.
+        - Otherwise, a plain substring match is performed.
+        - Only files are returned (not directories).
+        - Search is recursive.
+
+    Args:
+        path (str): Root directory.
+        pattern_str (str): Regex or plain substring filter.
+
+    Returns:
+        List[Path]: List of matching file paths.
+    """
+    base = Path(path).expanduser().resolve()
+    if not base.exists() or not base.is_dir():
+        raise NotADirectoryError(base)
+
+    # Determine if pattern is a regex
+    try:
+        pattern = re.compile(pattern_str)
+        use_regex = True
+    except re.error:
+        use_regex = False
+
+    matched = []
+    for p in base.rglob("*"):
+        if p.is_file():
+            name = p.name
+            if use_regex:
+                if pattern.search(name):
+                    matched.append(p)
+            else:
+                if pattern_str in name:
+                    matched.append(p)
+
+    return matched
+
+
+# ---------------------------------------------------------------------------
+# NEW: Copy list of files into new folder with optional prefix
+# ---------------------------------------------------------------------------
+
+def copy_files_to_folder(
+    path: str,
+    folder_name: str,
+    file_names_list: List[Union[str, Path]],
+    prefix_name: str = "",
+) -> List[Path]:
+    """
+    Copy a list of files into a new folder under `path`.
+
+    Behavior:
+        - Creates target folder: path / folder_name
+        - Files are copied inside it
+        - Optionally prefixes filenames (e.g., "archive_", "2025_")
+        - Returns list of copied Paths
+
+    Args:
+        path (str): Parent directory.
+        folder_name (str): Name of subfolder to create/use.
+        file_names_list (List[str|Path]): Files to copy.
+        prefix_name (str): Optional prefix for new filenames.
+
+    Returns:
+        List[Path]: Paths of copied files.
+    """
+    base = Path(path).expanduser().resolve()
+    target_folder = base / folder_name
+    target_folder.mkdir(parents=True, exist_ok=True)
+
+    copied = []
+
+    for file_item in file_names_list:
+        src = Path(file_item).expanduser().resolve()
+        if not src.exists() or not src.is_file():
+            print(f"⚠️ Skipped missing: {src}")
+            continue
+
+        new_name = f"{prefix_name}{src.name}"
+        dest = target_folder / new_name
+
+        try:
+            shutil.copy2(src, dest)
+            print(f"📄 Copied: {src} → {dest}")
+            copied.append(dest)
+        except Exception as e:
+            print(f"❌ Error copying {src}: {e}")
+
+    return copied
