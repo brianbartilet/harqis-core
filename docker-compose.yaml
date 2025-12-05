@@ -90,6 +90,7 @@ services:
 
   rabbitmq:
     image: rabbitmq:3.8-management
+    restart: unless-stopped
     ports:
       - "${HOST_PORT_RABBIT_MQ:-5672}:5672"
 
