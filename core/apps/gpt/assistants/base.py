@@ -92,14 +92,14 @@ class BaseAssistant(IAssistant):
         response = self.manager.get(ServiceRuns).create_run(use_thread_id, use_run)
         self.runs[f'{response.data.id}'] = response.data
 
-    def wait_for_runs_to_complete(self, multiprocess=False):
+    def wait_for_runs_to_complete(self, multiprocess=False, wait_secs=10, retries=20):
         if multiprocess:
             tasks = [(run.thread_id, run.id) for run in self.runs.values()]
             mp_client = MultiProcessingClient(tasks)
             mp_client.execute_tasks(self.wait_for_run_to_complete, )
         else:
             for run in self.runs.values():
-                self.wait_for_run_to_complete(run.thread_id, run.id)
+                self.wait_for_run_to_complete(run.thread_id, run.id, wait_secs=wait_secs, retries=retries)
 
     def get_messages(self, thread_id: str = None):
         thread = next(iter(self.threads.values()))
