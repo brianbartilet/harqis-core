@@ -137,6 +137,16 @@ ENV_WORKFLOW_CONFIG = os.environ.get(
     "WORKFLOW_CONFIG",
     "workflows.config"   # default
 )
+ENV_WORKFLOW_CONCURRENCY = os.environ.get(
+    "WORKFLOW_CONCURRENCY",
+    10   # default
+)
+
+ENV_WORKFLOW_QUEUE= os.environ.get(
+    "WORKFLOW_QUEUE",
+    "default"
+)
+
 
 # Root directory of the application, default is the root directory of the repository, unless specified
 ENV_ROOT_DIRECTORY = os.environ.get('ROOT_DIRECTORY', os.path.dirname(os.path.abspath(__file__)))
