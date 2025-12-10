@@ -24,4 +24,4 @@ class Command(BaseCommand):
         """Handle the command execution."""
         print('Starting celery scheduler with autoreload...')
         # For Django>=2.2
-        autoreload.run_with_reloader(restart_celery_worker_tasks, **options)
+        autoreload.run_with_reloader(restart_celery_worker_tasks)
