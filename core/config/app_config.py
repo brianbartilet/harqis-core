@@ -7,7 +7,16 @@ from core.config.loader import ConfigLoaderService
 from core.utilities.logging.custom_logger import create_logger
 from pathlib import Path
 from dataclasses import is_dataclass
-
+from core.apps.sprout.settings import APP_PACKAGE
+from core.config.env_variables import ENV_WORKFLOW_CONFIG
+from core.config.env_variables import ENV_WORKFLOW_CONCURRENCY
+from core.config.env_variables import ENV_WORKFLOW_QUEUE
+print('====================================================================================')
+print(f'{APP_PACKAGE}')
+print(f'{ENV_WORKFLOW_CONFIG}')
+print(f'{ENV_WORKFLOW_CONCURRENCY}')
+print(f'{ENV_WORKFLOW_QUEUE}')
+print('====================================================================================')
 
 TApp = TypeVar('TApp', bound=Enum)
 """
