@@ -2,6 +2,7 @@ import subprocess
 import psutil
 
 
+
 def kill_celery_process(target_pid):
     """Kills a Celery process with the given PID."""
     for proc in psutil.process_iter():
@@ -34,7 +35,7 @@ def restart_celery_scheduler(app, task_file):
     write_pid_to_file(pid_file, process)
 
 
-def restart_celery_worker(app, task_file, use_eventlet=False, concurrency=10, queue=None):
+def restart_celery_worker(app, task_file, use_eventlet=False, concurrency=10, queue='default'):
     """
     Restarts the Celery worker for the given app and task file.
 
@@ -46,7 +47,7 @@ def restart_celery_worker(app, task_file, use_eventlet=False, concurrency=10, qu
         queue (str | list[str] | None): Queue name or list of queue names for -Q.
                                         If None, Celery's default queue config is used.
     """
-    pid_file = f'pid.restart_celery_worker.{task_file.lower()}'
+    pid_file = f'pid.restart_celery_worker.{task_file.lower()}.{queue}'
 
     target_process = read_pid_from_file(pid_file)
     if target_process:
