@@ -7,9 +7,9 @@ from core.apps.sprout.settings import APP_PACKAGE
 from core.config.env_variables import ENV_WORKFLOW_CONFIG
 
 
-def restart_celery_worker_tasks():
+def restart_celery_worker_tasks(**options):
     """Restart the Celery scheduler for the workflow app."""
-    restart_celery_worker(APP_PACKAGE, ENV_WORKFLOW_CONFIG)
+    restart_celery_worker(APP_PACKAGE, ENV_WORKFLOW_CONFIG, **options)
 
 
 class Command(BaseCommand):
@@ -19,4 +19,4 @@ class Command(BaseCommand):
         """Handle the command execution."""
         print('Starting celery scheduler with autoreload...')
         # For Django>=2.2
-        autoreload.run_with_reloader(restart_celery_worker_tasks)
+        autoreload.run_with_reloader(restart_celery_worker_tasks, **options)

@@ -34,15 +34,17 @@ def restart_celery_scheduler(app, task_file):
     write_pid_to_file(pid_file, process)
 
 
-def restart_celery_worker(app, task_file, use_eventlet=False, concurrency=10):
+def restart_celery_worker(app, task_file, use_eventlet=False, concurrency=10, queue=None):
     """
     Restarts the Celery worker for the given app and task file.
 
     Args:
-        app (str): The name of the Celery app.
-        task_file (str): The name of the task file.
-        use_eventlet (bool): Whether to use eventlet for concurrency.
-        concurrency (int): The number of concurrent workers.
+        app (str): The name of the Celery app, e.g. "core.apps.sprout.app".
+        task_file (str): Logical worker name, used in -n (e.g. "worker_reports").
+        use_eventlet (bool): Whether to use eventlet for concurrency. If False, gevent is used.
+        concurrency (int): The number of concurrent worker processes/greenlets.
+        queue (str | list[str] | None): Queue name or list of queue names for -Q.
+                                        If None, Celery's default queue config is used.
     """
     pid_file = f'pid.restart_celery_worker.{task_file.lower()}'
 
@@ -53,11 +55,33 @@ def restart_celery_worker(app, task_file, use_eventlet=False, concurrency=10):
             print("Old worker process killed.")
 
     pool = 'eventlet' if use_eventlet else 'gevent'
-    cmd = f'celery -A {app} worker -l info --concurrency={concurrency} -n {task_file}@%h -P {pool}'
-    process = subprocess.Popen(cmd.split()).pid
+
+    # Base command
+    cmd = [
+        'celery',
+        '-A', app,
+        'worker',
+        '-l', 'info',
+        '--concurrency', str(concurrency),
+        '-n', f'{task_file}@%h',
+        '-P', pool,
+    ]
+
+    # Optional queue(s)
+    if queue:
+        if isinstance(queue, (list, tuple, set)):
+            queue = ",".join(queue)
+        else:
+            queue = str(queue)
+        cmd += ['-Q', queue]
+        print(f"Starting worker for queue(s): {queue}")
+
+    process = subprocess.Popen(cmd).pid
 
     print(f"Saving celery process id: {process}")
     write_pid_to_file(pid_file, process)
+
+    return process
 
 
 def read_pid_from_file(pid_file):
