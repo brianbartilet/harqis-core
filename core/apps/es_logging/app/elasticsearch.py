@@ -122,7 +122,7 @@ def _map_hits(hits, type_hook):
     return mapped
 
 
-def post(json_dump, index_name: str, location_key: str, use_interval_map=True, identifier=''):
+def post(json_dump, index_name: str, location_key: str, use_interval_map=True, identifier='', update_interval: str =None):
     """
     Index a JSON doc into Elasticsearch with robust auth handling.
 
@@ -145,8 +145,8 @@ def post(json_dump, index_name: str, location_key: str, use_interval_map=True, i
       - config.parameters['url']: base ES URL like "https://localhost:9200/"
       - ENV_ENABLE_PROXY: "true"/"false"
     """
-
-    update_interval_config = str(app_data['update_interval']).upper()
+    update_interval_ = app_data['update_interval'] if update_interval is None else update_interval
+    update_interval_config = str(update_interval_).upper()
     if use_interval_map:
         id_ = '_' + update_interval_map[update_interval_config]
     else:
