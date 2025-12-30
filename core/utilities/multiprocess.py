@@ -1,62 +1,80 @@
 import multiprocessing as mp
 import psutil
+from queue import Empty
 
 from core.utilities.logging.custom_logger import create_logger
-from queue import Empty
 
 
 class MultiProcessingClient:
     """
-    A class for handling multiprocessing tasks, allowing parallel execution of functions across multiple processes.
+    Multiprocessing helper that runs a function over a list of tasks in parallel.
 
-    Attributes:
-        log: Logger object for logging information, errors, etc.
-        worker_count (int): Number of worker processes to use.
-        queue (mp.Queue): Multiprocessing queue to hold tasks to be processed.
-        tasks (list): List of tasks to be executed.
-        output_list (list): List to store outputs of the executed tasks.
-        lock (mp.Lock): Lock for managing concurrent writes to the output_list.
-        func (callable): The function to be applied to each task.
+    Notes:
+    - Uses a spawn context (safer for Windows / pytest / Celery).
+    - Supports an optional hard timeout; on timeout/error, terminates the pool so callers
+      don't hang forever.
+    - Keeps legacy queue/lock attributes for backward compatibility, but execute_tasks()
+      uses Pool.map_async over self.tasks.
     """
+
     def __init__(self, tasks: list, worker_count=None):
-        """
-        Initializes the MultiProcessingClient with a list of tasks and optionally specifies the number of workers.
-
-        Args:
-            tasks (list): A list of tasks to be executed.
-            worker_count (int, optional): The number of worker processes to use. Defaults to the number of CPUs available.
-        """
         self.log = create_logger(self.__class__.__name__)
-        self.worker_count = worker_count or psutil.cpu_count()
+        cpu = psutil.cpu_count() or 1
+        self.worker_count = int(worker_count) if worker_count else cpu
 
+        # Legacy fields (not used by execute_tasks, but kept to avoid breaking imports/usages)
         self.queue = mp.Queue()
-        self.tasks = tasks
-        self.output_list = []
+        self.tasks = list(tasks or [])
+        self.output_list: list = []
         self.lock = mp.Lock()
         self.func = None
         self.add_tasks_to_queue()
 
     def add_tasks_to_queue(self):
-        """
-        Adds tasks to the multiprocessing queue.
-        """
-        # Iterate over the tasks and put each one in the queue
+        # Kept for compatibility; note execute_tasks uses self.tasks (not this queue).
         for task in self.tasks:
             self.queue.put(task)
 
-    def execute_tasks(self, func):
+    def execute_tasks(self, func, timeout_secs: int | None = None):
         """
-         Executes the tasks using a pool of workers and a specified function.
+        Executes tasks in parallel.
 
-         Args:
-             func (callable): The function to apply to each task.
-         """
-        # Create a pool of workers
-        with mp.Pool(self.worker_count) as pool:
-            # Map the function to the tasks and get the results
-            results = pool.map(func, self.tasks)
-            # Extend the output list with the results
+        Args:
+            func: Top-level callable (must be picklable). Signature: func(task) -> result
+            timeout_secs: Optional hard timeout for the *whole batch*. If exceeded, the
+                         pool is terminated and the exception is raised.
+
+        Returns:
+            list: The results in the same order as self.tasks.
+        """
+        if not callable(func):
+            raise TypeError("func must be callable")
+
+        self.func = func
+        self.output_list = []  # reset for this run
+
+        ctx = mp.get_context("spawn")  # safest default on Windows/pytest/Celery
+        pool = ctx.Pool(processes=self.worker_count)
+
+        try:
+            async_result = pool.map_async(func, self.tasks)
+
+            # BLOCK until all results are ready (or timeout)
+            results = async_result.get(timeout=timeout_secs) if timeout_secs else async_result.get()
+
             self.output_list.extend(results)
+
+            pool.close()
+            pool.join()
+
+            return self.output_list
+
+        except Exception:
+            # IMPORTANT: ensure we don't hang forever
+            self.log.exception("Multiprocessing execution failed; terminating pool")
+            pool.terminate()
+            pool.join()
+            raise
 
     def worker_wrapper(self, func, args):
         """
@@ -66,24 +84,17 @@ class MultiProcessingClient:
             func (callable): The function to execute for each task.
             args (tuple): Additional arguments to pass to `func`.
         """
-        # While there are tasks in the queue
         while not self.queue.empty():
             try:
-                # Get a task from the queue
                 task = self.queue.get(timeout=5)
-                # Execute the function on the task and get the output
                 output = func(task, *args)
-                # Add the output to the output list in a thread-safe manner
                 with self.lock:
                     self.output_list.append(output)
-            # If the queue is empty, break the loop
             except Empty:
                 break
-            # If an error occurs, log it
-            except Exception as e:
-                self.log.error(f"Error executing task: {e}")
+            except Exception:
+                self.log.exception("Error executing task in worker_wrapper")
 
-    # This method returns the output of the tasks.
     def get_tasks_output(self):
         """
         Returns the collected outputs from all processed tasks.
