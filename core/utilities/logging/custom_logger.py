@@ -63,7 +63,6 @@ def find_logging_config():
         file_list = os.listdir(cur_dir)
         parent_dir = os.path.dirname(cur_dir)
         if file_name in file_list:
-            print(f"Logging configuration file {file_name} found in: {cur_dir}")
             file_location = os.path.join(cur_dir, file_name)
             break
         else:
