@@ -9,97 +9,118 @@ class MultiProcessingClient:
     """
     Multiprocessing helper that runs a function over a list of tasks in parallel.
 
-    Notes:
-    - Uses a spawn context (safer for Windows / pytest / Celery).
-    - Supports an optional hard timeout; on timeout/error, terminates the pool so callers
-      don't hang forever.
-    - Keeps legacy queue/lock attributes for backward compatibility, but execute_tasks()
-      uses Pool.map_async over self.tasks.
+    Defaults to Pool.map_async over self.tasks (no mp.Queue/Lock created).
+    If you truly need queue-based consumption, pass use_legacy_queue=True.
     """
 
-    def __init__(self, tasks: list, worker_count=None):
+    def __init__(self, tasks: list, worker_count=None, *, use_legacy_queue: bool = False):
         self.log = create_logger(self.__class__.__name__)
         cpu = psutil.cpu_count() or 1
         self.worker_count = int(worker_count) if worker_count else cpu
 
-        # Legacy fields (not used by execute_tasks, but kept to avoid breaking imports/usages)
-        self.queue = mp.Queue()
         self.tasks = list(tasks or [])
         self.output_list: list = []
-        self.lock = mp.Lock()
         self.func = None
-        self.add_tasks_to_queue()
 
-    def add_tasks_to_queue(self):
-        # Kept for compatibility; note execute_tasks uses self.tasks (not this queue).
+        # Legacy fields: ONLY create if explicitly requested
+        self.queue = None
+        self.lock = None
+        self._use_legacy_queue = bool(use_legacy_queue)
+
+        if self._use_legacy_queue:
+            self._init_legacy_queue()
+
+    def _init_legacy_queue(self):
+        # Create legacy primitives only when needed
+        self.queue = mp.Queue()
+        self.lock = mp.Lock()
         for task in self.tasks:
             self.queue.put(task)
 
+    def close(self):
+        """
+        Explicitly release legacy multiprocessing primitives (if created).
+        Safe to call multiple times.
+        """
+        if self.queue is not None:
+            try:
+                self.queue.close()
+                self.queue.join_thread()
+            except Exception:
+                pass
+            self.queue = None
+
+        self.lock = None
+
     def execute_tasks(self, func, timeout_secs: int | None = None):
         """
-        Executes tasks in parallel.
+        Executes tasks in parallel using Pool.map_async over self.tasks.
 
         Args:
             func: Top-level callable (must be picklable). Signature: func(task) -> result
-            timeout_secs: Optional hard timeout for the *whole batch*. If exceeded, the
-                         pool is terminated and the exception is raised.
+            timeout_secs: Optional hard timeout for the whole batch.
 
         Returns:
-            list: The results in the same order as self.tasks.
+            list: results in the same order as self.tasks
         """
         if not callable(func):
             raise TypeError("func must be callable")
 
         self.func = func
-        self.output_list = []  # reset for this run
+        self.output_list = []
 
-        ctx = mp.get_context("spawn")  # safest default on Windows/pytest/Celery
+        ctx = mp.get_context("spawn")
         pool = ctx.Pool(processes=self.worker_count)
 
         try:
             async_result = pool.map_async(func, self.tasks)
-
-            # BLOCK until all results are ready (or timeout)
             results = async_result.get(timeout=timeout_secs) if timeout_secs else async_result.get()
 
             self.output_list.extend(results)
 
             pool.close()
             pool.join()
-
             return self.output_list
 
         except Exception:
-            # IMPORTANT: ensure we don't hang forever
             self.log.exception("Multiprocessing execution failed; terminating pool")
             pool.terminate()
             pool.join()
             raise
 
+        finally:
+            # If legacy queue was created, ensure it can't keep pytest alive
+            self.close()
+
+            # Extra safety: reap any leftover children quickly
+            try:
+                for p in mp.active_children():
+                    p.join(timeout=0.1)
+            except Exception:
+                pass
+
     def worker_wrapper(self, func, args):
         """
-        Worker function that processes tasks from the queue and stores results in output_list.
-
-        Args:
-            func (callable): The function to execute for each task.
-            args (tuple): Additional arguments to pass to `func`.
+        Legacy queue-based worker loop. Only usable if use_legacy_queue=True.
         """
-        while not self.queue.empty():
+        if self.queue is None or self.lock is None:
+            raise RuntimeError("worker_wrapper requires use_legacy_queue=True")
+
+        while True:
             try:
                 task = self.queue.get(timeout=5)
+            except Empty:
+                break
+            except Exception:
+                self.log.exception("Error reading from queue")
+                break
+
+            try:
                 output = func(task, *args)
                 with self.lock:
                     self.output_list.append(output)
-            except Empty:
-                break
             except Exception:
                 self.log.exception("Error executing task in worker_wrapper")
 
     def get_tasks_output(self):
-        """
-        Returns the collected outputs from all processed tasks.
-
-        Returns:
-            list: Outputs of all executed tasks.
-        """
         return self.output_list
