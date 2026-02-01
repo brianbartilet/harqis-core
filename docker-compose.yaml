@@ -92,6 +92,7 @@ services:
     restart: unless-stopped
     ports:
       - "${HOST_PORT_RABBIT_MQ:-5672}:5672"
+      - "${HOST_PORT_RABBIT_MQ_UI:-15672}:15672"
 
   sprout-scheduler:
     build: ./
