@@ -14,7 +14,7 @@ blinker==1.9.0
 cachetools==5.3.3
 celery==5.3.6
 certifi==2024.7.4
-cffi==1.16.0
+cffi>=2.0.0,<3
 cfgv==3.4.0
 charset-normalizer==3.3.2
 click==8.1.7
@@ -45,7 +45,7 @@ google-api-python-client==2.187.0
 google-auth==2.29.0
 google-auth-httplib2==0.2.1
 google-auth-oauthlib==1.2.3
-googleapis-common-protos==1.63.0
+googleapis-common-protos>=1.63.1
 greenlet==3.0.3
 grpc_requests==0.1.16
 grpcio==1.62.1
@@ -100,7 +100,7 @@ pluggy==1.4.0
 pre-commit==3.6.2
 prometheus_client==0.20.0
 prompt-toolkit==3.0.43
-proto-plus==1.23.0
+proto-plus>=1.24.0
 protobuf==5.29.6
 psutil==5.9.8
 pure-eval==0.2.2
