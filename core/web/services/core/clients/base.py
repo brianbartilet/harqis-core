@@ -1,5 +1,6 @@
 import requests, time
 import urllib.parse as url_helper
+import socket
 
 from abc import ABC
 from typing import TypeVar, Type, Dict
@@ -12,6 +13,15 @@ from core.web.services.core.response import IResponse, Response
 
 
 TResponseData = TypeVar('TResponseData')
+
+
+def _force_ipv4():
+    import urllib3.util.connection as urllib3_conn
+
+    def ipv4_only():
+        return socket.AF_INET
+
+    urllib3_conn.allowed_gai_family = ipv4_only
 
 
 class BaseWebClient(IWebClient, ABC):
@@ -101,11 +111,6 @@ class BaseWebClient(IWebClient, ABC):
         raw_url = self.__get_raw_url__(r.get_full_url(), strip_right=r.get_url_strip_right())
 
         try:
-            self.log.debug(f"\nREQUEST:\n"
-                           f"\tmethod: {r.get_request_method().value.upper()}\n"
-                           f"\turl: {raw_url}\n"
-                           f"\tbody: {r.get_body()}\n")
-
             self.response = session.request(
                 r.get_request_method().value,
                 raw_url,
@@ -119,12 +124,32 @@ class BaseWebClient(IWebClient, ABC):
                 **r.get_body(),
                 **kwargs
             )
-            if rate_limit_delay > 0:
-                time.sleep(rate_limit_delay)
 
-        except Exception as e:
-            self.log.error("Error sending %s request: %s", r.get_request_method().value, e)
-            raise e
+        except requests.exceptions.ConnectionError as e:
+
+            # IPv6 may be broken — retry using IPv4
+            self.log.warning("Connection failed, retrying with IPv4: %s", e)
+
+            try:
+                _force_ipv4()
+
+                self.response = session.request(
+                    r.get_request_method().value,
+                    raw_url,
+                    cookies=self.cookies,
+                    verify=self.verify,
+                    timeout=self.timeout,
+                    params=r.get_query_strings(),
+                    headers=r.get_headers(),
+                    auth=r.get_authorization(),
+                    proxies=self.proxies,
+                    **r.get_body(),
+                    **kwargs
+                )
+
+            except Exception as e2:
+                self.log.error("Error sending %s request: %s", r.get_request_method().value, e2)
+                raise e2
 
         return self.get_response(self.response, response_hook)
 
