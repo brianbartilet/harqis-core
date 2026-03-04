@@ -40,7 +40,7 @@ Flask==3.1.2
 flower==2.0.1
 future==1.0.0
 gevent==24.2.1
-google-api-core==2.18.0
+google-api-core>=2.19.1
 google-api-python-client==2.187.0
 google-auth==2.29.0
 google-auth-httplib2==0.2.1
