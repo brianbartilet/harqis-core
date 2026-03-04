@@ -92,7 +92,7 @@ parse==1.20.1
 parse-type==0.6.2
 parso==0.8.3
 pickleshare==0.7.5
-pillow==12.0.0
+pillow==12.1.1
 pipreqs==0.5.0
 platformdirs==4.2.0
 playwright==1.43.0
