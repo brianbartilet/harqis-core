@@ -156,7 +156,7 @@ sqlparse==0.5.4
 stack-data==0.6.3
 text-unidecode==1.3
 tinycss2==1.2.1
-tornado==6.5.1
+tornado==6.5.5
 tqdm==4.66.3
 traitlets==5.14.2
 trio==0.25.0
