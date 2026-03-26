@@ -28,12 +28,11 @@ jobs:
     if: github.actor != 'dependabot[bot]' && github.actor != 'dependabot-preview[bot]'
     steps:
       - name: Trigger harqis-work Tests
-        run: |
-          curl -X POST \
-            -H "Accept: application/vnd.github.v3+json" \
-            -H "Authorization: token ${{ secrets.HARQIS_TOKEN }}" \
-            https://api.github.com/repos/brianbartilet/harqis-work/actions/workflows/run_tests.yml/dispatches \
-            -d '{"ref":"main"}'
+        uses: peter-evans/repository-dispatch@v1
+        with:
+          token: ${{ secrets.HARQIS_TOKEN }}
+          repository: brianbartilet/harqis-work
+          event-type: trigger-harqis-work-tests
 
   trigger-demo-project-build:
     runs-on: ubuntu-latest
