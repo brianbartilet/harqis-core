@@ -22,6 +22,19 @@ jobs:
     - name: Run Unit Tests
       run: docker run -v app_volume:/app/data harqis-core
 
+  trigger-harqis-work-tests:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    if: github.actor != 'dependabot[bot]' && github.actor != 'dependabot-preview[bot]'
+    steps:
+      - name: Trigger harqis-work Tests
+        run: |
+          curl -X POST \
+            -H "Accept: application/vnd.github.v3+json" \
+            -H "Authorization: token ${{ secrets.HARQIS_TOKEN }}" \
+            https://api.github.com/repos/brianbartilet/harqis-work/actions/workflows/run_tests.yml/dispatches \
+            -d '{"ref":"main"}'
+
   trigger-demo-project-build:
     runs-on: ubuntu-latest
     if: github.actor != 'dependabot[bot]' && github.actor != 'dependabot-preview[bot]'
