@@ -3,8 +3,8 @@
 ## Introduction
 
 - **HARQIS** (Heuristic Automation for a Reliable Quality Integration System) is a versatile automation platform designed to facilitate a wide range of automation tasks across various domains.
-- Supports **GPT** integrated functionalities, leverages the **OpenAI API** to assist with code generation and analysis.
 - Provides fixtures, utilities, and templates for implementing automation for various applications and systems. It enables the creation of automated workflows for testing, cross-application integration, and more, adapting to both small and large-scale projects with ease.
+- AI-assisted features (previously OpenAI GPT) have been moved to **harqis-work** and now support the **Anthropic Claude SDK**.
 
 ## Key Features
 
@@ -21,9 +21,11 @@
 - Provide reporting and analytics.
 - Provide utility decorators to apply testing principles and techniques.
 
-### GPT Assisted Development
+### AI-Assisted Development *(moved to harqis-work)*
+> **Note:** The OpenAI GPT integration (`core/apps/gpt`) has been **deprecated** and removed from this repository. AI-assisted features are now maintained in **harqis-work** using the **Anthropic Claude SDK**.
+
 - **Development Assistant**: Generates test code, analyzes fixtures, and applies testing techniques.
-- **OpenAI Integration**: Directly integrates with the *OpenAI API* to create scripts and perform other useful tasks.
+- **Anthropic Claude Integration**: Uses the Anthropic Claude SDK for code generation, analysis, and multi-provider LLM support.
 
 #### Use Cases
 - Automates the generation of test code based on existing fixtures and templates.
@@ -89,19 +91,8 @@ To get started with **HARQIS-core**, follow these steps:
       CELERY_TASKS:
         application_name: 'workflow-harqis'
         broker: 'your_broker_url'
-      HARQIS_GPT:
-        client: 'rest'
-        parameters:
-          base_url: 'https://api.openai.com/v1'
-          response_encoding: 'utf-8'
-          verify: False
-          timeout: 60
-          stream: True
-        app_data:
-          api_key: ${OPEN_API_KEY} # add an environment variable to store the API key
-          model: 'your_target_assistant_mode'
-          max_tokens: 500
       ```
+   > **Note:** The `HARQIS_GPT` / OpenAI configuration block has been removed. AI integrations are now managed in **harqis-work** via the Anthropic Claude SDK.
    - These services are defined in `core\apps\docker_compose.yaml`
 
 **Run Unit Tests**:
