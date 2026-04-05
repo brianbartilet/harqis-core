@@ -111,7 +111,7 @@ proto-plus==1.27.1
 protobuf==5.29.6
 psutil==5.9.8
 pure-eval==0.2.2
-pyasn1==0.5.1
+pyasn1==0.6.3
 pyasn1-modules==0.3.0
 PyAutoGUI==0.9.54
 pycparser==2.21
