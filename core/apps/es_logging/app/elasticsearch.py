@@ -12,6 +12,7 @@ from datetime import datetime
 from http import HTTPStatus
 from urllib.parse import urljoin
 
+from core.utilities.logging.custom_logger import logger as log
 
 from hamcrest import assert_that, any_of, equal_to
 
@@ -68,7 +69,7 @@ def log_result(logging_index=LOGGING_INDEX):
                      use_interval_map=False,
                      location_key=path)
                 if error:
-                    raise error
+                    log.warn("Exception encountered for Elastic logging. {0}\nProceed with process".format(error))
 
             return f
 
