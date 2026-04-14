@@ -18,25 +18,35 @@ from hamcrest import assert_that, any_of, equal_to
 
 APP_NAME = AppNames.ELASTIC_LOGGING
 
-config = AppConfigLoader(AppNames.ELASTIC_LOGGING).config
-app_data = config.app_data
-
-LOGGING_INDEX = app_data.get('default_index', "harqis-elastic-logging")
-ELASTIC_TIME_FORMAT = app_data.get('time_format', "%Y-%m-%dT%H:%M")
+try:
+    config = AppConfigLoader(AppNames.ELASTIC_LOGGING).config
+    app_data = config.app_data
+    LOGGING_INDEX = app_data.get('default_index', "harqis-elastic-logging")
+    ELASTIC_TIME_FORMAT = app_data.get('time_format', "%Y-%m-%dT%H:%M")
+    _ES_CONFIGURED = True
+except Exception as _init_err:
+    log.warning(f"Elasticsearch logging disabled — config error: {_init_err}")
+    config = None
+    app_data = {}
+    LOGGING_INDEX = "harqis-elastic-logging"
+    ELASTIC_TIME_FORMAT = "%Y-%m-%dT%H:%M"
+    _ES_CONFIGURED = False
 
 
 def log_result(logging_index=LOGGING_INDEX):
     def decorator(func):
         @functools.wraps(func)
         def wrapper(*args, **kwargs):
+            if not _ES_CONFIGURED:
+                return func(*args, **kwargs)
 
             path = "{0}.{1}".format(func.__module__, func.__qualname__)
             try:
                 logs = QList(get_index_data(logging_index, type_hook=DtoFunctionLogger))
-
                 target = logs.where(lambda x: x.name == path).first() if len(logs) > 0 else None
             except Exception:
                 target = None
+
             args_str = ''.join(['"{0}" '.format(str(arg)) for arg in args])
             index_dto = DtoFunctionLogger(name=path,
                                           passed=0,
@@ -52,7 +62,6 @@ def log_result(logging_index=LOGGING_INDEX):
             try:
                 f = func(*args, **kwargs)
                 index_dto.passed += 1
-                # reset the initial date
                 index_dto.last_failed = '2000-01-01T00:00'
             except Exception as e:
                 error = e
@@ -64,12 +73,16 @@ def log_result(logging_index=LOGGING_INDEX):
                 index_dto.date = now
                 index_dto.compute_stat()
 
-                post(json_dump=index_dto.get_dict(),
-                     index_name=logging_index,
-                     use_interval_map=False,
-                     location_key=path)
+                try:
+                    post(json_dump=index_dto.get_dict(),
+                         index_name=logging_index,
+                         use_interval_map=False,
+                         location_key=path)
+                except Exception as es_error:
+                    log.warning(f"Elasticsearch logging skipped for '{path}': {es_error}")
+
                 if error:
-                    log.warn("Exception encountered for Elastic logging. {0}\nProceed with process".format(error))
+                    log.warning("Exception encountered in decorated function. {0}\nProceed with process".format(error))
 
             return f
 
