@@ -33,14 +33,14 @@ def load_logging_configuration():
         The root logger object after loading the configuration.
     """
     config_file_location = find_logging_config()
+    if config_file_location is None:
+        raise NotImplementedError(f"Please add a logging file {file_name} in root directory.")
     try:
         with open(config_file_location) as config_file:
             config_dict = yaml.load(config_file, Loader=yaml.FullLoader)
             logging.config.dictConfig(config_dict)
-    except FileNotFoundError as e:
+    except FileNotFoundError:
         raise FileNotFoundError(f"Logging configuration file not found: {config_file_location}")
-    except TypeError as e:
-        raise NotImplementedError(f"Please add a logging file {file_name} in root directory.")
 
     new_logger = logging.getLogger()
 
@@ -51,27 +51,30 @@ def load_logging_configuration():
 
 def find_logging_config():
     """
-    Search for the logging configuration file (logging.yaml) starting from the current working directory and moving up the directory tree.
+    Search for the logging configuration file (logging.yaml).
+
+    Priority 1: walks up from the current working directory to find a project-level config.
+    Priority 2: falls back to the bundled logging.yaml inside the installed core package.
 
     Returns:
         The file path of the logging configuration file if found, otherwise None.
     """
-    cur_dir = os.path.dirname(os.path.abspath(__file__))  # Dir from where search starts can be replaced with any path
-
-    file_location = None
+    cur_dir = os.getcwd()
     while True:
-        file_list = os.listdir(cur_dir)
+        if file_name in os.listdir(cur_dir):
+            return os.path.join(cur_dir, file_name)
         parent_dir = os.path.dirname(cur_dir)
-        if file_name in file_list:
-            file_location = os.path.join(cur_dir, file_name)
+        if cur_dir == parent_dir:
             break
-        else:
-            if cur_dir == parent_dir:  # if dir is root dir
-                print("File not found")
-                break
-            else:
-                cur_dir = parent_dir
-    return file_location
+        cur_dir = parent_dir
+
+    # Fallback: bundled logging.yaml shipped with the core package (core/logging.yaml)
+    core_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    bundled = os.path.join(core_dir, file_name)
+    if os.path.isfile(bundled):
+        return bundled
+
+    return None
 
 
 logger = load_logging_configuration()

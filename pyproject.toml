@@ -18,6 +18,7 @@ dynamic = ["dependencies"]
 dependencies = { file = ["requirements.txt"] }
 
 [tool.setuptools.package-data]
+"core" = ["logging.yaml"]
 "core.web.services.core.decorators" = ["py.typed", "*.pyi"]
 
 [project.urls]
