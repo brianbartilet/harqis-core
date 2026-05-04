@@ -16,3 +16,4 @@ venv/
 *.egg
 *.egg-info/
 *.json
+/workflows.mapping
