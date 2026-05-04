@@ -30,18 +30,41 @@ def kill_celery_process(target_pid):
     return False
 
 
-def _spawn_detached(cmd):
-    """Spawn celery without opening a new console on Windows.
+def _has_attached_console() -> bool:
+    """True iff a Windows console is attached to the current process.
 
-    The parent management command may be running under pythonw.exe (no
-    attached console). Without CREATE_NO_WINDOW, every spawned celery.exe
-    triggers Windows to allocate a fresh console — so a single dev
-    session of file-watch autoreload can pile up dozens of console
-    windows. CREATE_NEW_PROCESS_GROUP detaches the child from the
-    parent's signal group so a Ctrl-C upstream doesn't cascade.
+    Used to decide whether the spawned celery inherits our console
+    (output flows there) or is suppressed with CREATE_NO_WINDOW
+    (silent daemon when launched under pythonw.exe). Always True on
+    Unix — there's no equivalent to CREATE_NO_WINDOW.
+    """
+    if not _IS_WIN:
+        return True
+    try:
+        import ctypes
+        return ctypes.windll.kernel32.GetConsoleWindow() != 0
+    except (OSError, AttributeError):
+        return False
+
+
+def _spawn_detached(cmd):
+    """Spawn celery, inheriting the parent's console when one exists.
+
+    - Console attached (parent is python.exe with a window) → omit
+      CREATE_NO_WINDOW so celery's stdout/stderr land in that window.
+    - No console (parent is pythonw.exe) → keep CREATE_NO_WINDOW so
+      celery doesn't trigger Windows to allocate a fresh console
+      window. Without this gate, a session of file-watch autoreload
+      can pile up dozens of empty console windows.
+
+    CREATE_NEW_PROCESS_GROUP detaches the child from the parent's
+    signal group so an upstream Ctrl-C doesn't cascade through.
     """
     if _IS_WIN:
-        flags = subprocess.CREATE_NO_WINDOW | subprocess.CREATE_NEW_PROCESS_GROUP
+        if _has_attached_console():
+            flags = subprocess.CREATE_NEW_PROCESS_GROUP
+        else:
+            flags = subprocess.CREATE_NO_WINDOW | subprocess.CREATE_NEW_PROCESS_GROUP
         return subprocess.Popen(cmd, creationflags=flags, close_fds=True)
     return subprocess.Popen(cmd, start_new_session=True, close_fds=True)
 
