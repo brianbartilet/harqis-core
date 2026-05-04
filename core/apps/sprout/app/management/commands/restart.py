@@ -1,15 +1,49 @@
+import os
 import subprocess
 import psutil
 
 
+_IS_WIN = os.name == "nt"
+
 
 def kill_celery_process(target_pid):
-    """Kills a Celery process with the given PID."""
-    for proc in psutil.process_iter():
-        if proc.name() == 'celery.exe' and str(proc.pid) == target_pid:
-            subprocess.call(['taskkill', '/f', '/PID', target_pid])
-            return True
+    """Kills a Celery process with the given PID.
+
+    Matches both `celery` (Unix) and `celery.exe` (Windows) so the
+    cleanup works on every platform — the prior name=='celery.exe'
+    filter silently no-op'd on Linux/macOS.
+    """
+    try:
+        target_pid = int(str(target_pid))
+    except (TypeError, ValueError):
+        return False
+    for proc in psutil.process_iter(['pid', 'name']):
+        try:
+            if proc.pid == target_pid and proc.info.get('name') in ('celery', 'celery.exe'):
+                if _IS_WIN:
+                    subprocess.call(['taskkill', '/f', '/PID', str(target_pid)])
+                else:
+                    proc.terminate()
+                return True
+        except (psutil.NoSuchProcess, psutil.AccessDenied):
+            continue
     return False
+
+
+def _spawn_detached(cmd):
+    """Spawn celery without opening a new console on Windows.
+
+    The parent management command may be running under pythonw.exe (no
+    attached console). Without CREATE_NO_WINDOW, every spawned celery.exe
+    triggers Windows to allocate a fresh console — so a single dev
+    session of file-watch autoreload can pile up dozens of console
+    windows. CREATE_NEW_PROCESS_GROUP detaches the child from the
+    parent's signal group so a Ctrl-C upstream doesn't cascade.
+    """
+    if _IS_WIN:
+        flags = subprocess.CREATE_NO_WINDOW | subprocess.CREATE_NEW_PROCESS_GROUP
+        return subprocess.Popen(cmd, creationflags=flags, close_fds=True)
+    return subprocess.Popen(cmd, start_new_session=True, close_fds=True)
 
 
 def restart_celery_scheduler(app, task_file):
@@ -19,6 +53,9 @@ def restart_celery_scheduler(app, task_file):
     Args:
         app (str): The name of the Celery app.
         task_file (str): The name of the task file.
+
+    Returns:
+        subprocess.Popen: handle to the spawned celery beat process.
     """
     pid_file = f'pid.restart_celery_scheduler.{task_file.lower()}'
 
@@ -28,11 +65,12 @@ def restart_celery_scheduler(app, task_file):
         if kill_celery_process(target_process):
             print("Old scheduler process killed.")
 
-    cmd = f'celery -A {app} beat -l info --pidfile='
-    process = subprocess.Popen(cmd.split()).pid
+    cmd = ['celery', '-A', app, 'beat', '-l', 'info', '--pidfile=']
+    proc = _spawn_detached(cmd)
 
-    print(f"Saving celery process id: {process}")
-    write_pid_to_file(pid_file, process)
+    print(f"Saving celery process id: {proc.pid}")
+    write_pid_to_file(pid_file, proc.pid)
+    return proc
 
 
 def restart_celery_worker(app, task_file, use_eventlet=False, concurrency=10, queue='default'):
@@ -46,6 +84,9 @@ def restart_celery_worker(app, task_file, use_eventlet=False, concurrency=10, qu
         concurrency (int): The number of concurrent worker processes/greenlets.
         queue (str | list[str] | None): Queue name or list of queue names for -Q.
                                         If None, Celery's default queue config is used.
+
+    Returns:
+        subprocess.Popen: handle to the spawned celery worker process.
     """
     pid_file = f'pid.restart_celery_worker.{task_file.lower()}.{queue}'
 
@@ -77,12 +118,12 @@ def restart_celery_worker(app, task_file, use_eventlet=False, concurrency=10, qu
         cmd += ['-Q', queue]
         print(f"Starting worker for queue(s): {queue}")
 
-    process = subprocess.Popen(cmd).pid
+    proc = _spawn_detached(cmd)
 
-    print(f"Saving celery process id: {process}")
-    write_pid_to_file(pid_file, process)
+    print(f"Saving celery process id: {proc.pid}")
+    write_pid_to_file(pid_file, proc.pid)
 
-    return process
+    return proc
 
 
 def read_pid_from_file(pid_file):
@@ -98,4 +139,3 @@ def write_pid_to_file(pid_file, pid):
     """Writes the PID to the specified file."""
     with open(pid_file, 'w') as file:
         file.write(str(pid))
-

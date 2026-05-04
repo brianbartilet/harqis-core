@@ -147,6 +147,17 @@ ENV_WORKFLOW_QUEUE= os.environ.get(
     "default"
 )
 
+# When "1" / "true", the worker and scheduler management commands wrap
+# their start in django.utils.autoreload — convenient for dev (auto
+# restarts on file change) but pathological in production daemons:
+# every reload spawns a fresh celery.exe (each in its own console window
+# on Windows) and the prior one isn't reliably cleaned up, so orphan
+# workers pile up. Default "0" → run once, no reloader.
+ENV_WORKFLOW_AUTORELOAD = os.environ.get(
+    "WORKFLOW_AUTORELOAD",
+    "0"
+)
+
 
 # Root directory of the application, default is the root directory of the repository, unless specified
 ENV_ROOT_DIRECTORY = os.environ.get('ROOT_DIRECTORY', os.path.dirname(os.path.abspath(__file__)))
