@@ -1,3 +1,5 @@
+import socket
+
 from core.web.services.core.json import JsonObject
 from datetime import datetime
 
@@ -40,8 +42,18 @@ class DtoFunctionLogger(JsonObject):
     short_name = ''
     exception_message = ''
     args = ''
+    data = {}
+    # OS hostname of the process that emitted the log. Resolved once at
+    # class-definition time — same value for every instance in this process,
+    # which is what we want: pinning by host lets ES queries filter by node
+    # (windows-work-all vs harqis-ones-mac-mini etc.).
+    machine = socket.gethostname()
 
     def compute_stat(self):
         self.pass_fail_percent = 100 * (self.passed / (self.passed + self.failed))
         self.short_name = self.name.split('.')[-1]
+        # Backfill in case an instance was constructed before the class-level
+        # default was set (e.g. deserialised from an older ES doc).
+        if not self.machine:
+            self.machine = socket.gethostname()
 
