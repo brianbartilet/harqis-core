@@ -25,7 +25,7 @@ click-repl==0.3.0
 colorama==0.4.6
 comtypes==1.4.13
 cron_descriptor==2.0.6
-cryptography==46.0.5
+cryptography==48.0.1
 cucumber-expressions==19.0.0
 cucumber-tag-expressions==9.1.0
 decorator==5.1.1
