@@ -1,27 +1,10 @@
-from setuptools import setup, find_packages
+"""Compatibility entry point for tools that still invoke ``setup.py``.
 
-with open('core/requirements.txt') as f:
-    requirements = f.read().splitlines()
+Package metadata, including runtime dependencies, lives in ``pyproject.toml``.
+Keeping this file metadata-free prevents it from drifting out of sync.
+"""
 
-setup(
-    name='harqis-core',
-    version="0.1.0",
-    packages=find_packages(),
-    author="Brian Bartilet",
-    author_email="brian.bartilet@gmail.com",
-    install_requires=requirements,
-    description="Heuristic Automation for a Reliable Quality Integration System",
-    long_description=open('README.md').read(),
-    long_description_content_type="text/markdown",
-    url="https://github.com/brianbartilet/harqis-core",
-    classifiers=[
-        "Programming Language :: Python :: 3",
-        "License :: OSI Approved :: MIT License",
-        "Operating System :: OS Independent",
-    ],
-    python_requires='>=3.10',
-    homepage="https://github.com/brianbartilet/harqis-core",
-    package_data={
-        'your_package_name': ['*.yaml', '*.tpl.gql', '*.gql', '*.graphql'],
-    },
-)
+from setuptools import setup
+
+
+setup()

@@ -1,6 +1,6 @@
 [project]
 name = "harqis-core"
-version = "0.1.0"
+version = "0.1.1"
 description = "Heuristic Automation for a Reliable Quality Integration System"
 authors = [
     { name = "Brian Bartilet", email = "brian.bartilet@gmail.com" },
@@ -12,14 +12,47 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 requires-python = ">=3.12"
-dynamic = ["dependencies"]
+dependencies = [
+    "celery>=5.3.6,<6",
+    "cron-descriptor>=1.4,<3",
+    "Django>=5.1,<6",
+    "jsonmerge>=1.9,<2",
+    "jsonpickle>=3,<5",
+    "jsonschema>=4.21,<5",
+    "mss>=9,<11",
+    "paramiko>=3.4,<4",
+    "Pillow>=10,<13",
+    "playwright>=1.43,<2",
+    "psutil>=5.9,<8",
+    "PyAutoGUI>=0.9.54,<1",
+    "PyHamcrest>=2,<3",
+    "pystache>=0.6,<1",
+    "pytesseract>=0.3.10,<1",
+    "PyYAML>=6,<7",
+    "requests>=2.31,<3",
+    "selenium>=4.18,<5",
+    "uiautomation>=2,<3; platform_system == 'Windows'",
+    "urllib3>=2,<3",
+    "validators>=0.24,<1",
+    "webdriver-manager>=4,<5",
+    "pywin32>=310; platform_system == 'Windows'",
+]
 
-[tool.setuptools.dynamic]
-dependencies = { file = ["requirements.txt"] }
+[project.optional-dependencies]
+dev = [
+    "behave>=1.2,<2",
+    "parameterized>=0.9,<1",
+    "pytest>=8,<9",
+    "pytest-base-url>=2,<3",
+    "pytest-playwright>=0.4,<1",
+]
 
 [tool.setuptools.package-data]
 "core" = ["logging.yaml"]
 "core.web.services.core.decorators" = ["py.typed", "*.pyi"]
+
+[tool.setuptools.packages.find]
+include = ["core", "core.*"]
 
 [project.urls]
 Homepage = "https://github.com/brianbartilet/harqis-core"

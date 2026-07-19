@@ -79,10 +79,10 @@ To get started with **HARQIS-core**, follow these steps:
       python -m venv venv
       source venv/bin/activate
       ```
-   - Install the required packages using the requirements file
+   - Install the package and its development dependencies
       ```sh
       python -m pip install --upgrade pip
-      pip install -r requirements.txt
+      pip install -e ".[dev]"
       ```
 
 **Configuration**:
@@ -116,12 +116,11 @@ To get started with **HARQIS-core**, follow these steps:
 **Package Management**:
 - To build the package, execute the following command:
    ```sh
-   python setup.py sdist bdist_wheel
+   python -m build
    ```
- - Use `pip freeze` to generate the requirements file from `root` directory:
-   ```sh
-   pip freeze > requirements.txt
-   ```
+ - Runtime dependencies are bounded direct requirements in `pyproject.toml`.
+   `core/requirements.txt` is retained only as a legacy environment snapshot
+   and is not published as package metadata.
 
 
 ## License
