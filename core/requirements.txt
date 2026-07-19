@@ -6,7 +6,7 @@
 # Regenerate this snapshot only when reproducing the historical environment.
 amqp==5.2.0
 annotated-types==0.6.0
-anthropic==0.86.0
+anthropic==0.87.0
 anyio==4.3.0
 asgiref==3.10.0
 asttokens==2.4.1
