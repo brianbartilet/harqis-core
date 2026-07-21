@@ -140,7 +140,7 @@ PySide6_Essentials==6.10.1
 PySocks==1.7.1
 pystache==0.6.5
 pytesseract==0.3.13
-pytest==8.0.2
+pytest==9.0.3
 pytest-base-url==2.1.0
 pytest-playwright==0.4.4
 python-dateutil==2.9.0.post0
