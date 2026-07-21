@@ -142,7 +142,7 @@ pystache==0.6.5
 pytesseract==0.3.13
 pytest==9.0.3
 pytest-base-url==2.1.0
-pytest-playwright==0.4.4
+pytest-playwright==0.8.0
 python-dateutil==2.9.0.post0
 python-discovery==1.2.0
 python-dotenv==1.2.2
