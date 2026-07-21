@@ -96,8 +96,8 @@
 - Sample use cases: performance monitoring, bug density and test coverage analysis.
 
 ## Integrations
-#### :white_check_mark: OpenAI API
-- Support for [**OpenAI**](https://platform.openai.com/overview) API for AI-powered testing and automation.
+#### :no_entry: Model-provider integrations
+- Model-provider integrations have moved to [**harqis-work**](https://github.com/brianbartilet/harqis-work). HARQIS-core no longer ships an OpenAI or other model-specific client.
 
 ## Utilities
 ### Communication

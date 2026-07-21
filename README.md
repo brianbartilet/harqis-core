@@ -1,19 +1,19 @@
-# HARQIS: Heuristic Automation for a Reliable Quality Integration System
+# HARQIS: Heuristic Automation for Resilient, Queryable Integration Systems
 
 ## Introduction
 
-- **HARQIS** (Heuristic Automation for a Reliable Quality Integration System) is a versatile automation platform designed to facilitate a wide range of automation tasks across various domains.
-- Provides fixtures, utilities, and templates for implementing automation for various applications and systems. It enables the creation of automated workflows for testing, cross-application integration, and more, adapting to both small and large-scale projects with ease.
-- AI-assisted features (previously OpenAI GPT) have been moved to **harqis-work** and now support the **Anthropic Claude SDK**.
+- **HARQIS-core** is the reusable foundation for HARQIS: configuration, service fixtures, browser automation, code generation, Celery execution, logging, and testing utilities.
+- The deployed automation and second-brain platform lives in [**harqis-work**](https://github.com/brianbartilet/harqis-work), which composes these primitives into app integrations, workflows, MCP tools, and AI agents.
+- AI-assisted features have moved to **harqis-work** and are model-neutral; available models, tools, and invocation depend on the active agent harness.
 
 ## Key Features
 
 ### Automation Swiss Army Knife
 
 - **Generic Automation**: Provides comprehensive support for both general automation tasks and testing.
-- **Ease of Use**: Offers automation fixtures for frontend, backend, embedded systems, and IoT applications.
+- **Ease of Use**: Offers reusable fixtures for web services, browser automation, configuration, and workflow execution.
 - **Adaptability**: Easily adjusts to dynamic environments, automation strategies, and evolving requirements.
-- **Quality Integration System**: Ensures testing standards and optimal performance of integrated components and systems.
+- **Resilient, Queryable Integrations**: Combines reusable service fixtures, configuration, logging, scheduled execution, and test utilities so integrated systems can be operated and inspected consistently.
 
 #### Use Cases
 - Facilitates the creation of a generic test automation framework.
@@ -22,19 +22,19 @@
 - Provide utility decorators to apply testing principles and techniques.
 
 ### AI-Assisted Development *(moved to harqis-work)*
-> **Note:** The OpenAI GPT integration (`core/apps/gpt`) has been **deprecated** and removed from this repository. AI-assisted features are now maintained in **harqis-work** using the **Anthropic Claude SDK**.
+> **Note:** The former OpenAI GPT integration (`core/apps/gpt`) has been removed. AI-assisted development is maintained in [**harqis-work**](https://github.com/brianbartilet/harqis-work), where repository skills can guide Claude, OpenAI models, and other capable reasoning models when supported by their harness.
 
-- **Development Assistant**: Generates test code, analyzes fixtures, and applies testing techniques.
-- **Anthropic Claude Integration**: Uses the Anthropic Claude SDK for code generation, analysis, and multi-provider LLM support.
+- **HARQIS-core boundary**: Keeps deterministic fixtures, generators, configuration, and execution primitives independent of any model provider.
+- **HARQIS-work ownership**: Provides the agent integrations and reusable skills that apply those primitives to development and operations.
 
 #### Use Cases
 - Automates the generation of test code based on existing fixtures and templates.
 - Offers code analysis and suggestions for testing techniques.
 - Generates test code by analyzing static specifications or schemas (e.g. *OpenAPI*, *GraphQL*, *WSDL*) from available fixtures and templates.
 
-### Cross Application Integration and Workflow Builder
+### Cross-Application Integration and Workflow Orchestration
 - **Create Robots**: Provides RPA-like capabilities to automate any workflow from integrated applications.
-- **Workflow Builder**: Features a workflow builder (akin to *Zapier* or *IFTTT*) for code-based, fully controllable application data and task scheduling.
+- **Celery Orchestration**: Provides code-based task scheduling and execution primitives for composing application workflows.
 
 #### Use Cases
 - Publish workflow tasks as events that can be consumed for execution.
@@ -44,7 +44,7 @@
 Please refer here for the complete map of the [HARQIS Features](core/docs/FEATURES.md).
 
 ## Demo Project
-- Please refer here [harqis-demo-generic-framework](https://github.com/brianbartilet/harqis-demo-generic-framework) for an sample application of **HARQIS-core**.
+- Please refer to [harqis-demo-generic-framework](https://github.com/brianbartilet/harqis-demo-generic-framework) for a sample application of **HARQIS-core**.
 - The demo project can be used as a template for creating new projects and providing basic operations of fixtures and templates.
 - See the [README.md](https://github.com/brianbartilet/harqis-demo-generic-framework/blob/main/README.md)
 
@@ -70,9 +70,9 @@ To get started with **HARQIS-core**, follow these steps:
       ```
    - Set up and activate the virtual environment
      *windows*
-     ```bash
+     ```powershell
       python -m venv venv
-      venv/scripts/activate
+      .\venv\Scripts\Activate.ps1
      ```
      *linux*
      ```sh
@@ -92,15 +92,16 @@ To get started with **HARQIS-core**, follow these steps:
         application_name: 'workflow-harqis'
         broker: 'your_broker_url'
       ```
-   > **Note:** The `HARQIS_GPT` / OpenAI configuration block has been removed. AI integrations are now managed in **harqis-work** via the Anthropic Claude SDK.
-   - These services are defined in `core\apps\docker_compose.yaml`
+   > **Note:** AI integrations are managed in **harqis-work** and are not configured by **HARQIS-core**.
+   - Supporting services are defined in the root [`docker-compose.yaml`](docker-compose.yaml).
 
-**Run Unit Tests**:
-- Execute all tests using the following command:
+**Run the Test Suite**:
+- Execute the suite using the following command:
    ```sh
    cd core
    pytest
    ```
+- Most tests are isolated, but development-mode resource-download and browser-driver checks use live network services and installed browsers. A missing browser, driver host, or upstream fixture can fail those environment-dependent checks.
 
 **Docker**:
 - Alternatively, you may test the package from the provided `Dockerfile`, by executing the following commands:
@@ -110,7 +111,7 @@ To get started with **HARQIS-core**, follow these steps:
    ```
 - Enable dependencies from Docker compose
   ```sh
-  docker-compose up
+  docker compose up
   ```
 
 **Package Management**:

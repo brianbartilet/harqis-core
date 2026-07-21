@@ -11,11 +11,9 @@ class AppNames(Enum):
     Enum class for environment settings.
 
     Attributes:
-        API_GPT (str): ChatGPT integration.
         TASKS_CLIENT (str): Celery tasks client.
-        TASKS_CLIENT (str): Elastic integration.
+        ELASTIC_LOGGING (str): Elastic integration.
     """
-    API_GPT = 'HARQIS_GPT'
     TASKS_CLIENT = 'CELERY_TASKS'
     ELASTIC_LOGGING = 'ELASTIC_LOGGING'
 
@@ -29,9 +27,7 @@ class AppConfigLoader(AppConfig):
                     the values are the client classes.
     """
     map = {
-        AppNames.API_GPT.value: AppConfigWSClient,
         AppNames.ELASTIC_LOGGING.value: AppConfigWSClient
-
     }
 
     def __init__(self, name: AppNames):

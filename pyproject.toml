@@ -1,7 +1,7 @@
 [project]
 name = "harqis-core"
 version = "0.1.1"
-description = "Heuristic Automation for a Reliable Quality Integration System"
+description = "Heuristic Automation for Resilient, Queryable Integration Systems"
 authors = [
     { name = "Brian Bartilet", email = "brian.bartilet@gmail.com" },
 ]

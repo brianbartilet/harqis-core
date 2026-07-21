@@ -34,7 +34,7 @@ class AppConfigManager:
 
     def __init__(self, service: ConfigLoaderService):
         self.service = service
-        # Holds the filtered, current app's sections: { "N8N": {...}, "HARQIS_GPT": {...}, ... }
+        # Holds the filtered, current app's sections: {"ELASTIC_LOGGING": {...}, ...}
         self._current_app_configs: Dict[str, Dict[str, Any]] = service.config
 
     def _normalize_source(self, source: Any) -> Dict[str, Dict[str, Any]]:

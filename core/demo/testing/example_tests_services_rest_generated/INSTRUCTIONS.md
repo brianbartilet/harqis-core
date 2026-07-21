@@ -21,7 +21,7 @@
 #### generated.zip
 - `/models` - folder to contain data transfer objects that can be provided from an open API schema
 - `/services` - serves as a reference directory to store implementation of fixtures from an external library defined
-- `/tests` - tests written in `pytest`, this would be the primary output that we would want to generate with GPT
+- `/tests` - tests written in `pytest`; this is the primary output produced by the generator
 - `base_service.py` - a base class to implement the service class fixture
 - `config.py` - configuration script to initialize the test environment
 - `config.yaml` - configuration file to store the test environment

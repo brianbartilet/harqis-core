@@ -3,19 +3,15 @@
 ## Introduction
 - Ability to generate out-of-box and run ready tests from a REST API OpenAPI specification from a url or file source.
 - Generates the test code using existing core fixtures and utilities which are defined in mustache templates.
-- Integrates with OpenAI API to generate test cases from the OpenAPI specification.
+- Model-assisted enrichment has moved to `harqis-work`; this demo remains a deterministic Mustache generator.
 
 ## Design
 - Use the script `generate.py` to generate the test cases from the OpenAPI specifications in a Python dictionary.
 - This dictionary data can be parsed to the test mustache templates to generate the test code.
-- Tests are generated into two core processes:
-  - **generate test code from OpenAPI** process a URL or file source argument spec to generate the test cases and code from using core fixtures..
-  - **update and add test cases using GPT** uploads and analyses the generated files to add more test cases using OpenAI API.
+- **Generate test code from OpenAPI** processes a URL or file source and generates baseline tests using core fixtures.
 - This demo is still in development and will be updated with more features and functionalities. *bugs*
 
 ## Modules
-- [`/data`](./data)
-  - Contains sample data to upload to GPT
 - [`/specs`](./specs)
   - Contains sample OpenAPI specifications to generate test cases
 - [`/specs/tasks_api_specs.yaml`](./specs/tasks_api_specs.yaml)
@@ -35,9 +31,6 @@
 - [`/generated`](./generated)
   - Contains the generated test code from the OpenAPI specification
   - Mimics the test application structure of [demo REST tests](../example_tests_services_rest/README.md)
-- [`/generated/GPT_RESPONSE.md`](./generated/GPT_RESPONSE.md)
-  - Store the GPT response from the OpenAI API.
-
 ## Run Tests
 - Run the service for the mocked openAPI in the Docker compose file.
   ```bash

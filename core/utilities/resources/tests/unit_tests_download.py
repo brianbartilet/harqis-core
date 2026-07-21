@@ -14,7 +14,7 @@ class TestDownloadFile(unittest.TestCase):
     def setUp(self):
         self.get_url = "https://api.github.com/repos/brianbartilet/harqis-core/zipball/"
         self.get_url_file = \
-            "https://raw.githubusercontent.com/OAI/OpenAPI-Specification/main/examples/v3.0/api-with-examples.yaml"
+            "https://raw.githubusercontent.com/swagger-api/swagger-petstore/master/src/main/resources/openapi.yaml"
 
         self.file_name = f"harqis-core-{uuid4()}.zip"
         self.base_path = os.path.dirname(os.path.abspath(__file__))
