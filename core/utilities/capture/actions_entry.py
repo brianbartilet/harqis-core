@@ -1,8 +1,11 @@
+import os
 import sys
+import threading
 import traceback
 from pathlib import Path
 from datetime import datetime
 import faulthandler
+import psutil
 
 
 def main() -> None:
@@ -38,7 +41,38 @@ def main() -> None:
             pass
 
     _boot("actions_entry.main started")
+    _boot(f"  pid = {os.getpid()}")
     _boot(f"  sys.argv = {sys.argv!r}")
+
+    try:
+        max_memory_mb = max(128, int(os.environ.get("CAPTURE_MAX_MEMORY_MB", "768")))
+    except ValueError:
+        max_memory_mb = 768
+    watchdog_stop = threading.Event()
+
+    def _memory_watchdog() -> None:
+        process = psutil.Process()
+        while not watchdog_stop.wait(1.0):
+            try:
+                memory = process.memory_info()
+                private_bytes = getattr(memory, "private", memory.rss)
+                private_mb = private_bytes / (1024 * 1024)
+                if private_mb >= max_memory_mb:
+                    _boot(
+                        "MEMORY_WATCHDOG_EXIT "
+                        f"pid={os.getpid()} private_memory_mb={private_mb:.1f} "
+                        f"limit_mb={max_memory_mb}"
+                    )
+                    os._exit(70)
+            except (psutil.NoSuchProcess, psutil.AccessDenied):
+                return
+
+    threading.Thread(
+        target=_memory_watchdog,
+        name="capture-memory-watchdog",
+        daemon=True,
+    ).start()
+    _boot(f"memory watchdog enabled limit_mb={max_memory_mb}")
 
     # Try to open crash file early and enable faulthandler on it
     fh = None
@@ -104,6 +138,7 @@ def main() -> None:
             pass
 
     finally:
+        watchdog_stop.set()
         _boot("actions_entry.main exiting")
         # Clean up faulthandler file
         try:

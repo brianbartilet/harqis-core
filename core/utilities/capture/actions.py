@@ -53,6 +53,7 @@ By default, logs will rotate **hourly** into the `activity_logs/` directory:
 Press Ctrl+C to stop.
 """
 
+import json
 import os
 import time
 import re
@@ -72,6 +73,13 @@ import ctypes
 from ctypes import wintypes
 import psutil
 
+
+LOOP_INTERVAL_SECONDS = float(os.environ.get("CAPTURE_LOOP_INTERVAL_SECONDS", "0.1"))
+FOCUS_INTERVAL_SECONDS = float(os.environ.get("CAPTURE_FOCUS_INTERVAL_SECONDS", "1.0"))
+IDLE_PAUSE_SECONDS = float(os.environ.get("CAPTURE_IDLE_PAUSE_SECONDS", "300"))
+HEALTH_INTERVAL_SECONDS = float(os.environ.get("CAPTURE_HEALTH_INTERVAL_SECONDS", "30"))
+HEALTH_FILENAME = "actions_health.json"
+
 # If needed, explicitly set the tesseract.exe path, e.g.:
 # pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
 
@@ -90,6 +98,80 @@ MOUSE_OCR_HEIGHT = 400
 # Windows user32 / kernel32 handles for various win32 APIs
 _user32 = ctypes.windll.user32
 _kernel32 = ctypes.windll.kernel32
+_user32.OpenInputDesktop.argtypes = [wintypes.DWORD, wintypes.BOOL, wintypes.DWORD]
+_user32.OpenInputDesktop.restype = wintypes.HANDLE
+_user32.SwitchDesktop.argtypes = [wintypes.HANDLE]
+_user32.SwitchDesktop.restype = wintypes.BOOL
+_user32.CloseDesktop.argtypes = [wintypes.HANDLE]
+_user32.CloseDesktop.restype = wintypes.BOOL
+_kernel32.GetTickCount64.restype = ctypes.c_ulonglong
+
+
+class _LASTINPUTINFO(ctypes.Structure):
+    _fields_ = [("cbSize", wintypes.UINT), ("dwTime", wintypes.DWORD)]
+
+
+def _idle_seconds() -> float:
+    """Return seconds since keyboard/mouse input, or zero if unavailable."""
+    info = _LASTINPUTINFO()
+    info.cbSize = ctypes.sizeof(info)
+    if not _user32.GetLastInputInfo(ctypes.byref(info)):
+        return 0.0
+    elapsed_ms = (int(_kernel32.GetTickCount64()) - int(info.dwTime)) & 0xFFFFFFFF
+    return elapsed_ms / 1000.0
+
+
+def _interactive_session_state() -> Tuple[str, float]:
+    """Return a safe capture state and current user-idle duration.
+
+    ``SwitchDesktop`` fails for the secure Winlogon desktop, which lets a
+    normal user process detect a locked session without polling UI Automation.
+    The idle guard deliberately pauses before display-off / Modern Standby so
+    native accessibility calls are never made through those transitions.
+    """
+    idle = _idle_seconds()
+    desktop = _user32.OpenInputDesktop(0, False, 0x0100)  # DESKTOP_SWITCHDESKTOP
+    if not desktop:
+        return "locked", idle
+    try:
+        if not _user32.SwitchDesktop(desktop):
+            return "locked", idle
+    finally:
+        _user32.CloseDesktop(desktop)
+    if IDLE_PAUSE_SECONDS > 0 and idle >= IDLE_PAUSE_SECONDS:
+        return "idle", idle
+    return "active", idle
+
+
+def _write_health(
+    *,
+    state: str,
+    idle_seconds: float,
+    last_operation: str,
+    last_focus_poll: Optional[str],
+) -> None:
+    """Atomically publish process and capture-loop diagnostics."""
+    try:
+        process = psutil.Process()
+        memory = process.memory_info()
+        private_bytes = getattr(memory, "private", memory.rss)
+        payload = {
+            "timestamp": datetime.now().isoformat(),
+            "pid": os.getpid(),
+            "state": state,
+            "idle_seconds": round(idle_seconds, 1),
+            "private_memory_mb": round(private_bytes / (1024 * 1024), 1),
+            "working_set_mb": round(memory.rss / (1024 * 1024), 1),
+            "last_operation": last_operation,
+            "last_focus_poll": last_focus_poll,
+        }
+        destination = LOG_DIR / HEALTH_FILENAME
+        temporary = destination.with_name(f"{destination.name}.{os.getpid()}.tmp")
+        temporary.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+        os.replace(temporary, destination)
+    except Exception:
+        # Telemetry must never destabilize the capture loop.
+        pass
 
 # Virtual-key code for the left mouse button
 VK_LBUTTON = 0x01
@@ -594,6 +676,14 @@ def run_capture(
 
     # Track last open app snapshot (as a signature string)
     last_open_apps_sig: Optional[str] = None
+    last_state: Optional[str] = None
+    last_operation = "startup"
+    last_focus_poll: Optional[str] = None
+    next_focus_poll = 0.0
+    next_state_check = 0.0
+    next_health_write = 0.0
+    session_state = "starting"
+    idle_seconds = 0.0
 
     print(f"Logging focus changes and click OCR to: {LOG_DIR.resolve()}")
     print(f"Rotation: {rotation}")
@@ -602,21 +692,56 @@ def run_capture(
     try:
         while True:
             try:
-                # -------- FOCUS HANDLING (name only) --------
-                try:
-                    focused = auto.GetFocusedControl()
-                except Exception:
-                    focused = None
+                now = time.monotonic()
+                if now >= next_state_check:
+                    last_operation = "session_state_check"
+                    session_state, idle_seconds = _interactive_session_state()
+                    next_state_check = now + 1.0
+                    if session_state != last_state:
+                        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                        log_file = _current_log_file(rotation)
+                        with log_file.open("a", encoding="utf-8") as f:
+                            f.write(
+                                f"[{timestamp}] SESSION_STATE: {session_state} "
+                                f"idle_seconds={idle_seconds:.1f}\n"
+                            )
+                        last_state = session_state
+                        next_health_write = 0.0
 
-                if focused:
+                if now >= next_health_write:
+                    _write_health(
+                        state=session_state,
+                        idle_seconds=idle_seconds,
+                        last_operation=last_operation,
+                        last_focus_poll=last_focus_poll,
+                    )
+                    next_health_write = now + HEALTH_INTERVAL_SECONDS
+
+                if session_state != "active":
+                    # Avoid UI Automation, screenshots and clipboard APIs while
+                    # locked/idle or transitioning through display power states.
+                    last_mouse_down = False
+                    time.sleep(1.0)
+                    continue
+
+                # -------- FOCUS HANDLING (name only) --------
+                name = ""
+                if now >= next_focus_poll:
+                    focused = None
+                    last_operation = "focus_poll"
                     try:
-                        name = focused.Name or ""
-                    except COMError:
-                        name = ""
+                        focused = auto.GetFocusedControl()
+                        if focused:
+                            try:
+                                name = focused.Name or ""
+                            except Exception:
+                                name = ""
                     except Exception:
                         name = ""
-                else:
-                    name = ""
+                    finally:
+                        focused = None
+                    last_focus_poll = datetime.now().isoformat()
+                    next_focus_poll = now + FOCUS_INTERVAL_SECONDS
 
                 if name and name != last_name:
                     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -639,6 +764,7 @@ def run_capture(
                     last_name = name
 
                 # -------- CLICK HANDLING (mouse-based OCR + clipboard + apps) --------
+                last_operation = "mouse_poll"
                 mouse_down = _is_left_button_down()
 
                 if mouse_down and not last_mouse_down:
@@ -764,7 +890,7 @@ def run_capture(
                             print(f"[{timestamp}] INTERNAL_ERROR: {repr(e)}")
 
                 last_mouse_down = mouse_down
-                time.sleep(0.05)
+                time.sleep(LOOP_INTERVAL_SECONDS)
 
             except Exception as loop_error:
                 # This catches *any* unexpected error per iteration so the loop survives
